@@ -2,11 +2,18 @@
 
 namespace Encore\Admin\Controllers;
 
+use App\Models\Disability;
+use App\Models\District;
 use App\Models\Event;
 use App\Models\NewsPost;
+use App\Models\Organisation;
+use App\Models\Person;
+use App\Models\Region;
+use App\Models\ServiceProvider;
 use Encore\Admin\Admin;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class Dashboard
 {
@@ -32,9 +39,165 @@ class Dashboard
         $events = NewsPost::where([])->orderBy('id', 'desc')->limit(8)->get();
         return view('dashboard.news', [
             'items' => $events
-        ]); 
+        ]);
     }
 
+    public static function getDuOpdPerRegion()
+    {
+        $regions = Region::pluck('name')->toArray();
+        $chartDataDU = Organisation::where('relationship_type', 'du')
+            ->selectRaw('region_id, count(*) as count')
+            ->groupBy('region_id')
+            ->get();
+
+        $chartDataOPD = Organisation::where('relationship_type', 'opd')
+            ->selectRaw('region_id, count(*) as count')
+            ->groupBy('region_id')
+            ->get();
+        return view('dashboard.du-nopd-chart', compact('regions', 'chartDataDU', 'chartDataOPD'));
+    }
+
+    public static function getMembershipChart()
+    {
+        $membershipTypes = Organisation::distinct('membership_type')->pluck('membership_type')->toArray();
+        $membershipDataDU = Organisation::where('relationship_type', 'du')
+            ->select('membership_type', DB::Raw('count(*) as count'))
+            ->groupBy('membership_type')
+            ->get();
+
+        $membershipDataOPD = Organisation::where('relationship_type', 'opd')
+            ->select('membership_type', DB::Raw('count(*) as count'))
+            ->groupBy('membership_type')
+            ->get();
+        return view('dashboard.membership', compact('membershipTypes', 'membershipDataDU', 'membershipDataOPD'));
+    }
+
+    //Function for returning count of people with disability in a district grouped by sex
+    public static function getPeopleWithDisability()
+    {
+        $sex = Person::whereNotNull('sex')->distinct('sex')->pluck('sex')->toArray();
+        $barChart = Person::select('districts.name as district', DB::raw('count(*) as count'), 'people.sex as sex')
+            ->join('districts', 'people.district_id', '=', 'districts.id')
+            ->groupBy('districts.name', 'people.sex')
+            ->whereNotNull('people.sex') // Eliminate data where 'sex' is null
+            ->where('people.sex', '<>', 'N/A') // Eliminate data where 'sex' is 'N/A'
+            ->get();
+
+        return view('dashboard.gender-count', compact('sex', 'barChart'));
+    }
+
+    //PWDs Disability Category Count per district
+    public static function getDisabilityCount()
+    {
+        $people = Person::with('disabilities', 'district')->get(); // Eager load people disabilities
+        $disabilityCounts = [];
+        $districtDisabilityCounts = [];
+
+        foreach ($people as $person) {
+            //District loaded has a name
+            $districtName = $person->district->name ?? 'Unknown';
+
+            // Initialize district in the array if not already present
+            if (!array_key_exists($districtName, $districtDisabilityCounts)) {
+                $districtDisabilityCounts[$districtName] = [];
+            }
+            foreach ($person->disabilities as $disability) {
+                if (!isset($disabilityCounts[$disability->name])) {
+                    $disabilityCounts[$disability->name] = 0;
+                }
+                $disabilityCounts[$disability->name]++;
+
+                if (!isset($districtDisabilityCounts[$districtName][$disability->name])) {
+                    $districtDisabilityCounts[$districtName][$disability->name] = 0;
+                }
+                $districtDisabilityCounts[$districtName][$disability->name]++;
+            }
+        }
+        arsort($disabilityCounts);
+        arsort($districtDisabilityCounts);
+
+        return view('dashboard.disability-category-count', compact('disabilityCounts', 'districtDisabilityCounts'));
+    }
+
+    // public static function getServiceProviderCount()
+    // {
+    //     $service_providers = ServiceProvider::with('districts_of_operation', 'disability_category')->get(); // Eager load service providers
+    //     $serviceCounts = [];
+    //     $districtServiceCounts = [];
+
+    //     foreach ($service_providers as $service_provider) {
+    //         // District loaded has a name
+    //         $districtName = $service_provider->districts_of_operation->name ?? 'Unknown';
+
+    //         // Initialize district in the array if not already present
+    //         if (!array_key_exists($districtName, $districtServiceCounts)) {
+    //             $districtServiceCounts[$districtName] = [];
+    //         }
+    //         // Use the plural form when accessing the disability_category relationship
+    //         foreach ($service_provider->disability_category as $disability) {
+    //             // Ensure $disability is an object before attempting to access its properties
+    //             if (is_object($disability)) {
+    //                 if (!isset($serviceCounts[$disability->name])) {
+    //                     $serviceCounts[$disability->name] = 0;
+    //                 }
+    //                 $serviceCounts[$disability->name]++;
+
+    //                 if (!isset($districtServiceCounts[$districtName][$disability->name])) {
+    //                     $districtServiceCounts[$districtName][$disability->name] = 0;
+    //                 }
+    //                 $districtServiceCounts[$districtName][$disability->name]++;
+    //             }
+    //         }
+    //     }
+
+    //     arsort($serviceCounts);
+    //     arsort($districtServiceCounts);
+
+    //     return view('dashboard.service_provider_per_disability', compact('serviceCounts', 'districtServiceCounts'));
+    // }
+
+    //Method for retrieving service providers residing in a particular district.
+    public static function getTargetGroupByService()
+    {
+        // Define the allowed target groups
+        $allowedTargetGroups = ['Children', 'Adults', 'Parents', 'Others'];
+
+        // Fetch distinct target groups from the ServiceProvider model
+        $targetGroup = ServiceProvider::distinct('target_group')
+            ->whereIn('target_group', $allowedTargetGroups)
+            ->pluck('target_group')
+            ->toArray();
+
+        // Fetch target group data with count
+        $targetGroupData = ServiceProvider::select('target_group', DB::raw('count(*) as count'))
+            ->whereIn('target_group', $allowedTargetGroups)
+            ->groupBy('target_group')
+            ->get();
+
+        return view('dashboard.service-provider-per-targetgroup', compact('targetGroup', 'targetGroupData'));
+    }
+
+    public static function getServiceProviders($disability = null)
+    {
+        $availableDistricts = District::pluck('name')->toArray();
+        $disabilityNames = Disability::pluck('name')->toArray();
+
+        $serviceProviderCounts = [];
+
+        foreach ($availableDistricts as $district) {
+            foreach ($disabilityNames as $disability) {
+                $count = ServiceProvider::where('districts_of_operation', 'LIKE', '%' . $district . '%')
+                    ->where('disability_category', 'LIKE', '%' . $disability . '%')
+                    ->count();
+
+                $serviceProviderCounts[$district][$disability] = $count;
+            }
+        };
+
+        arsort($serviceProviderCounts);
+
+        return view('dashboard.service_providers_per_disability', compact('serviceProviderCounts', 'availableDistricts', 'disabilityNames'));
+    }
 
 
     /**

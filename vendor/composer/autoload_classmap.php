@@ -132,6 +132,7 @@ return array(
     'App\\Models\\Product' => $baseDir . '/app/Models/Product.php',
     'App\\Models\\ProductOrder' => $baseDir . '/app/Models/ProductOrder.php',
     'App\\Models\\Program' => $baseDir . '/app/Models/Program.php',
+    'App\\Models\\Region' => $baseDir . '/app/Models/Region.php',
     'App\\Models\\Resource' => $baseDir . '/app/Models/Resource.php',
     'App\\Models\\ServiceProvider' => $baseDir . '/app/Models/ServiceProvider.php',
     'App\\Models\\ServiceProviderContactPerson' => $baseDir . '/app/Models/ServiceProviderContactPerson.php',

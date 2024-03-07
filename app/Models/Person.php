@@ -14,20 +14,27 @@ class Person extends Model
         'is_formal_education',
         'is_employed',
         'is_member',
-        'is_same_address'
+        'is_same_address',
     ];
 
-    public function association(){
+    protected $fillable = [
+        'name',
+        'other_names',
+    ];
+
+    public function association()
+    {
         return $this->belongsTo(Association::class);
     }
 
-    public function disabilities(){
+    public function disabilities()
+    {
         return $this->belongsToMany(Disability::class);
     }
 
     public function district()
     {
-        return $this->belongsTo(District::class,'district_id');
+        return $this->belongsTo(District::class, 'district_id');
     }
 
     public function districtOfOrigin()
@@ -35,7 +42,8 @@ class Person extends Model
         return $this->belongsTo(District::class, 'district_of_origin');
     }
 
-    public function academic_qualifications(){
+    public function academic_qualifications()
+    {
         return $this->hasMany(AcademicQualification::class);
     }
 
@@ -52,12 +60,39 @@ class Person extends Model
     public function getDisabilityTextAttribute()
     {
         $d = Disability::find($this->disability_id);
-        if($d == null){
+        if ($d == null) {
             return 'Not mentioned.';
         }
         return $d->name;
     }
 
-    
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::creating(function ($person) {
+            $person->name = ucfirst(strtolower($person->name));
+            $person->other_names = ucfirst(strtolower($person->other_names));
+        });
+
+        static::saving(function ($person) {
+            $person->name = ucfirst(strtolower($person->name));
+            $person->other_names = ucfirst(strtolower($person->other_names));
+        });
+
+        static::updating(function ($person) {
+            $person->name = ucfirst(strtolower($person->name));
+            $person->other_names = ucfirst(strtolower($person->other_names));
+        });
+    }
+
+    public static function updateRecord()
+    {
+        $people_records = Person::select('id', 'name', 'other_names')->get();
+        foreach ($people_records as $record) {
+            $record->name = ucfirst(strtolower($record->name));
+            $record->other_names = ucfirst(strtolower($record->other_names));
+            $record->save();
+        }
+    }
 }

@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Person;
 use App\Models\Product;
 use App\Models\Job;
+use App\Models\Organisation;
 use App\Models\ServiceProvider;
 use Illuminate\Support\Facades\DB;
 use App\Models\Utils;
@@ -220,27 +221,22 @@ deleted_at
  */
 
         $u = Admin::user();
-
-        // if ($u->gender == null  && !$u->inRoles(['nudipu', 'district-union', 'odp', 'administrator'])) {
-        //     $content->row(function (Row $row) {
-        //         $row->column(12, function (Column $column) {
-        //             $column->append(view('widgets.alert', [
-        //                 'color' => false,
-        //                 'msg' => 'You have not completed your profile information. ',
-        //                 'link' => admin_url('auth/setting'),
-        //             ]));
-        //         });
-        //     });
-        // }
-
-
         $content->row(function (Row $row) {
             $row->column(3, function (Column $column) {
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
-                    'title' => 'New members',
-                    'sub_title' => 'Joined 30 days ago.',
-                    'number' => Person::where('created_at', '>', Carbon::now()->subDays(30))->count(),
+                    'title' => 'Number Of DUs',
+                    'sub_title' => 'dus',
+                    'number' => Organisation::where('relationship_type', '=', 'du')->count(),
+                    'link' => 'javascript:;'
+                ]));
+            });
+            $row->column(3, function (Column $column) {
+                $column->append(view('widgets.box-5', [
+                    'is_dark' => false,
+                    'title' => 'Number Of NOPDs',
+                    'sub_title' => 'nopds',
+                    'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
                     'link' => 'javascript:;'
                 ]));
             });
@@ -248,7 +244,7 @@ deleted_at
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Service providers',
-                    'sub_title' => 'All time.',
+                    'sub_title' => 'service providers',
                     'number' => ServiceProvider::count(),
                     'link' => admin_url('service-providers'),
                 ]));
@@ -257,52 +253,47 @@ deleted_at
             $row->column(3, function (Column $column) {
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
-                    'title' => 'Products & Services',
-                    'sub_title' => 'All time.',
-                    'number' => Product::count(),
+                    'title' => 'Persons with Disability',
+                    'sub_title' => 'pwds',
+                    'number' => Person::count(),
                     'link' => admin_url('products'),
                 ]));
             });
-            $row->column(3, function (Column $column) {
-                $jobs = Job::where('created_at', '>', Carbon::now()->subDays(7))->count();
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Job oppotunities',
-                    'sub_title' => $jobs . ' jobs posted 7 days ago.',
-                    'number' => $jobs,
-                    'link' => admin_url('jobs'),
-                ]));
-            });
-            // $row->column(3, function (Column $column) {
-            //     $column->append(view('widgets.box-5', [
-            //        'is_dark' => true,
-            //         'title' => 'System traffic',
-            //         'sub_title' => rand(100, 400) . ' mobile app, ' . rand(100, 300) . ' web browser.',
-            //         'number' => number_format(rand(100, 6000)),
-            //         'link' => 'javascript:;'
-            //     ]));
-            // }); 
         });
 
         $content->row(function (Row $row) {
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getDuOpdPerRegion());
+            });
 
-            $row->column(12, function (Column $column) {
-                //groups persons with disabilities by districts
-                $districts = DB::table('people')
-                    ->join('districts', 'people.district_id', '=', 'districts.id')
-                    ->select('districts.name', DB::raw('COUNT(*) as count'))
-                    ->groupBy('districts.name')
-                    ->get();
-                $column->append(view('widgets.by-districts', [
-                    'title' => 'Persons with Disabilities by Districts',
-                    'data' => $districts->pluck('count')->toArray(),
-                    'labels' =>  $districts->pluck('count', 'name')->map(function ($count, $name) {
-                                        return "$name - $count";
-                                    })->values()->toArray()
-
-                ]));
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getMembershipChart());
             });
         });
+
+        //Bar Chart for People with Disability count.
+        $content->row(function (Row $row) {
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getPeopleWithDisability());
+            });
+
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getDisabilityCount());
+            });
+        });
+
+        //Bar Chart for People with Service count.
+        $content->row(function (Row $row) {
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getServiceProviders());
+            });
+
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getTargetGroupByService());
+            });
+        });
+
+
         $content->row(function (Row $row) {
             $row->column(6, function (Column $column) {
                 //group pesons with disabilities by categories
@@ -319,8 +310,8 @@ deleted_at
                     'title' => 'Persons with Disabilities by Categories',
                     'data' => $persons->pluck('count')->toArray(),
                     'labels' =>  $persons->pluck('count', 'name')->map(function ($count, $name) {
-                                        return "$name - $count";
-                                    })->values()->toArray()
+                        return "$name - $count";
+                    })->values()->toArray()
                 ]));
             });
             $row->column(6, function (Column $column) {
@@ -331,14 +322,14 @@ deleted_at
                     ->get();
 
                 // dd($persons);
-                
+
 
                 $column->append(view('widgets.by-place-of-birth', [
                     'title' => 'Persons with Disabilities by Place Of Birth',
                     'data' => $persons->pluck('count')->toArray(),
                     'labels' =>  $persons->pluck('count', 'place_of_birth')->map(function ($count, $name) {
-                                        return "$name - $count";
-                                    })->values()->toArray()
+                        return "$name - $count";
+                    })->values()->toArray()
                 ]));
             });
         });

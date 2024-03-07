@@ -18,4 +18,9 @@ class Disability extends Model
     {
         return $this->belongsToMany(Innovation::class);
     }
+
+    public function serviceProviders()
+    {
+        return $this->belongsToMany(ServiceProvider::class)->withTimestamps();
+    }
 }

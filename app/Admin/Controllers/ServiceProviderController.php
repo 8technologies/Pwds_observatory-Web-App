@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\District;
 use Encore\Admin\Facades\Admin;
 use App\Admin\Extensions\ServiceProvidersExcelExporter;
-
-
+use App\Models\Disability;
 
 class ServiceProviderController extends AdminController
 {
@@ -30,30 +29,25 @@ class ServiceProviderController extends AdminController
      */
     protected function grid()
     {
+
         $grid = new Grid(new ServiceProvider());
 
-        $grid->filter(function($filter){
+        $grid->filter(function ($filter) {
             $filter->disableIdFilter();
-            $filter->like('name', 'Name');
-            // $filter->like('registration_number', 'Registration number');
-            // $filter->between('date_of_registration', 'Date of registration')->date();
-            // $filter->where(function ($query) {
-            //     $query->whereHas('districts_of_operation', function ($query) {
-            //         $query->where('name', 'like', "%{$this->input}%");
-            //     });
-            // }, 'Districts of operation');
-            $filter->where(function ($query) {
-                $query->where('target_group', 'like', "%{$this->input}%")->orWhere('target_group', 'like', "%all%");
-            }, 'Target Group');
-            $filter->where(function ($query) {
-                $query->where('disability_category', 'like', "%{$this->input}%")->orWhere('disability_category', 'like', "%all%");
-            }, 'Disability Category');
+            $filter->like('districts_of_operation', 'Filter by district')
+                ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'name'));
 
-            $filter->where(function ($query) {
-                $query->where('districts_of_operation', 'like', "%{$this->input}%")->orWhere('districts_of_operation', 'like', "%uganda%");
-            }, 'Districts / Regions of operation');
+            $filter->equal('target_group', 'Target Group')->select([
+                'Children' => 'Children',
+                'Adults' => 'Adults',
+                'Parents' => 'Parents',
+                'Others' => 'Others'
+            ]);
+            $filter->like('disability_category', 'Disability Category')
+                ->select(Disability::orderBy('name', 'asc')->get()->pluck('name', 'name'));
+            // ->select(Disability::pluck('name', 'name'));
         });
-        if(!Admin::user()->inRoles(['administrator', 'nudipu'])) {
+        if (!Admin::user()->inRoles(['administrator', 'nudipu'])) {
             $grid->disableCreateButton();
             $grid->actions(function ($actions) {
                 $actions->disableDelete();
@@ -76,9 +70,27 @@ class ServiceProviderController extends AdminController
         $grid->column('email', __('Email'));
         $grid->column('telephone', __('Telephone'));
         $grid->column('target_group', __('Target group'));
-        $grid->column('disability_category', __('Disability category'));
+        $grid->column('disability_category', __('Disability category'))
+            ->display(
+                function ($disability_category) {
+                    $disabilities = [];
+                    foreach ($disability_category as $disability) {
+                        $disabilities[] = $disability['name'];
+                    }
+                    return join(', ', $disabilities);
+                }
+            );
         $grid->column('level_of_operation', __('Level of operation'));
-        $grid->column('districts_of_operation', __('Districts of operation'));
+        $grid->column('districts_of_operation', __('Districts of Operation'))
+            ->display(
+                function ($districts_of_operation) {
+                    $districts = [];
+                    foreach ($districts_of_operation as $district) {
+                        $districts[] = $district['name'];
+                    }
+                    return join(', ', $districts);
+                }
+            );
         $grid->column('services_offered', __('Services offered'));
         $grid->column('is_verified', __('Verified'))->display(function ($is_verified) {
             return $is_verified ? 'Yes' : 'No';
@@ -141,7 +153,7 @@ class ServiceProviderController extends AdminController
 
             // $form->multipleSelect('districts_of_operation', __('Select districts'))
             // ->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
-            
+
             $form->textarea('mission', __('Mission'));
 
             $form->quill('brief_profile', __('Brief profile'));
@@ -150,13 +162,12 @@ class ServiceProviderController extends AdminController
             $form->html('
             <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
             ');
-
         });
 
         $form->tab('Address & Contacts', function ($form) {
             $form->text('physical_address', __('Physical address'));
 
-            
+
             // $form->hasMany('contact_persons', 'Contact Persons', function (Form\NestedForm $form) {
             //     $form->text('name', __('Name'))->rules("required");
             //     $form->text('position', __('Position'))->rules("required");
@@ -177,18 +188,21 @@ class ServiceProviderController extends AdminController
         });
 
         $form->tab('Region & Operations', function ($form) {
-            $form->textarea('target_group', __('Target group'))->rules("required")
-                ->help("Which group of people do you serve?");
+            $form->select('target_group', __('Target group'))->options([
+                'Children' => 'Children',
+                'Adults' => 'Adults',
+                'Parents' => 'Parents',
+                'Others' => 'Others'
+            ]);
 
-            $form->textarea('disability_category', __('Disability category'))->rules("required")
-                ->help("Which disability category do you serve?");
+            $form->multipleSelect('disability_category', __('Disability category'))->rules("required")
+                ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
 
             $form->textarea('level_of_operation', __('Level of operation'))->rules("required")
                 ->help("What is the level of your operation i.e Reginal, National, International?");
 
-            $form->textarea('districts_of_operation', __('Districts of operation'))->rules("required")
-            ->placeholder("Region or Districts of operation e.g Makindye Division, Kampala District")
-                ->help("Which districts or regions do you operate in?");
+            $form->multipleSelect('districts_of_operation', __('Select Districts of operation'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+            $form->divider();
 
             $form->textarea('services_offered', __('Services offered'))->rules("required")
                 ->help("Give a brief summary about services you offer?");
@@ -202,24 +216,23 @@ class ServiceProviderController extends AdminController
             ');
         });
 
-        $form->tab('Attachmments',  function($form) {
+        $form->tab('Attachmments',  function ($form) {
             $form->file('logo', __('Logo'))
-            ->help("Upload image logo in png, jpg, jpeg format (max: 2MB)");
+                ->help("Upload image logo in png, jpg, jpeg format (max: 2MB)");
             $form->file('certificate_of_registration', __('Certificate of registration'))
-            ->help("Upload certificate of registration in pdf format (max: 2MB)");
+                ->help("Upload certificate of registration in pdf format (max: 2MB)");
 
             $form->file('license', __('License'))
-            ->help("Upload your trade license");
+                ->help("Upload your trade license");
 
             $form->multipleFile('attachments', __('Attachments'))
-            ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg)");
+                ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg)");
 
             $form->divider();
             $form->html('
             <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
             <button type="submit" class="btn btn-primary float-right">Submit</button> 
            ');
-
         });
 
         $form->hidden('user_id')->default(Auth::guard('admin')->user()->id);

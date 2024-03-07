@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PwdCreated;
+use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 
 class PersonController extends AdminController
@@ -34,57 +35,25 @@ class PersonController extends AdminController
      */
     protected function grid()
     {
+
         $grid = new Grid(new Person());
 
         //TODO: fix filters, and also display users from the opd, and district unions
 
 
-        $grid->filter(function ($f) {
+        $grid->filter(function ($filter) {
             // Remove the default id filter
-            $f->disableIdFilter();
-            $f->between('created_at', 'Filter by registered')->date();
+            $filter->disableIdFilter();
+            //filter by district, Gender, and disability type
+            $filter->equal('district_id', 'Filter by district')
+                ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
 
-
-            // $f->equal('disabilities', 'Filter Type of disability')->select(
-            //     Disability::where([])->orderBy('name', 'asc')->get()->pluck('name', 'id')
-            // );
-            $f->where(function ($query) {
-                $query->whereHas('disabilities', function ($query) {
-                    $query->where('name', 'like', "%{$this->input}%");
-                });
-            }, 'Filter by Disability');
-
-            $f->equal('district_id', 'Filter by district')->select(District::pluck('name', 'id'));
-
-
-
-
-            // $district_ajax_url = url(
-            //     '/api/ajax?'
-            //         . "&search_by_1=name"
-            //         . "&search_by_2=id"
-            //         . "&query_parent=0"
-            //         . "&model=Location"
-            // );
-            // $f->equal('district_id', 'Filter by district')->select(function ($id) {
-            //     $a = Location::find($id);
-            //     if ($a) {
-            //         return [$a->id => "#" . $a->id . " - " . $a->name];
-            //     }
-            // })
-            //     ->ajax($district_ajax_url);
-
-            $f->equal('sex', 'Filter by Gender')->select([
+            $filter->equal('sex', 'Filter by Gender')->select([
                 'Male' => 'Male',
                 'Female' => 'Female',
             ]);
-
-
-            $f->between('dob', 'Filter by date of birth range')->date();
-
-            $f->equal('profiler', 'Filter by profiler Name')->select(
-                Person::whereNotNull('profiler')->orderBy('profiler', 'asc')->pluck('profiler', 'profiler')
-            );
+            $filter->equal('disabilities.name', 'Disability Name')
+                ->select(Disability::pluck('name', 'name'));
         });
 
         $grid->quickSearch('name')->placeholder('Search by name');
@@ -95,8 +64,8 @@ class PersonController extends AdminController
             $grid->model()->orderBy('id', 'desc');
         } elseif ($user->isRole('district-union')) {
             $grid->model()->where('district_id', $organisation->district_id)->orderBy('id', 'desc');
-        } else if ($user->isRole('opd')) {
-            $grid->model()->where('opd_id', $organisation->id)->orderBy('id', 'desc');
+        } else if ($user->isRole('nopd')) {
+            $grid->model()->where('nopd_id', $organisation->id)->orderBy('id', 'desc');
         }
         //  else {
         //     // dd("ddd");
@@ -115,11 +84,48 @@ class PersonController extends AdminController
         $grid->column('name', __('Name'))->sortable();
         $grid->column('other_names', __('Other Names'))->sortable();
         $grid->column('sex', __('Gender'))->sortable();
-        $grid->column('is_formal_education', __('Formal Education'))->display(
-            function ($x) {
-                return $x ? 'Yes' : 'No';
+        $grid->column('education_level', __('Education'))->display(
+            function ($education_level) {
+                $levels = [
+                    1 => 'Formal Education',
+                    2 => 'Informal Education',
+                    3 => 'Not mentioned'
+                ];
+                if (array_key_exists($education_level, $levels)) {
+                    return $levels[$education_level];
+                } else {
+                    return 'Not mentioned';
+                }
             }
         )->sortable();
+        $grid->column('employer', __('Employment Type'))
+            ->display(function ($employer) {
+                if ($employer == 1) {
+                    return 'Formal Employment';
+                } else if ($employer == 2) {
+                    return 'Self Employment';
+                } else {
+                    return 'Not mentioned';
+                }
+            })->sortable();
+        $grid->column('is_formal_education', __('Formal Education'))->display(
+            function ($is_formal_education) {
+                $levels = [
+                    3 => 'PHD',
+                    4 => 'Masters',
+                    5 => 'Bachelors',
+                    6 => 'Secondary',
+                    7 => 'Primary',
+                    8 => 'Not mentioned'
+                ];
+                if (array_key_exists($is_formal_education, $levels)) {
+                    return $levels[$is_formal_education];
+                } else {
+                    return 'Not mentioned';
+                }
+            }
+        )->sortable();
+        $grid->column('informal_education', __('Informal Education'));
 
         $grid->column('district_id', __('Attached District'))->display(
             function ($x) {
@@ -133,16 +139,16 @@ class PersonController extends AdminController
         $grid->column('profiler', __('Profiler'));
 
         $grid->column('disabilities', __('Disabilities'))
-            ->display( 
+            ->display(
                 function ($x) {
                     //disabilities in badges
                     if ($this->disabilities()->count() > 0) {
                         $disabilities = $this->disabilities->map(function ($item) {
-                            return "<span class='badge badge-success'>" . $item->name . "</span>";
+                            return  $item->name;
                         })->toArray();
-                        return join(' ', $disabilities);
-                    }else {
-                        return '-';  
+                        return join(',', $disabilities);
+                    } else {
+                        return '-';
                     }
                 }
             );
@@ -171,9 +177,8 @@ class PersonController extends AdminController
         $show->field('id_number', __('Id number'));
         $show->field('dob', __('Dob'));
         $show->field('sex', __('Gender'));
-        $show->field('ethnicity', __('Ethnicity'));
-        $show->field('religion', __('Religion'));
-        $show->field('marital_status', __('Marital status'));
+        // $show->field('ethnicity', __('Ethnicity'));
+        // $show->field('religion', __('Religion'));
         $show->field('place_of_birth', __('Place of birth'));
         $show->field('languages', __('Languages'));
         $show->field('address', __('Address'));
@@ -255,31 +260,17 @@ class PersonController extends AdminController
         });
         $form->tab('Bio', function ($form) {
             $form->image('photo', __('Photo'))->uniqueName();
-            $form->text('name', __('Surname'))->rules('required');
-            $form->text('other_names', __('Other Names'))->rules('required');
-            $form->text('id_number', __('ID Number'))
+            $form->text('name', __('Surname'))->placeholder('Surname')->rules('required');
+            $form->text('other_names', __('Other Names'))->placeholder('Other Names')->rules('required');
+            $form->select('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
+            $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
+            $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
+            $form->email('email', __('Email'))->placeholder('Email');
+            $form->text('id_number', __('ID Number'))->placeholder('ID Number')
                 ->help("NIN, Passport Number, Driving Permit Number");
-            $form->date('dob', __('Date of Birth'))->rules("required");
-            $form->radio('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
-            $form->radio('marital_status', __('Marital Status'))->options([
-                'Single' => 'Single',
-                'Married' => 'Married',
-                'Divorced' => 'Divorced',
-                'Widowed' => 'Widowed'
-            ])->rules('required');
-            $form->text('ethnicity', __('Ethnicity'))->rules('required')
-                ->help('Your Tribe');
-            $form->text('religion', __('Religion'))->rules('required');
-            $form->select('district_of_origin', __('District Origin'))->options(District::pluck('name', 'id'))->rules("required");
-            $form->radio('place_of_birth', __('Place Of Birth'))->options(['Hospital' => 'Hospital', 'Other' => 'Other'])
-                ->when('Hospital', function ($form) {
-                    $form->text('birth_hospital', __('Hospital Name'));
-                })
-                ->when('Other', function ($form) {
-                    $form->textarea('birth_no_hospital_description', __('Description'))->placeholder('Where were you given birth to?')->rules("required");
-                })
-                ->rules("required");
-            $form->text('languages', __('Languages'))->rules('required')
+            $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+            $form->select('district_of_residence', __('District Of Residence'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+            $form->text('languages', __('Languages'))->placeholder('Languages')->rules('required')
                 ->help('English, Luganda, Runyakitara, etc');
             $form->multipleSelect('disabilities', __('Select disabilities'))
                 ->rules('required')
@@ -287,24 +278,52 @@ class PersonController extends AdminController
             $form->divider();
 
             $form->html('
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
+            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
+        ');
+            // $form->select('marital_status', __('Marital Status'))->options([
+            //     'Single' => 'Single',
+            //     'Married' => 'Married',
+            //     'Divorced' => 'Divorced',
+            //     'Widowed' => 'Widowed'
+            // ])->rules('required');
+            // $form->text('ethnicity', __('Ethnicity'))->rules('required')
+            //     ->help('Your Tribe');
+            // $form->text('religion', __('Religion'))->rules('required');
+
+            // $form->radio('place_of_birth', __('Place Of Birth'))->options(['Hospital' => 'Hospital', 'Other' => 'Other'])
+            //     ->when('Hospital', function ($form) {
+            //         $form->text('birth_hospital', __('Hospital Name'));
+            //     })
+            //     ->when('Other', function ($form) {
+            //         $form->textarea('birth_no_hospital_description', __('Description'))->placeholder('Where were you given birth to?')->rules("required");
+            //     })
+            //     ->rules("required");
         });
 
         $form->tab('Academics', function ($form) {
-            $form->radio('is_formal_education', __('Attended Formal Education'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
+            $form->select('education_level', __('Education'))->options(
+                [1 => 'Formal Education', 2 => 'Informal Education', 3 => 'Not mentioned']
+            )
                 ->when(1, function (Form $form) {
-                    $form->hasMany('academic_qualifications', "Start with highest Qualification", function (Form\NestedForm $form) {
-                        $form->text('institution', __('Institution'));
-                        $form->text('qualification', __('Qualification'));
-                        $form->text('year_of_completion', __('Year Of Completion'));
-                    })->default(0);
-                });
-            $form->divider();
+                    $form->select('is_formal_education', __('Formal Education'))->options([3 => 'PHD', 4 => 'Masters', 5 => 'Bachelors', 6 => 'Secondary', 7 => 'Primary'])->rules('required')
+                        ->when(3, function (Form $form) {
+                            $form->text('indicate_class', 'Indicate class')->placeholder('Class')->rules('required');
+                        })->when(4, function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                        })->when(5, function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                        })->when(6, function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                        })->when(7, function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                        });
+                })->rules('required')
+                ->when(2, function (Form $form) {
+                    $form->text('informal_education', __('Informal Education'))->placeholder("Enter any informal education forexample: tailoring, carpentry, etc")->rules('required');
+                })->rules('required');
 
             $form->html(' <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
- ');
+                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>');
         });
 
         $form->tab('Skills', function ($form) {
@@ -317,22 +336,14 @@ class PersonController extends AdminController
         });
 
         $form->tab('Employment', function ($form) {
-            $form->radio('is_employed', __('Employment'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
+            $form->radio('is_employed', __('Are you Employed'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
                 ->when(1, function (Form $form) {
-                    $form->text('employer', __('Current Employer Name'))->rules('required');
-                    $form->text('position', __('Current Position'))->placeholder("Manager");
-                    $form->text('year_of_employment', __('Current Period of service'))->placeholder("2022 - 2023");
-
-                    $form->radio('is_formerly_employed', __('Employment History'))->options([1 => 'Yes', 0 => 'No'])
-                        ->help("Are you formerly employed anywhere?")
-                        ->default(0)
-                        ->rules('required')
+                    $form->radio('employer', __('Indicate type of Employment'))->options([1 => 'Formal Employment', 2 => 'Self Employemnt'])->rules('required')
                         ->when(1, function (Form $form) {
-                            $form->hasMany('employment_history', 'Previous Employment', function (Form\NestedForm $form) {
-                                $form->text('employer', __('Employer Name'))->rules('required');
-                                $form->text('position', __('Position'))->placeholder("Manager")->rules('required');
-                                $form->text('year_of_employment', __('Period of service'))->placeholder("2022 - 2023")->rules('required');
-                            })->default(0);
+                            $form->text('position', __('Current position'))->placeholder('What is your current position')->rules('required');
+                        })
+                        ->when(2, function (Form $form) {
+                            $form->text('occupation', __('Occupation'))->placeholder('What is your occupation?')->rules('required')->help('e.g Farming, Fishing, Retailer');
                         });
                 })
                 ->help("Are you currently employed? or have you ever been employed?");
@@ -343,6 +354,7 @@ class PersonController extends AdminController
             ');
         });
         $user = auth("admin")->user();
+
 
         if (!$user->inRoles(['district-union', 'opd'])) {
             $form->tab('Memberships', function ($form) {
@@ -392,54 +404,37 @@ class PersonController extends AdminController
         $form->tab('Aspirations', function ($form) {
             $form->quill('aspirations', __('Aspirations'));
             $form->divider();
+
             $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
+            <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+            <button type="submit" class="btn btn-primary float-right">Submit</button>');
         });
+        // if (Admin::user()->inRoles(['district-union', 'opd'])) {
+        //     $form->tab('Profiler Name', function ($form) {
+        //         $form->text('profiler', __('Profiler'))
+        //             ->placeholder('Enter your name as a profiler')
+        //             ->help('Enter your name as a profiler')
+        //             ->rules('required');
 
-        $form->tab('Address & Contacts', function ($form) {
+        //         if (Admin::user()->isRole('opd')) {
+        //             $current_user = auth("admin")->user();
+        //             $organisation = Organisation::where('user_id', $current_user->id)->first();
+        //             $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
+        //         }
 
-            $form->radio('is_same_address', __('Is the same as next of kin?'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
-                ->when(0, function (Form $form) {
-                    $form->text('address', __('Address'));
-                    $form->mobile('phone_number', __('Phone Number'));
-                    $form->mobile('phone_number_2', __('Other Phone Number'));
-                    $form->text('email', __('Email'));
-                })->default(0);
-            $form->divider();
-            $form->html('
-                    <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                    <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-                ');
-        });
-        if (Admin::user()->inRoles(['district-union', 'opd'])) {
-            $form->tab('Profiler Name', function ($form) {
-                $form->text('profiler', __('Profiler'))
-                    ->placeholder('Enter your name as a profiler')
-                    ->help('Enter your name as a profiler')
-                    ->rules('required');
-
-                if (Admin::user()->isRole('opd')) {
-                    $current_user = auth("admin")->user();
-                    $organisation = Organisation::where('user_id', $current_user->id)->first();
-                    $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
-                }
-
-                $form->divider();
-                //Add submit button
-                $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-    
-                <button type="submit" class="btn btn-primary float-right">Submit</button>');
-            });
-        }
-        $form->hidden('district_id');
-        $form->hidden('opd_id');
-        $form->hidden('is_approved');
+        //         $form->divider();
+        //         //Add submit button
+        //         $form->html('
+        //         <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+        //         <button type="submit" class="btn btn-primary float-right">Submit</button>');
+        //     });
+        // }
+        // $form->hidden('district_id');
+        // $form->hidden('opd_id');
+        // $form->hidden('is_approved');
 
         // Check if district union is doing the registration and send credentials else do not send
-        if (auth("admin")->user()->inRoles(['district-union', 'opd'])) {
+        if (auth("admin")->user()->inRoles(['district-union', 'nopd'])) {
 
             $form->saving(function ($form) {
                 // save the admin in users and map to this du
@@ -488,8 +483,8 @@ class PersonController extends AdminController
                         return back()->with('error', 'You do not have an organisation to register a member under');
                     } else if ($organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
-                    } else if ($organisation->relationship_type == 'opd') {
-                        $form->opd_id = $organisation->id;
+                    } else if ($organisation->relationship_type == 'nopd') {
+                        $form->nopd_id = $organisation->id;
                     }
                 }
             });

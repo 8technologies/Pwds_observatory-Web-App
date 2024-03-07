@@ -10,6 +10,8 @@ class Organisation extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['region_id', 'name'];
+
     public function setAttachmentsAttribute($value)
     {
         $this->attributes['attachments'] = json_encode($value);
@@ -50,12 +52,12 @@ class Organisation extends Model
 
     public function opds()
     {
-        return $this->hasMany(Organisation::class, 'parent_organisation_id')->where('relationship_type','opd');
+        return $this->hasMany(Organisation::class, 'parent_organisation_id')->where('relationship_type', 'opd');
     }
 
     public function district_unions()
     {
-        return $this->hasMany(Organisation::class, 'parent_organisation_id')->where('relationship_type','du');
+        return $this->hasMany(Organisation::class, 'parent_organisation_id')->where('relationship_type', 'du');
     }
 
     public function contact_persons()
@@ -68,8 +70,53 @@ class Organisation extends Model
         return $this->hasMany(Organisation::class);
     }
 
-    public function administrator() {
+    public function administrator()
+    {
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id');
+    }
+
+    public static function get_region($district_id)
+    {
+        $district = District::with('region')->find($district_id);
+        if (!$district) {
+            return null;
+        }
+        return $district->region->name;
+    }
+
+    public static function updateRegionIdForOldRecords()
+    {
+        // Find organisations with region_id set to zero
+        $organisationsToUpdate = self::where('region_id', 0)->get();
+
+        foreach ($organisationsToUpdate as $organisation) {
+            $districtId = $organisation->district_id;
+
+            // Retrieve the corresponding district and its region
+            $district = District::with('region')->find($districtId);
+
+            // If district and region are found, update the organisation's region_id
+            if ($district && $district->region) {
+                $organisation->update(['region_id' => $district->region->id]);
+            }
+        }
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $district = District::find($model->district_id);
+            if (!$district) {
+                return 'District not found';
+            }
+            $model->region_id = $district->region_id;
+        });
+    }
 }

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Admin\Extensions\DistrictUnionsExcelExporter;
 use Encore\Admin\Admin;
 use App\Models\District;
+use App\Models\Region;
 
 class DistrictUnionController extends AdminController
 {
@@ -31,9 +32,18 @@ class DistrictUnionController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Organisation());
-        $grid->disableFilter();
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by Name');
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            //Filters for region, membership type and date of registration
+            $filter->equal('region.name', 'Region')
+                ->select(Region::pluck('name', 'name'));
+            $filter->equal('membership_type', 'Membership Type')
+                ->select(Organisation::pluck('membership_type', 'membership_type'));
+            $filter->between('date_of_registration', 'Date of Registration')->date();
+        });
+
         if (!auth('admin')->user()->isRole('nudipu')) {
             $grid->disableCreateButton();
             $grid->disableActions();
@@ -46,6 +56,10 @@ class DistrictUnionController extends AdminController
         $grid->column('date_of_registration', __('Date of registration'));
         $grid->column('membership_type', __('Membership type'));
         $grid->column('physical_address', __('Physical address'));
+        $grid->column('district_id', __('region'))->display(function ($district_id) {
+            $region = Organisation::get_region($district_id);
+            return $region;
+        })->sortable();
         // $grid->column('contact_persons', __('Contact persons'));
 
         return $grid;
@@ -130,9 +144,9 @@ class DistrictUnionController extends AdminController
             $footer->disableSubmit();
         });
 
-        $form->tab('Bio', function ($form) {
+        $form->tab('Info', function ($form) {
             $form->text('name', __('Name'))->rules("required");
-            $form->select('district_id', __('District Of Operation'))->options(District::pluck('name', 'id'))->rules("required");
+            $form->select('district_id', __('District Of Operation'))->options(District::orderBy('name', 'asc')->pluck('name', 'id'))->rules("required");
             $form->text('registration_number', __('Registration number'));
             $form->date('date_of_registration', __('Date of registration'));
             $form->textarea('mission', __('Mission'));
@@ -191,6 +205,8 @@ class DistrictUnionController extends AdminController
                 ->help("Upload image logo in png, jpg, jpeg format (max: 2MB)");
             $form->file('certificate_of_registration', __('Certificate of registration'))->removable()->rules('mimes:pdf')
                 ->help("Upload certificate of registration in pdf format (max: 2MB)");
+            $form->file('constitution', __('Constitution'))->removable()->rules('mimes:pdf')
+                ->help("Upload constitution in pdf format (max: 2MB)");
 
             $form->multipleFile('attachments', __('Other Attachments'))->removable()->rules('mimes:pdf,png,jpg,jpeg')
                 ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg), constitution, etc (max: 2MB)");
@@ -201,27 +217,27 @@ class DistrictUnionController extends AdminController
                 <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
             ');
         });
-        $form->tab('Membership Duration', function ($form) {
-            $form->date('valid_from', __('Valid From'))->default(date('Y-m-d'));
-            $form->date('valid_to', __('Valid To'))->default(date('Y-m-d'))->rules('after:start_date');
-            $form->hidden('relationship_type')->default('du');
-            $form->hidden('parent_organisation_id')->default(session('organisation_id'));
+        // $form->tab('Membership Duration', function ($form) {
+        //     $form->date('valid_from', __('Valid From'))->default(date('Y-m-d'));
+        //     $form->date('valid_to', __('Valid To'))->default(date('Y-m-d'))->rules('after:start_date');
+        //     $form->hidden('relationship_type')->default('du');
+        //     $form->hidden('parent_organisation_id')->default(session('organisation_id'));
 
-            $form->divider();
+        //     $form->divider();
 
-            $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
-        });
+        //     $form->html('
+        //         <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+        //         <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
+        //     ');
+        // });
         $form->tab('Administrator', function ($form) {
             $form->email('admin_email', ('Administrator'))->rules("required| email")
                 ->help("This will be emailed with the password to log into the system");
 
-            if($form->isEditing()) {
+            if ($form->isEditing()) {
                 $form->divider('Change Password');
                 $form->password('password', __('Old Password'))
-                ->help('Previous password');
+                    ->help('Previous password');
                 $form->password('new_password', __('New Password'));
                 $form->password('confirm_new_password', __('Confirm Password'))->rules('same:new_password');
             }
@@ -235,16 +251,16 @@ class DistrictUnionController extends AdminController
         $form->hidden('user_id')->default(0);
 
         $form->submitted(function (Form $form) {
-            if($form->isEditing()) {
+            if ($form->isEditing()) {
                 $form->ignore(['admin_email', 'password', 'new_password', 'confirm_new_password']);
             }
         });
 
         $form->saving(function ($form) {
-            
+
             // save the admin in users and map to this du
             if ($form->isCreating()) {
-                          $du_exists = Organisation::where('district_id', $form->district_id)->where('relationship_type', 'du')->exists();
+                $du_exists = Organisation::where('district_id', $form->district_id)->where('relationship_type', 'du')->exists();
                 if ($du_exists) {
                     admin_error('District Union already exists', 'Please check the district and try again');
                     return back();
@@ -277,45 +293,44 @@ class DistrictUnionController extends AdminController
 
                 session(['password' => $new_password]);
             }
-            if($form->isEditing()) {
-                
+            if ($form->isEditing()) {
+
                 $password = request()->input('password');
                 $new_password = request()->input('new_password');
                 $confirm_new_password = request()->input('confirm_new_password');
-                
-                if($new_password != $confirm_new_password) {
+
+                if ($new_password != $confirm_new_password) {
                     admin_error('Passwords do not match', 'Please check the new password and try again');
                     return back();
                 }
 
                 // Check is password is not empty
-                if($password != null && $new_password != null) {
+                if ($password != null && $new_password != null) {
                     $administrator = $form->model()->administrator;
-          
+
                     // check if old password is correct
-                    if(Hash::check($password, $administrator->password, [
+                    if (Hash::check($password, $administrator->password, [
                         'rounds' => 12
                     ])) {
                         $administrator->password = Hash::make($new_password);
                         $administrator->save();
 
                         admin_success('Your password has been changed');
-                    } else {  
+                    } else {
                         admin_error('Old password is incorrect', 'Please check the old password and try again');
                         return back();
                     }
                 }
             }
-
         });
 
 
         $form->saved(function (Form $form) {
-            if ($form->isCreating()) {
-                $admin_password = session('password');
+            // if ($form->isCreating()) {
+            //     $admin_password = session('password');
 
-                Mail::to($form->admin_email)->send(new CreatedDistrictUnionMail($form->name, $form->admin_email, $admin_password));
-            }
+            //     Mail::to($form->admin_email)->send(new CreatedDistrictUnionMail($form->name, $form->admin_email, $admin_password));
+            // }
         });
 
         Admin::script(

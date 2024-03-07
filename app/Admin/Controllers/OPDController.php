@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Mail\CreatedOPDMail;
 use App\Admin\Extensions\OPDExcelExporter;
 use App\Models\District;
+use App\Models\Region;
 use Encore\Admin\Facades\Admin;
 
 
@@ -32,9 +33,17 @@ class OPDController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Organisation());
-        $grid->disableFilter();
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by Name');
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+            //Filters for region, Membership type and date of registration
+            $filter->equal('region.name', 'Region')
+                ->select(Region::pluck('name', 'name'));
+            $filter->equal('membership_type', 'Membership Type')
+                ->select(Organisation::pluck('membership_type', 'membership_type'));
+            $filter->between('date_of_registration', 'Date of Registration')->date();
+        });
 
         $user = auth("admin")->user();
 
@@ -62,6 +71,7 @@ class OPDController extends AdminController
 
         $grid->column('membership_type', __('Membership type'));
         $grid->column('physical_address', __('Physical address'));
+        $grid->column('website', __('Website'));
         // $grid->column('contact_persons', __('Contact persons'));
 
         return $grid;
@@ -107,6 +117,7 @@ class OPDController extends AdminController
         $show->field('brief_profile', __('Brief profile'));
         $show->field('membership_type', __('Membership type'));
         $show->field('physical_address', __('Physical address'));
+        $show->field('website', __('Website'));
         $show->divider();
         $show->field('contact_persons', __('Contact persons'))->as(function ($contact_persons) {
             return $contact_persons->map(function ($contact_person) {
@@ -144,14 +155,14 @@ class OPDController extends AdminController
             $footer->disableSubmit();
         });
 
-        $form->tab('Bio', function ($form) {
-            $form->text('name', __('Name'))->rules("required");
-            $form->text('registration_number', __('Registration number'));
+        $form->tab('Info', function ($form) {
+            $form->text('name', __('OPD NName'))->placeholder('Name')->rules("required");
+            $form->text('registration_number', __('Registration number'))->placeholder('RegNo.')->rules("required");;
             $form->date('date_of_registration', __('Date of registration'));
-            $form->textarea('mission', __('Mission'));
-            $form->textarea('vision', __('Vision'));
-            $form->textarea('core_values', __('Core values'));
-            $form->quill('brief_profile', __('Brief profile'));
+            $form->textarea('mission', __('Mission'))->placeholder('Org. Mission')->rules("required");
+            $form->textarea('vision', __('Vision'))->placeholder('Org. Vision')->rules("required");
+            $form->textarea('core_values', __('Core values'))->placeholder('Org. Core Values')->rules("required");
+            $form->quill('brief_profile', __('Brief profile'))->placeholder('Org. Brief profile')->rules("required");
             $form->hidden('user_id')->default(Admin::user()->id);
 
             $form->divider();
@@ -184,6 +195,7 @@ class OPDController extends AdminController
 
         $form->tab('Contact', function ($form) {
             $form->text('physical_address', __('Physical address'))->rules("required");
+            $form->text('website', __('Website'));
 
 
             $form->hasMany('contact_persons', 'Contact Persons', function (Form\NestedForm $form) {
@@ -206,6 +218,8 @@ class OPDController extends AdminController
                 ->help("Upload image logo in png, jpg, jpeg format (max: 2MB)");
             $form->file('certificate_of_registration', __('Certificate of registration'))->removable()->rules('mimes:pdf')
                 ->help("Upload certificate of registration in pdf format (max: 2MB)");
+            $form->file('constitution', __('Constitution'))->removable()->rules('mimes:pdf')
+                ->help("Upload certificate of registration in pdf format (max: 2MB)");
 
             $form->multipleFile('attachments', __('Other Attachments'))->removable()->rules('mimes:pdf,png,jpg,jpeg')
                 ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg), constitution, etc (max: 2MB)");
@@ -216,18 +230,6 @@ class OPDController extends AdminController
             <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
             ');
         });
-        if (!Admin::user()->isRole('basic')) {
-            $form->tab('Membership Duration', function ($form) {
-                $form->date('valid_from', __('Valid From'))->default(date('Y-m-d'));
-                $form->date('valid_to', __('Valid To'))->default(date('Y-m-d'))->rules('after:start_date');
-                $form->divider();
-
-                $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-                ');
-            });
-        }
 
         $form->tab('Districts of Operation', function ($form) {
             $form->multipleSelect('districtsOfOperation', __('Select Districts'))->options(District::all()->pluck('name', 'id'));

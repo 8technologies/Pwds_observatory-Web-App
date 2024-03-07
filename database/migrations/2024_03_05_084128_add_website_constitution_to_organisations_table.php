@@ -13,8 +13,10 @@ class AddWebsiteConstitutionToOrganisationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('organisation', function (Blueprint $table) {
-            //
+        Schema::table('organisations', function (Blueprint $table) {
+            //adding website and constitution to organisation table
+            $table->string('website')->after('physical_address')->nullable();
+            $table->string('constitution')->after('certificate_of_registration')->nullable();
         });
     }
 

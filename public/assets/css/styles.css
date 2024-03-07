@@ -25,3 +25,20 @@
         margin-left: 12%!important;
     } 
 }
+
+.chart-container {
+    position: relative;
+    margin: auto;
+    width: 100%;
+    height: 70%;
+}
+
+#chart-content{
+    height: 10%;
+    width: 100%;
+}
+
+#chart-description{
+    height: 400px;
+    width: 100%;
+}

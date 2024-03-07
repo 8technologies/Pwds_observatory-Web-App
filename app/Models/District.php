@@ -31,7 +31,7 @@ class District extends Model
      */
     public function service_providers()
     {
-        return $this->belongsToMany(ServiceProvider::class);
+        return $this->belongsToMany(ServiceProvider::class)->withTimestamps();
     }
 
     /**
@@ -45,5 +45,10 @@ class District extends Model
     public function districtUnion()
     {
         return $this->hasOne(Organisation::class, 'district_id');
+    }
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class, 'region_id');
     }
 }
