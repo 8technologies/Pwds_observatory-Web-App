@@ -112,11 +112,11 @@ class PersonController extends AdminController
             function ($is_formal_education) {
                 $levels = [
                     3 => 'PHD',
-                    4 => 'Masters',
-                    5 => 'Bachelors',
-                    6 => 'Secondary',
-                    7 => 'Primary',
-                    8 => 'Not mentioned'
+                    4 => 'Master\'s Degree',
+                    5 => 'Bachelor\'s Degree',
+                    6 => 'Secondary - UACE',
+                    7 => 'Secondary - UCE',
+                    8 => 'Primary - PLE',
                 ];
                 if (array_key_exists($is_formal_education, $levels)) {
                     return $levels[$is_formal_education];
@@ -263,41 +263,41 @@ class PersonController extends AdminController
             $form->text('name', __('Surname'))->placeholder('Surname')->rules('required');
             $form->text('other_names', __('Other Names'))->placeholder('Other Names')->rules('required');
             $form->select('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
+            $form->multipleSelect('disabilities', __('Select disabilities'))
+                ->rules('required')
+                ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
             $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
             $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
             $form->email('email', __('Email'))->placeholder('Email');
+
+            $form->divider();
             $form->text('id_number', __('ID Number'))->placeholder('ID Number')
                 ->help("NIN, Passport Number, Driving Permit Number");
             $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
             $form->select('district_of_residence', __('District Of Residence'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
-            $form->text('languages', __('Languages'))->placeholder('Languages')->rules('required')
-                ->help('English, Luganda, Runyakitara, etc');
-            $form->multipleSelect('disabilities', __('Select disabilities'))
-                ->rules('required')
-                ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
-            $form->divider();
+            $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
+            $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
+            $form->select('marital_status', __('Marital Status'))->options([
+                'Single' => 'Single',
+                'Married' => 'Married',
+                'Divorced' => 'Divorced',
+                'Widowed' => 'Widowed'
+            ])->rules('required');
+            $form->text('ethnicity', __('Ethnicity'))->rules('required')
+                ->help('Your Tribe');
+            $form->text('religion', __('Religion'))->rules('required');
+
+            $form->radio('place_of_birth', __('Place Of Birth'))->options(['Hospital' => 'Hospital', 'Other' => 'Other'])
+                ->when('Hospital', function ($form) {
+                    $form->text('birth_hospital', __('Hospital Name'));
+                })
+                ->when('Other', function ($form) {
+                    $form->textarea('birth_no_hospital_description', __('Description'))->placeholder('Where were you given birth to?')->rules("required");
+                })
+                ->rules("required");
 
             $form->html('
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-        ');
-            // $form->select('marital_status', __('Marital Status'))->options([
-            //     'Single' => 'Single',
-            //     'Married' => 'Married',
-            //     'Divorced' => 'Divorced',
-            //     'Widowed' => 'Widowed'
-            // ])->rules('required');
-            // $form->text('ethnicity', __('Ethnicity'))->rules('required')
-            //     ->help('Your Tribe');
-            // $form->text('religion', __('Religion'))->rules('required');
-
-            // $form->radio('place_of_birth', __('Place Of Birth'))->options(['Hospital' => 'Hospital', 'Other' => 'Other'])
-            //     ->when('Hospital', function ($form) {
-            //         $form->text('birth_hospital', __('Hospital Name'));
-            //     })
-            //     ->when('Other', function ($form) {
-            //         $form->textarea('birth_no_hospital_description', __('Description'))->placeholder('Where were you given birth to?')->rules("required");
-            //     })
-            //     ->rules("required");
+            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>');
         });
 
         $form->tab('Academics', function ($form) {
@@ -305,17 +305,17 @@ class PersonController extends AdminController
                 [1 => 'Formal Education', 2 => 'Informal Education', 3 => 'Not mentioned']
             )
                 ->when(1, function (Form $form) {
-                    $form->select('is_formal_education', __('Formal Education'))->options([3 => 'PHD', 4 => 'Masters', 5 => 'Bachelors', 6 => 'Secondary', 7 => 'Primary'])->rules('required')
+                    $form->select('is_formal_education', __('Formal Education'))->options([3 => 'PHD', 4 => 'Master\'s Degree', 5 => 'Bachelor\'s Degree', 6 => 'Secondary - UACE', 7 => 'Secondary - UCE', 8 => 'Primary - PLE'])->rules('required')
                         ->when(3, function (Form $form) {
-                            $form->text('indicate_class', 'Indicate class')->placeholder('Class')->rules('required');
+                            $form->text('indicate_class', 'Indicate class/grade')->placeholder('Class')->rules('required');
                         })->when(4, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
                         })->when(5, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
                         })->when(6, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
                         })->when(7, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class'))->placeholder('Class')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
                         });
                 })->rules('required')
                 ->when(2, function (Form $form) {

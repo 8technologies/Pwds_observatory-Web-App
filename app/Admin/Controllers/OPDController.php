@@ -194,9 +194,8 @@ class OPDController extends AdminController
         });
 
         $form->tab('Contact', function ($form) {
-            $form->text('physical_address', __('Physical address'))->rules("required");
-            $form->text('website', __('Website'));
-
+            $form->text('physical_address', __('Physical address'))->placeholder('physical address')->rules("required");
+            $form->text('website', __('Website'))->placeholder('http://www.example.com');
 
             $form->hasMany('contact_persons', 'Contact Persons', function (Form\NestedForm $form) {
                 $form->text('name', __('Name'))->rules("required");

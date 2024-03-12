@@ -156,8 +156,7 @@ class DistrictUnionController extends AdminController
             $form->divider();
 
             $form->html('
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-        ');
+            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>');
         });
 
         // $form->tab('Leadership', function ($form) {
@@ -177,8 +176,7 @@ class DistrictUnionController extends AdminController
 
             $form->html('
             <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-        ');
+            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>');
         });
 
         $form->tab('Contact', function ($form) {
@@ -249,6 +247,8 @@ class DistrictUnionController extends AdminController
             <button type="submit" class="btn btn-primary float-right">Submit</button>        ');
         });
         $form->hidden('user_id')->default(0);
+        $form->hidden('relationship_type')->default('du');
+        $form->hidden('parent_organisation_id')->default(0);
 
         $form->submitted(function (Form $form) {
             if ($form->isEditing()) {
@@ -288,7 +288,7 @@ class DistrictUnionController extends AdminController
                     $admin->assignRole('district-union');
                 }
                 $form->user_id = $admin->id;
-
+                $form->relationship_type = 'du';
                 $form->parent_organisation_id = session('organisation_id');
 
                 session(['password' => $new_password]);

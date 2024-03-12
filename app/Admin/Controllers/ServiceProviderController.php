@@ -146,7 +146,7 @@ class ServiceProviderController extends AdminController
             $footer->disableSubmit();
         });
 
-        $form->tab('Bio', function ($form) {
+        $form->tab('Info', function ($form) {
             $form->text('name', __('Name'))->rules('required');
             $form->text('registration_number', __('Registration number'));
             $form->date('date_of_registration', __('Date of registration'));

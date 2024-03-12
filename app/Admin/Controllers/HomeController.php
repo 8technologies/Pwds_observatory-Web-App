@@ -261,15 +261,6 @@ deleted_at
             });
         });
 
-        $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
-                $column->append(Dashboard::getDuOpdPerRegion());
-            });
-
-            $row->column(6, function (Column $column) {
-                $column->append(Dashboard::getMembershipChart());
-            });
-        });
 
         //Bar Chart for People with Disability count.
         $content->row(function (Row $row) {
@@ -279,6 +270,16 @@ deleted_at
 
             $row->column(6, function (Column $column) {
                 $column->append(Dashboard::getDisabilityCount());
+            });
+        });
+
+        $content->row(function (Row $row) {
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getDuOpdPerRegion());
+            });
+
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::getMembershipChart());
             });
         });
 
