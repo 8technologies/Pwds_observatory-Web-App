@@ -20,6 +20,46 @@ class Person extends Model
     protected $fillable = [
         'name',
         'other_names',
+        'age',
+        'address',
+        'phone_number',
+        'email',
+        'phone_number_2',
+        'dob',
+        'sex',
+        'photo',
+        'district_of_origin',
+        'district_of_residence',
+        'id_number',
+        'ethnicity',
+        'marital_status',
+        'religion',
+        'place_of_birth',
+        'birth_hospital',
+        'birth_no_hospital_description',
+        'languages',
+        'employer',
+        'position',
+        'district_id',
+        'opd_id',
+        'aspirations',
+        'skills',
+        'is_formal_education',
+        'indicate_class',
+        'occupation',
+        'informal_education',
+        'is_employed',
+        'is_member',
+        'disability',
+        'education_level',
+        'sub_county',
+        'village',
+        'employment_status'
+    ];
+
+    protected $casts = [
+        'age' => 'integer',
+
     ];
 
     public function association()
@@ -73,16 +113,35 @@ class Person extends Model
         static::creating(function ($person) {
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
+            $person->sub_county = ucfirst(strtolower($person->sub_county));
+            $person->village = ucfirst(strtolower($person->village));
+
+            if ($person->is_employed == 0) {
+                $person->employment_status = 'Unemployed';
+            }
         });
 
         static::saving(function ($person) {
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
+            $person->sub_county = ucfirst(strtolower($person->sub_county));
+            $person->village = ucfirst(strtolower($person->village));
+
+            //is_employed == 0 must be taken as unemployed
+            if ($person->is_employed == 0) {
+                $person->employment_status = 'Unemployed';
+            }
         });
 
         static::updating(function ($person) {
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
+            $person->sub_county = ucfirst(strtolower($person->sub_county));
+            $person->village = ucfirst(strtolower($person->village));
+
+            if ($person->is_employed == 0) {
+                $person->employment_status = 'Unemployed';
+            }
         });
     }
 

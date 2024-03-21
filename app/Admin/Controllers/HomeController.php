@@ -228,7 +228,7 @@ deleted_at
                     'title' => 'Number Of DUs',
                     'sub_title' => 'dus',
                     'number' => Organisation::where('relationship_type', '=', 'du')->count(),
-                    'link' => 'javascript:;'
+                    'link' => admin_url('district-unions'),
                 ]));
             });
             $row->column(3, function (Column $column) {
@@ -237,7 +237,7 @@ deleted_at
                     'title' => 'Number Of NOPDs',
                     'sub_title' => 'nopds',
                     'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
-                    'link' => 'javascript:;'
+                    'link' => admin_url('opds'),
                 ]));
             });
             $row->column(3, function (Column $column) {
@@ -256,7 +256,7 @@ deleted_at
                     'title' => 'Persons with Disability',
                     'sub_title' => 'pwds',
                     'number' => Person::count(),
-                    'link' => admin_url('products'),
+                    'link' => admin_url('people'),
                 ]));
             });
         });
@@ -264,32 +264,43 @@ deleted_at
 
         //Bar Chart for People with Disability count.
         $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
+            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getPeopleWithDisability());
             });
 
-            $row->column(6, function (Column $column) {
+            $row->column(4, function (Column $column) {
+                $column->append(Dashboard::getDisabilityByGenderAndAge());
+            });
+
+            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getDisabilityCount());
             });
         });
 
         $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
+            $row->column(4, function (Column $column) {
+                $column->append(Dashboard::getEducationByGender());
+            });
+
+            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getDuOpdPerRegion());
             });
 
-            $row->column(6, function (Column $column) {
+            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getMembershipChart());
             });
         });
 
         //Bar Chart for People with Service count.
         $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
+            $row->column(4, function (Column $column) {
+                $column->append(Dashboard::getEmploymentStatus());
+            });
+            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getServiceProviders());
             });
 
-            $row->column(6, function (Column $column) {
+            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getTargetGroupByService());
             });
         });

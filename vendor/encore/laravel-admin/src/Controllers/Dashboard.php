@@ -12,8 +12,10 @@ use App\Models\Region;
 use App\Models\ServiceProvider;
 use Encore\Admin\Admin;
 use Encore\Admin\Auth\Database\Administrator;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use SebastianBergmann\Type\NullType;
 
 class Dashboard
 {
@@ -155,6 +157,127 @@ class Dashboard
 
     //     return view('dashboard.service_provider_per_disability', compact('serviceCounts', 'districtServiceCounts'));
     // }
+
+
+    //Method for retrieving person with disability by age
+    public static function getDisabilityByGenderAndAge()
+    {
+        // Initialize the array to hold counts
+        $disabilityCounts = [];
+
+        // Get all people, eager loading their disabilities
+        $people = Person::whereNotNull('sex')->where('sex', '<>', '')->get();
+
+        foreach ($people as $person) {
+            // Determine the person's age group
+            $ageGroup = self::determineAgeGroup($person->age);
+
+            if (is_null($ageGroup)) {
+                continue;
+            }
+
+            // Skip if sex is null or empty
+            if (is_null($person->sex) || $person->sex === '' || $person->sex === 'N/A') {
+                continue;
+            }
+
+            if (!isset($disabilityCounts[$ageGroup][$person->sex])) {
+                $disabilityCounts[$ageGroup][$person->sex] = 0;
+            }
+
+            // Increment the count for the current combination of age group and gender
+            $disabilityCounts[$ageGroup][$person->sex]++;
+        }
+
+        return view('dashboard.genderCountByAgeGroup', compact('disabilityCounts'));
+    }
+
+    private static function determineAgeGroup($age)
+    {
+        if (is_null($age)) {
+            return null;
+        }
+        if ($age <= 12) {
+            return '0 - 12';
+        } elseif ($age <= 18) {
+            return '13 - 18';
+        } elseif ($age <= 30) {
+            return '19 - 30';
+        } elseif ($age <= 45) {
+            return '31 - 45';
+        } elseif ($age <= 65) {
+            return '46 - 65';
+        } else {
+            return '65+';
+        }
+    }
+
+    public static function getEducationByGender()
+    {
+        $educ_level = [
+            1 => 'Formal Education',
+            2 => 'Informal Education',
+            3 => 'No Education'
+        ];
+
+        // Fetch distinct education levels and genders from the database
+        $educationLevelsDb = Person::distinct('education_level')->pluck('education_level')->toArray();
+        $gender = Person::distinct('sex')->pluck('sex')->toArray();
+
+        // Map the education levels from the database to their names
+        $educationLevels = array_map(function ($el) use ($educ_level) {
+            return $educ_level[$el] ?? 'Unknown'; // Fallback to 'Unknown' if not found
+        }, $educationLevelsDb);
+
+        // Fetch and prepare the education data
+        $educationData = Person::select('education_level', 'sex', DB::raw('count(*) as count'))
+            ->groupBy('education_level', 'sex')
+            ->get()
+            ->each(function ($item) use ($educ_level) {
+                // Map each education level to its name for display
+                $item->education_level = $educ_level[$item->education_level] ?? 'Unknown';
+            });
+
+        return view('dashboard.disability-employment-gender', compact('educationLevels', 'gender', 'educationData'));
+    }
+
+    //Method for retrieving emploment status of people with disability according to my system
+    public static function getEmploymentStatus()
+    {
+        // Define the allowed employment statuses
+        $employmentStatus = [
+            1 => 'Formal Employment',
+            2 => 'Self Employment',
+            3 => 'Unemployed',
+        ];
+
+        // Fetch distinct employment statuses and gender from the Person model
+        $employmentStatuses = Person::distinct('employment_status')
+            ->whereIn('employment_status', $employmentStatus)
+            ->pluck('employment_status')
+            ->toArray();
+        $gender = Person::distinct('sex')->pluck('sex')->toArray();
+
+        // Map the education levels from the database to their names
+        $employmentStatuses = array_map(function ($status) use ($employmentStatus) {
+            return $employmentStatus[$status] ?? 'Unknown'; // Fallback to 'Unknown' if not found
+        }, $employmentStatuses);
+
+        // Fetch employment status data with count
+        $employmentStatusData = Person::select('employment_status', 'sex', DB::raw('count(*) as count'))
+            ->groupBy('employment_status', 'sex')
+            ->get()
+            ->each(function ($item) use ($employmentStatus) {
+                // Map each employment status to its name for display
+                $item->employment_status = $employmentStatus[$item->employment_status] ?? 'Unknown';
+            });
+
+        return view('dashboard.employment_status_by_gender', compact('employmentStatuses', 'gender', 'employmentStatusData'));
+    }
+
+
+
+
 
     //Method for retrieving service providers residing in a particular district.
     public static function getTargetGroupByService()

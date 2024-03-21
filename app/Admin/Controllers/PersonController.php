@@ -89,7 +89,7 @@ class PersonController extends AdminController
                 $levels = [
                     1 => 'Formal Education',
                     2 => 'Informal Education',
-                    3 => 'Not mentioned'
+                    3 => 'No Education'
                 ];
                 if (array_key_exists($education_level, $levels)) {
                     return $levels[$education_level];
@@ -98,14 +98,14 @@ class PersonController extends AdminController
                 }
             }
         )->sortable();
-        $grid->column('employer', __('Employment Type'))
+        $grid->column('employment_status', __('Employment Type'))
             ->display(function ($employer) {
                 if ($employer == 1) {
                     return 'Formal Employment';
                 } else if ($employer == 2) {
                     return 'Self Employment';
                 } else {
-                    return 'Not mentioned';
+                    return 'Unemployed';
                 }
             })->sortable();
         $grid->column('is_formal_education', __('Formal Education'))->display(
@@ -249,6 +249,8 @@ class PersonController extends AdminController
      */
     protected function form()
     {
+        // $education_level = Dashboard::getEducationByGender();
+        // dd($education_level);
         $form = new Form(new Person());
 
         $form->footer(function ($footer) {
@@ -266,10 +268,10 @@ class PersonController extends AdminController
             $form->multipleSelect('disabilities', __('Select disabilities'))
                 ->rules('required')
                 ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+            $form->date('dob', __('Date of Birth'))->rules('required')->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY')->rules('required');
             $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
             $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
             $form->email('email', __('Email'))->placeholder('Email');
-
             $form->divider();
             $form->text('id_number', __('ID Number'))->placeholder('ID Number')
                 ->help("NIN, Passport Number, Driving Permit Number");
@@ -292,7 +294,7 @@ class PersonController extends AdminController
                     $form->text('birth_hospital', __('Hospital Name'));
                 })
                 ->when('Other', function ($form) {
-                    $form->textarea('birth_no_hospital_description', __('Description'))->placeholder('Where were you given birth to?')->rules("required");
+                    $form->textarea('birth_no_hospital_description', __('Description'))->placeholder('Where were you given birth to?');
                 })
                 ->rules("required");
 
@@ -302,7 +304,7 @@ class PersonController extends AdminController
 
         $form->tab('Academics', function ($form) {
             $form->select('education_level', __('Education'))->options(
-                [1 => 'Formal Education', 2 => 'Informal Education', 3 => 'Not mentioned']
+                [1 => 'Formal Education', 2 => 'Informal Education', 3 => 'No Education']
             )
                 ->when(1, function (Form $form) {
                     $form->select('is_formal_education', __('Formal Education'))->options([3 => 'PHD', 4 => 'Master\'s Degree', 5 => 'Bachelor\'s Degree', 6 => 'Secondary - UACE', 7 => 'Secondary - UCE', 8 => 'Primary - PLE'])->rules('required')
@@ -331,14 +333,13 @@ class PersonController extends AdminController
             $form->divider();
 
             $form->html(' <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
- ');
+                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>');
         });
 
         $form->tab('Employment', function ($form) {
             $form->radio('is_employed', __('Are you Employed'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
                 ->when(1, function (Form $form) {
-                    $form->radio('employer', __('Indicate type of Employment'))->options([1 => 'Formal Employment', 2 => 'Self Employemnt'])->rules('required')
+                    $form->radio('employment_status', __('Indicate type of Employment'))->options([1 => 'Formal Employment', 2 => 'Self Employemnt'])->rules('required')
                         ->when(1, function (Form $form) {
                             $form->text('position', __('Current position'))->placeholder('What is your current position')->rules('required');
                         })

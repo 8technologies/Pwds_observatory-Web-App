@@ -7,7 +7,7 @@
             <select name="organisationType" id="organisationType">
                 <option value="all">Show All</option>
                 <option value="du">District Unions</option>
-                <option value="nopd">NOPDs</option>
+                <option value="opd">NOPDs</option>
             </select>
         </div>
     </div>

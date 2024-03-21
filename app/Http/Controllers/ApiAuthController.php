@@ -50,12 +50,12 @@ class ApiAuthController extends Controller
 
 
     public function login(Request $r)
-    { 
+    {
         if ($r->username == null) {
             return $this->error('Username is required.');
         }
 
-    if ($r->password == null) {
+        if ($r->password == null) {
             return $this->error('Password is required.');
         }
 
@@ -63,7 +63,6 @@ class ApiAuthController extends Controller
 
         $u = User::where('phone_number', $r->username)
             ->orWhere('username', $r->username)
-            ->orWhere('id', $r->username)
             ->orWhere('email', $r->username)
             ->first();
 
@@ -87,9 +86,9 @@ class ApiAuthController extends Controller
             return $this->error('User account not found.');
         }
 
-        
+
         JWTAuth::factory()->setTTL(60 * 24 * 30 * 365);
-        
+
         $token = auth('api')->attempt([
             'id' => $u->id,
             'password' => trim($r->password),
@@ -99,9 +98,7 @@ class ApiAuthController extends Controller
         if ($token == null) {
             return $this->error('Wrong credentials.');
         }
- 
 
- 
         $u->token = $token;
         $u->remember_token = $token;
 
@@ -141,10 +138,9 @@ class ApiAuthController extends Controller
         $user = new Administrator();
         $user->phone_number = $phone_number;
         $user->username = $phone_number;
-        $user->username = $phone_number;
-        $user->name = $r->first_name . " " . $user->last_name;
         $user->first_name = $r->first_name;
         $user->last_name = $r->last_name;
+        $user->name = $r->first_name . " " . $user->last_name;
         $user->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
         if (!$user->save()) {
             return $this->error('Failed to create account. Please try again.');

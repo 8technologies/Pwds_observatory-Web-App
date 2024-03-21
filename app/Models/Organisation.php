@@ -10,7 +10,28 @@ class Organisation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['region_id', 'name'];
+    protected $fillable = [
+        'region_id',
+        'name',
+        'registration_number',
+        'date_of_registration',
+        'mission',
+        'vision',
+        'core_values',
+        'brief_profile',
+        'membership_type',
+        'district_id',
+        'physical_address',
+        'website',
+        'attachments',
+        'logo',
+        'certificate_of_registration',
+        'constitution',
+        'admin_email',
+        'valid_from',
+        'valid_to',
+        'relationship_type',
+    ];
 
     public function setAttachmentsAttribute($value)
     {

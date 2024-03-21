@@ -37,7 +37,7 @@ class ApiResurceController extends Controller
                 ->limit(100)
                 ->orderBy('id', 'desc')
                 ->get(),
-            $message = "Sussesfully",
+            $message = "Succesfully",
             200
         );
     }
@@ -53,7 +53,7 @@ class ApiResurceController extends Controller
                 ->orderBy('id', 'desc')
                 ->limit(100)
                 ->get(),
-            $message = "Sussesfully",
+            $message = "Succesfully",
         );
     }
 
@@ -65,8 +65,8 @@ class ApiResurceController extends Controller
         }
         if (
             $r->name == null ||
-            $r->sex == null ||
-            $r->subcounty_id == null
+            $r->sex == null
+            // $r->subcounty_id == null
         ) {
             return $this->error('Some Information is still missing. Fill the missing information and try again.');
         }
@@ -83,34 +83,97 @@ class ApiResurceController extends Controller
         $obj = new Person();
         $obj->id = $r->id;
         $obj->created_at = $r->created_at;
-        $obj->association_id = $r->association_id;
-        $obj->administrator_id = $u->id;
-        $obj->group_id = $r->group_id;
         $obj->name = $r->name;
+        $obj->age = $r->age;
         $obj->address = $r->address;
-        $obj->parish = $r->parish;
-        $obj->village = $r->village;
         $obj->phone_number = $r->phone_number;
         $obj->email = $r->email;
-        $obj->district_id = $r->district_id;
-        $obj->subcounty_id = $r->subcounty_id;
-        $obj->disability_id = $r->disability_id;
-        $obj->phone_number_2 = $r->phone_number_2;
         $obj->dob = $r->dob;
         $obj->sex = $r->sex;
-        $obj->education_level = $r->education_level;
-        $obj->employment_status = $r->employment_status;
-        $obj->has_caregiver = $r->has_caregiver;
-        $obj->caregiver_name = $r->caregiver_name;
-        $obj->caregiver_sex = $r->caregiver_sex;
-        $obj->caregiver_phone_number = $r->caregiver_phone_number;
-        $obj->caregiver_age = $r->caregiver_age;
-        $obj->caregiver_relationship = $r->caregiver_relationship;
         $obj->photo = $image;
+        $obj->district_of_origin = $r->district_of_origin;
+        $obj->district_of_residence = $r->district_of_residence;
+        $obj->other_names = $r->other_names;
+        $obj->id_number = $r->id_number;
+        $obj->marital_status = $r->marital_status;
+        $obj->religion = $r->religion;
+        $obj->place_of_birth = $r->place_of_birth;
+        $obj->position = $r->position;
+        $obj->year_of_employment = $r->year_of_employment;
+        $obj->district_id = $r->district_id;
+        $obj->aspirations = $obj->aspirations;
+        $obj->skills = $obj->skills;
+        $obj->is_formal_education = $obj->is_formal_education;
+        $obj->indicate_class = $obj->indicate_class;
+        $obj->occupation = $obj->occupation;
+        $obj->is_employed = $obj->is_employed;
+        $obj->select_opd_or_du = $obj->select_opd_or_du;
+        $obj->disability = $obj->disability;
+        $obj->education_level = $obj->education_level;
+        $obj->sub_county = $obj->sub_county;
+        $obj->village = $obj->village;
+        $obj->employment_status = $obj->employment_status;
         $obj->save();
 
 
-        return $this->success(null, $message = "Sussesfully registered!", 200);
+        // $obj->association_id = $r->association_id;
+        // $obj->administrator_id = $u->id;
+        // $obj->group_id = $r->group_id;
+        // $obj->name = $r->name;
+        // $obj->address = $r->address;
+        // $obj->parish = $r->parish;
+        // $obj->village = $r->village;
+        // $obj->phone_number = $r->phone_number;
+        // $obj->email = $r->email;
+        // $obj->district_id = $r->district_id;
+        // $obj->subcounty_id = $r->subcounty_id;
+        // $obj->disability_id = $r->disability_id;
+        // $obj->phone_number_2 = $r->phone_number_2;
+        // $obj->dob = $r->dob;
+        // $obj->sex = $r->sex;
+        // $obj->education_level = $r->education_level;
+        // $obj->employment_status = $r->employment_status;
+        // $obj->has_caregiver = $r->has_caregiver;
+        // $obj->caregiver_name = $r->caregiver_name;
+        // $obj->caregiver_sex = $r->caregiver_sex;
+        // $obj->caregiver_phone_number = $r->caregiver_phone_number;
+        // $obj->caregiver_age = $r->caregiver_age;
+        // $obj->caregiver_relationship = $r->caregiver_relationship;
+        // $obj->photo = $image;
+
+
+        return $this->success(null, $message = "Succesfully registered!", 200);
+    }
+
+    public function person_update(Request $r)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+
+        $person = Person::find($r->id);
+        if (!$person) {
+            return response()->json(['message' => 'Person not found'], 404);
+        }
+        $person->update($r->all());
+        return $this->success(null, $message = "Succesfully updated!", 200);
+    }
+
+    //function for deleting a person
+    public function person_delete(Request $r)
+    {
+        $u = auth('api')->user();
+        if ($u == null) {
+            return $this->error('User not found.');
+        }
+
+        $person = Person::find($r->id);
+        if (!$person) {
+            return response()->json(['message' => 'Person not found'], 404);
+        }
+        $person->delete();
+        return $this->success(null, $message = "Succesfully deleted!", 200);
     }
 
     public function groups()

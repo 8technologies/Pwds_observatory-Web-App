@@ -48,7 +48,13 @@
                             }
                         }
                     }
-                }
+                },
+                xAxes: [{
+                    fontSize: 8,
+                    autoSkip: false,
+                    minRotation: 45,
+                    maxRotation: 40
+                }]
             }
         }
     });
