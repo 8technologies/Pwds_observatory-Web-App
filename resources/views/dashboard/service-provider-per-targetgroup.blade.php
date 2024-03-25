@@ -23,6 +23,7 @@
             }]
         },
         options: {
+            maintainAspectRatio: false,
             scales: {
                 y: { //label for y-axis
                     title: {

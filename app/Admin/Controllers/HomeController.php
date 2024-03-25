@@ -229,6 +229,7 @@ deleted_at
                     'sub_title' => 'dus',
                     'number' => Organisation::where('relationship_type', '=', 'du')->count(),
                     'link' => admin_url('district-unions'),
+                    'font_size' => '1.5em'
                 ]));
             });
             $row->column(3, function (Column $column) {
@@ -236,6 +237,7 @@ deleted_at
                     'is_dark' => false,
                     'title' => 'Number Of NOPDs',
                     'sub_title' => 'nopds',
+                    'font_size' => '1.5em',
                     'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
                     'link' => admin_url('opds'),
                 ]));

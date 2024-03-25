@@ -1,7 +1,7 @@
 <div class="container card pt-5 mb-5" id="chart-description">
     <h5 class="text-center">Employment Status by Gender</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="EmploymentStatus">Select Employment Status:</label>
             <select id="employmentStatusSelector">
                 <option value="Formal Employment">Formal Employment</option>
@@ -26,6 +26,7 @@
             data: null, // Data will be set by updateChart function
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         position: 'top',

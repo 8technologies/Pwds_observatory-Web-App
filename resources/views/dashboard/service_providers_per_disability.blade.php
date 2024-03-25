@@ -1,7 +1,7 @@
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">Number of Service Providers By Disability Category</h5>
+    <h5 class="text-center">District Unions Vs Organisation for Person with Disability By Region</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="selectDistrict">Select District: </label>
             <select id="districtService">
                 <option value="all">All Districts</option>
@@ -16,6 +16,26 @@
     </div>
 </div>
 
+
+
+{{-- <div class="container card pt-5 mb-5" id="chart-description">
+    <h5 class="text-center">Number of Service Providers By Disability Category</h5>
+    <div class="row" id="chart-content">
+        <div class="col-md-12">
+            <label for="selectDistrict">Select District: </label>
+            <select id="districtService">
+                <option value="all">All Districts</option>
+                @foreach ($availableDistricts as $district)
+                    <option value="{{ $district }}">{{ $district }}</option>
+                @endforeach
+            </select>
+        </div>
+    </div>
+    <div class="chart-container">
+        <canvas id="serviceProviderChart"></canvas>
+    </div>
+</div>
+ --}}
 
 <script>
     (function() {
@@ -66,6 +86,7 @@
                     }]
                 },
                 options: {
+                    maintainAspectRatio: false,
                     scales: {
                         y: {
                             type: 'logarithmic',
@@ -76,6 +97,13 @@
                                         return value.toString();
                                     }
                                 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 40
                             }
                         }
                     }

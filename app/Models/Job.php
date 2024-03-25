@@ -9,6 +9,19 @@ class Job extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'user_id',
+        'title',
+        'location',
+        'description',
+        'minimum_academic_qualification',
+        'required_experience',
+        'photo',
+        'how_to_apply',
+        'hiring_firm',
+        'deadline',
+    ];
+    //
     // public static function boot()
     // {
     //     parent::boot();

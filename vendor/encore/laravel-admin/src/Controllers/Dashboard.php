@@ -215,14 +215,15 @@ class Dashboard
     public static function getEducationByGender()
     {
         $educ_level = [
-            1 => 'Formal Education',
-            2 => 'Informal Education',
-            3 => 'No Education'
+            'formal education' => 'Formal Education',
+            'informal education' => 'Informal Education',
+            'no education' => 'No Education'
         ];
 
         // Fetch distinct education levels and genders from the database
         $educationLevelsDb = Person::distinct('education_level')->pluck('education_level')->toArray();
         $gender = Person::distinct('sex')->pluck('sex')->toArray();
+
 
         // Map the education levels from the database to their names
         $educationLevels = array_map(function ($el) use ($educ_level) {
@@ -238,7 +239,7 @@ class Dashboard
                 $item->education_level = $educ_level[$item->education_level] ?? 'Unknown';
             });
 
-        return view('dashboard.disability-employment-gender', compact('educationLevels', 'gender', 'educationData'));
+        return view('dashboard.disability-education-gender', compact('educationLevels', 'gender', 'educationData'));
     }
 
     //Method for retrieving emploment status of people with disability according to my system
@@ -246,9 +247,9 @@ class Dashboard
     {
         // Define the allowed employment statuses
         $employmentStatus = [
-            1 => 'Formal Employment',
-            2 => 'Self Employment',
-            3 => 'Unemployed',
+            'formal employment' => 'Formal Employment',
+            'self employment' => 'Self Employment',
+            'unemployed' => 'Unemployed',
         ];
 
         // Fetch distinct employment statuses and gender from the Person model
@@ -257,11 +258,6 @@ class Dashboard
             ->pluck('employment_status')
             ->toArray();
         $gender = Person::distinct('sex')->pluck('sex')->toArray();
-
-        // Map the education levels from the database to their names
-        $employmentStatuses = array_map(function ($status) use ($employmentStatus) {
-            return $employmentStatus[$status] ?? 'Unknown'; // Fallback to 'Unknown' if not found
-        }, $employmentStatuses);
 
         // Fetch employment status data with count
         $employmentStatusData = Person::select('employment_status', 'sex', DB::raw('count(*) as count'))

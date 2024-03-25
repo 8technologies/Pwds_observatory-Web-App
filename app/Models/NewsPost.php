@@ -5,19 +5,33 @@ namespace App\Models;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class NewsPost extends Model
 {
     use HasFactory;
+
+
+    protected $fillable = [
+        'title',
+        'details',
+        'user_id',
+        'post_category_id',
+        'views',
+        'description',
+        'photo'
+    ];
+    protected $appends = ['post_category_text'];
+
     public function category()
     {
         return $this->belongsTo(PostCategory::class, 'post_category_id');
     }
 
     public function created_by()
-    { 
+    {
         $u = Administrator::find($this->user_id);
-        if($u == null){
+        if ($u == null) {
             $this->user_id = 1;
             $this->save();
         }
@@ -32,5 +46,4 @@ class NewsPost extends Model
         }
         return $d->name;
     }
-    protected $appends = ['post_category_text'];
 }

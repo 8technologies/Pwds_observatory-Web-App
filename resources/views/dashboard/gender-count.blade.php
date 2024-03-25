@@ -2,7 +2,7 @@
 <div class="container card pt-5 mb-5" id="chart-description">
     <h5 class="text-center">Number of Persons with Disability by Gender</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="districtSelect">Select District:</label>
             <select id="districtSelect" onchange="updateDistrict()">
                 <option value="">All Districts</option>

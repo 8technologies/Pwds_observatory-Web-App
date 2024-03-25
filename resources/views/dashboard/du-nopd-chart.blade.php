@@ -2,7 +2,7 @@
 <div class="container card pt-5 mb-5" id="chart-description">
     <h5 class="text-center">District Unions Vs Organisation for Person with Disability By Region</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="organisationType">Select DU or NOPD:</label>
             <select name="organisationType" id="organisationType">
                 <option value="all">Show All</option>

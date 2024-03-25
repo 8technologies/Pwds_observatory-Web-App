@@ -9,7 +9,15 @@ class Product extends Model
 {
     use HasFactory;
 
-    protected $guarded=[];
+    protected $guarded = [];
+    protected $fillable = [
+        'name',
+        'type',
+        'photo',
+        'details',
+        'price',
+        'service_provider_id'
+    ];
 
 
     public function serviceProvider()
@@ -22,4 +30,24 @@ class Product extends Model
         return $this->belongsToMany(District::class);
     }
 
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            $product->service_provider_id = 137;
+            $product->details = strip_tags($product->details);
+        });
+
+        static::updating(function ($product) {
+            $product->service_provider_id = 137;
+            $product->details = strip_tags($product->details);
+        });
+
+
+        static::deleting(function ($product) {
+            $product->districts()->detach();
+        });
+    }
 }

@@ -87,9 +87,9 @@ class PersonController extends AdminController
         $grid->column('education_level', __('Education'))->display(
             function ($education_level) {
                 $levels = [
-                    1 => 'Formal Education',
-                    2 => 'Informal Education',
-                    3 => 'No Education'
+                    'formal education' => 'Formal Education',
+                    'informal education' => 'Informal Education',
+                    'no education' => 'No Education'
                 ];
                 if (array_key_exists($education_level, $levels)) {
                     return $levels[$education_level];
@@ -99,10 +99,10 @@ class PersonController extends AdminController
             }
         )->sortable();
         $grid->column('employment_status', __('Employment Type'))
-            ->display(function ($employer) {
-                if ($employer == 1) {
+            ->display(function ($employee_status) {
+                if ($employee_status == 'formal employment') {
                     return 'Formal Employment';
-                } else if ($employer == 2) {
+                } else if ($employee_status == 'self employment') {
                     return 'Self Employment';
                 } else {
                     return 'Unemployed';
@@ -111,12 +111,13 @@ class PersonController extends AdminController
         $grid->column('is_formal_education', __('Formal Education'))->display(
             function ($is_formal_education) {
                 $levels = [
-                    3 => 'PHD',
-                    4 => 'Master\'s Degree',
-                    5 => 'Bachelor\'s Degree',
-                    6 => 'Secondary - UACE',
-                    7 => 'Secondary - UCE',
-                    8 => 'Primary - PLE',
+                    'phd' => 'PHD',
+                    'master\'s degree' => 'Master\'s Degree',
+                    'bachelor\'s degree' => 'Bachelor\'s Degree',
+                    'diploma' => 'Diploma',
+                    'secondary-uace' => 'Secondary - UACE',
+                    'secondary-uce' => 'Secondary - UCE',
+                    'primary' => 'Primary - PLE',
                 ];
                 if (array_key_exists($is_formal_education, $levels)) {
                     return $levels[$is_formal_education];
@@ -304,23 +305,31 @@ class PersonController extends AdminController
 
         $form->tab('Academics', function ($form) {
             $form->select('education_level', __('Education'))->options(
-                [1 => 'Formal Education', 2 => 'Informal Education', 3 => 'No Education']
+                ['formal education' => 'Formal Education', 'informal education' => 'Informal Education', 'no education' => 'No Education']
             )
-                ->when(1, function (Form $form) {
-                    $form->select('is_formal_education', __('Formal Education'))->options([3 => 'PHD', 4 => 'Master\'s Degree', 5 => 'Bachelor\'s Degree', 6 => 'Secondary - UACE', 7 => 'Secondary - UCE', 8 => 'Primary - PLE'])->rules('required')
-                        ->when(3, function (Form $form) {
-                            $form->text('indicate_class', 'Indicate class/grade')->placeholder('Class')->rules('required');
-                        })->when(4, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
-                        })->when(5, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
-                        })->when(6, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
-                        })->when(7, function (Form $form) {
-                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class')->rules('required');
+                ->when('formal education', function (Form $form) {
+                    $form->select('is_formal_education', __('Formal Education'))->options(['php' => 'PHD', 'master\'s degree' => 'Master\'s Degree', 'bachelor\'s degree' => 'Bachelor\'s Degree', 'diploma' => 'Diploma', 'secondary-uace' => 'Secondary - UACE', 'secondary-uce' => 'Secondary - UCE', 'primary' => 'Primary - PLE'])->rules('required')
+                        ->when('phd', function (Form $form) {
+                            $form->text('field_of_study', __('Field of Study'))->placeholder('Field of Study')->rules('required');
+                            $form->text('indicate_class', 'Indicate class/grade')->placeholder('Class/grade')->rules('required');
+                        })->when('master\'s degree', function (Form $form) {
+                            $form->text('field_of_study', __('Field of Study'))->placeholder('Field of Study')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class/grade')->rules('required');
+                        })->when('bachelor\'s degree', function (Form $form) {
+                            $form->text('field_of_study', __('Field of Study'))->placeholder('Field of Study')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class/grade')->rules('required');
+                        })->when('diploma', function (Form $form) {
+                            $form->text('field_of_study', __('Field of Study'))->placeholder('Field of Study')->rules('required');
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class/grade')->rules('required');
+                        })->when('secondary-uace', function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class/grade')->rules('required');
+                        })->when('secondary-uce', function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class/grade')->rules('required');
+                        })->when('primary', function (Form $form) {
+                            $form->text('indicate_class', __('Indicate class/grade'))->placeholder('Class/grade')->rules('required');
                         });
                 })->rules('required')
-                ->when(2, function (Form $form) {
+                ->when('informal education', function (Form $form) {
                     $form->text('informal_education', __('Informal Education'))->placeholder("Enter any informal education forexample: tailoring, carpentry, etc")->rules('required');
                 })->rules('required');
 
@@ -337,16 +346,16 @@ class PersonController extends AdminController
         });
 
         $form->tab('Employment', function ($form) {
-            $form->radio('is_employed', __('Are you Employed'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
+            $form->radio('is_employed', __('Are you Employed'))->options([1 => 'Yes', 2 => 'No'])->rules('required')
                 ->when(1, function (Form $form) {
-                    $form->radio('employment_status', __('Indicate type of Employment'))->options([1 => 'Formal Employment', 2 => 'Self Employemnt'])->rules('required')
-                        ->when(1, function (Form $form) {
+                    $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment'])->rules('required')
+                        ->when('formal employment', function (Form $form) {
                             $form->text('position', __('Current position'))->placeholder('What is your current position')->rules('required');
                         })
-                        ->when(2, function (Form $form) {
+                        ->when('self employment', function (Form $form) {
                             $form->text('occupation', __('Occupation'))->placeholder('What is your occupation?')->rules('required')->help('e.g Farming, Fishing, Retailer');
                         });
-                })
+                })->default(2)
                 ->help("Are you currently employed? or have you ever been employed?");
             $form->divider();
             $form->html('

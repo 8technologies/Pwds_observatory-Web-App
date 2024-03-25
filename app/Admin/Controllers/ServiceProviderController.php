@@ -70,22 +70,22 @@ class ServiceProviderController extends AdminController
         $grid->column('email', __('Email'));
         $grid->column('telephone', __('Telephone'));
         $grid->column('target_group', __('Target group'));
-        $grid->column('disability_category', __('Disability category'))
+        $grid->column('disability_categories', __('Disability category'))
             ->display(
-                function ($disability_category) {
+                function ($disability_categories) {
                     $disabilities = [];
-                    foreach ($disability_category as $disability) {
+                    foreach ($disability_categories as $disability) {
                         $disabilities[] = $disability['name'];
                     }
                     return join(', ', $disabilities);
                 }
             );
         $grid->column('level_of_operation', __('Level of operation'));
-        $grid->column('districts_of_operation', __('Districts of Operation'))
+        $grid->column('districts', __('Districts of Operation'))
             ->display(
-                function ($districts_of_operation) {
+                function ($districts) {
                     $districts = [];
-                    foreach ($districts_of_operation as $district) {
+                    foreach ($districts as $district) {
                         $districts[] = $district['name'];
                     }
                     return join(', ', $districts);
@@ -195,13 +195,13 @@ class ServiceProviderController extends AdminController
                 'Others' => 'Others'
             ]);
 
-            $form->multipleSelect('disability_category', __('Disability category'))->rules("required")
+            $form->multipleSelect('disability_categories', __('Disability category'))->rules("required")
                 ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
 
             $form->textarea('level_of_operation', __('Level of operation'))->rules("required")
                 ->help("What is the level of your operation i.e Reginal, National, International?");
 
-            $form->multipleSelect('districts_of_operation', __('Select Districts of operation'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+            $form->multipleSelect('districts', __('Select Districts of operation'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
             $form->divider();
 
             $form->textarea('services_offered', __('Services offered'))->rules("required")

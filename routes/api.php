@@ -1,9 +1,16 @@
 <?php
 
+use App\Http\Controllers\API\District_UnionAPIController;
+use App\Http\Controllers\API\EventApiController;
+use App\Http\Controllers\API\InnovationApiController;
+use App\Http\Controllers\API\JobApiController;
+use App\Http\Controllers\API\NewsPostApiController;
+use App\Http\Controllers\API\OPD;
+use App\Http\Controllers\API\PersonController;
+use App\Http\Controllers\API\ProductServiceAPIController;
+use App\Http\Controllers\API\ServiceProviderAPIController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ApiResurceController;
-use App\Http\Controllers\District_Union;
-use App\Http\Controllers\person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,8 +27,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::POST("users/register", [ApiAuthController::class, "register"]);
 Route::POST("users/login", [ApiAuthController::class, "login"]);
-Route::resource('people', person::class);
-Route::resource('district-unions', District_Union::class);
+Route::resource('people', PersonController::class);
+Route::resource('district-unions', District_UnionAPIController::class);
+Route::resource('opds', OPD::class);
+Route::resource('service-providers', ServiceProviderAPIController::class);
+Route::resource('jobs', JobApiController::class);
+Route::resource('innovations', InnovationApiController::class);
+Route::resource('events', EventApiController::class);
+Route::resource('news-posts', NewsPostApiController::class);
+Route::resource('products', ProductServiceAPIController::class);
 
 // Route::POST("people", [ApiResurceController::class, "person_create"]);
 // Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);

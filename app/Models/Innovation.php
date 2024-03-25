@@ -9,6 +9,15 @@ class Innovation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'title',
+        'innovation_type',
+        'photo',
+        'innovators',
+        'innovation_status',
+        'description',
+    ];
+
     public function getInnovatorsAttribute($value)
     {
         return array_values(json_decode($value, true) ?: []);

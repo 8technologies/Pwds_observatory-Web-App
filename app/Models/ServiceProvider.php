@@ -8,6 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 class ServiceProvider extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'name',
+        'registration_number',
+        'date_of_registration',
+        'user_id',
+        'brief_profile',
+        'physical_address',
+        'attachments',
+        'logo',
+        'license',
+        'certificate_of_registration',
+        'is_verified',
+        'email',
+        'telephone',
+        'services_offered',
+        'districts_of_operation',
+        'level_of_operation',
+        'mission',
+        'postal_address',
+        'disability_categories',
+        'target_group',
+        'affiliated_organizations',
+    ];
 
     public function setAttachmentsAttribute($value)
     {
@@ -19,7 +42,7 @@ class ServiceProvider extends Model
         return json_decode($value);
     }
 
-    public function districts_of_operation()
+    public function districts()
     {
         return $this->belongsToMany(District::class)->withTimestamps();
     }
@@ -33,7 +56,7 @@ class ServiceProvider extends Model
     // {
     // }
 
-    public function disability_category()
+    public function disability_categories()
     {
         return $this->belongsToMany(Disability::class)->withTimestamps();
     }

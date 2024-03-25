@@ -23,20 +23,6 @@ class PeopleStoreRequest extends FormRequest
      */
     public function rules()
     {
-        //validate Education level, should be one of the following For example, 'Formal Education', 'Informal Education', else 'No Education'
-        if ($this->input('education_level') !== 'Formal Education' || $this->input('education_level') !== 'Informal Education' || $this->input('education_level') !== 'No Education') {
-            return [
-                'education_level' => 'required|in:Formal Education,Informal Education,No Education',
-            ];
-        }
-        //validate Formal Education, It should be one of the following For example, 'Primary', 'Secondary - UCE',  'Secondary - UACE', 'PHD', 'Bachelor's Degree', 'Master's Degree', 
-        // 'Diploma', 'Certificate', 'Vocational Training', 'None'
-        if ($this->input('education_level') === 'Formal Education') {
-            return [
-                'education_level' => 'required|in:Formal Education,Informal Education,No Education',
-                'formal_education' => 'required|in:Primary,Secondary - UCE, Secondary - UACE,PHD,Bachelor\'s Degree,Master\'s Degree, Diploma, Certificate, Vocational Training',
-            ];
-        }
         return [
             'name' => 'required',
             'other_names' => 'required',
@@ -51,10 +37,23 @@ class PeopleStoreRequest extends FormRequest
             'district_of_residence' => 'required',
             'village' => 'required',
             'sub_county' => 'required',
-            //validate Education level
             'education_level' => 'required|in:Formal Education,Informal Education,No Education',
-            //validate Formal Education
-            'is_formal_education' => 'required|in:Primary,Secondary - UCE, Secondary - UACE,PHD,Bachelor\'s Degree,Master\'s Degree, Diploma, Certificate, Vocational Training',
+            'is_formal_education' => [
+                'required_if:education_level,Formal Education',
+                'nullable',
+                'in:Primary,Secondary -UCE,Secondary - UACE,Bachelor\'s Degree,Master\'s Degree,PHD'
+            ],
+            'informal_education' => 'required_if:education_level,Informal Education|nullable|string',
         ];
+    }
+    public function withValidator($validator)
+    {
+        $validator->sometimes('is_formal_education', 'required|string', function ($input) {
+            return $input->education_level === 'Formal Education';
+        });
+
+        $validator->sometimes('informal_education', 'required|string', function ($input) {
+            return $input->education_level === 'Informal Education';
+        });
     }
 }

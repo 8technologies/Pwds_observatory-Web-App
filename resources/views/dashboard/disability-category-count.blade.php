@@ -1,7 +1,7 @@
 <div class="container card pt-5 mb-5" id='chart-description'>
     <h5 class="text-center">Person With Disability By Disability Category</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <label for="districtSelect">Select District:</label>
             <select name="districtSelector" id="districtSelector" class="form-control" onchange="UpdateCategory()">
                 <option value="all">All Districts</option>
@@ -49,12 +49,14 @@
                         }
                     }
                 },
-                xAxes: [{
-                    fontSize: 8,
-                    autoSkip: false,
-                    minRotation: 45,
-                    maxRotation: 40
-                }]
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        fontSize: 8,
+                        minRotation: 45,
+                        maxRotation: 40
+                    }
+                }
             }
         }
     });

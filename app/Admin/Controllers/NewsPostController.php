@@ -29,7 +29,7 @@ class NewsPostController extends AdminController
     {
         $grid = new Grid(new NewsPost());
 
-        Utils::checkEventRegustration(); 
+        Utils::checkEventRegustration();
 
         $grid->disableFilter();
         $grid->disableBatchActions();
@@ -40,8 +40,8 @@ class NewsPostController extends AdminController
             function ($x) {
                 return Utils::my_date($x);
             }
-        )->sortable(); 
-        $grid->column('title', __('Post Title'))->sortable();  
+        )->sortable();
+        $grid->column('title', __('Post Title'))->sortable();
 
 
         return $grid;
