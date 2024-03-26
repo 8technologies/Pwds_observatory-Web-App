@@ -32,8 +32,8 @@ class ServiceProviderStoreRequest extends FormRequest
             'services_offered' => 'required',
             'disability_categories' => 'required|array',
             'disability_categories.*' => 'required|exists:disabilities,id',
-            'districts' => 'required|array',
-            'districts.*' => 'required|exists:districts,id',
+            'districts_of_operations' => 'required|array',
+            'districts_of_operations.*' => 'required|exists:districts,id',
         ];
     }
 }

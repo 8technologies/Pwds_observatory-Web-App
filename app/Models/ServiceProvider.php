@@ -27,7 +27,7 @@ class ServiceProvider extends Model
         'level_of_operation',
         'mission',
         'postal_address',
-        'disability_categories',
+        'disability_category',
         'target_group',
         'affiliated_organizations',
     ];
@@ -42,7 +42,7 @@ class ServiceProvider extends Model
         return json_decode($value);
     }
 
-    public function districts()
+    public function districts_of_operations()
     {
         return $this->belongsToMany(District::class)->withTimestamps();
     }

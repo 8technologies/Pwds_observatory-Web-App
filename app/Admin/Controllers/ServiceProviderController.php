@@ -34,7 +34,7 @@ class ServiceProviderController extends AdminController
 
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
-            $filter->like('districts_of_operation', 'Filter by district')
+            $filter->like('districts_of_operations.name', 'Filter by district')
                 ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'name'));
 
             $filter->equal('target_group', 'Target Group')->select([
@@ -43,7 +43,7 @@ class ServiceProviderController extends AdminController
                 'Parents' => 'Parents',
                 'Others' => 'Others'
             ]);
-            $filter->like('disability_category', 'Disability Category')
+            $filter->like('disability_categories.name', 'Disability Category')
                 ->select(Disability::orderBy('name', 'asc')->get()->pluck('name', 'name'));
             // ->select(Disability::pluck('name', 'name'));
         });
@@ -72,24 +72,39 @@ class ServiceProviderController extends AdminController
         $grid->column('target_group', __('Target group'));
         $grid->column('disability_categories', __('Disability category'))
             ->display(
-                function ($disability_categories) {
-                    $disabilities = [];
-                    foreach ($disability_categories as $disability) {
-                        $disabilities[] = $disability['name'];
+                function ($x) {
+                    //disabilities in badges
+                    if ($this->disability_categories()->count() > 0) {
+                        $disabilities = $this->disability_categories->map(function ($item) {
+                            return  $item->name;
+                        })->toArray();
+                        return join(', ', $disabilities);
+                    } else {
+                        return '-';
                     }
-                    return join(', ', $disabilities);
                 }
             );
         $grid->column('level_of_operation', __('Level of operation'));
-        $grid->column('districts', __('Districts of Operation'))
+        $grid->column('districts_of_operations', __('Districts of Operation'))
             ->display(
-                function ($districts) {
-                    $districts = [];
-                    foreach ($districts as $district) {
-                        $districts[] = $district['name'];
+                function ($x) {
+                    //disabilities in badges
+                    if ($this->districts_of_operations()->count() > 0) {
+                        $districts = $this->districts_of_operations->map(function ($item) {
+                            return  $item->name;
+                        })->toArray();
+                        return join(', ', $districts);
+                    } else {
+                        return '-';
                     }
-                    return join(', ', $districts);
                 }
+                // function ($districts) {
+                //     $districts = [];
+                //     foreach ($districts as $district) {
+                //         $districts[] = $district['name'];
+                //     }
+                //     return join(', ', $districts);
+                // }
             );
         $grid->column('services_offered', __('Services offered'));
         $grid->column('is_verified', __('Verified'))->display(function ($is_verified) {
@@ -201,7 +216,7 @@ class ServiceProviderController extends AdminController
             $form->textarea('level_of_operation', __('Level of operation'))->rules("required")
                 ->help("What is the level of your operation i.e Reginal, National, International?");
 
-            $form->multipleSelect('districts', __('Select Districts of operation'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+            $form->multipleSelect('districts_of_operations', __('Select Districts of operation'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
             $form->divider();
 
             $form->textarea('services_offered', __('Services offered'))->rules("required")

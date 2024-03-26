@@ -299,7 +299,7 @@ deleted_at
                 $column->append(Dashboard::getEmploymentStatus());
             });
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getServiceProviders());
+                $column->append(Dashboard::getServiceProviderCount());
             });
 
             $row->column(4, function (Column $column) {
