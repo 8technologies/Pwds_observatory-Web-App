@@ -11,11 +11,13 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use App\Admin\Extensions\PersonsExcelExporter;
+use App\Mail\NextOfKin as MailNextOfKin;
 use App\Models\District;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PwdCreated;
+use App\Models\NextOfKin;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 
@@ -64,8 +66,8 @@ class PersonController extends AdminController
             $grid->model()->orderBy('id', 'desc');
         } elseif ($user->isRole('district-union')) {
             $grid->model()->where('district_id', $organisation->district_id)->orderBy('id', 'desc');
-        } else if ($user->isRole('nopd')) {
-            $grid->model()->where('nopd_id', $organisation->id)->orderBy('id', 'desc');
+        } else if ($user->isRole('opd')) {
+            $grid->model()->where('opd_id', $organisation->id)->orderBy('id', 'desc');
         }
         //  else {
         //     // dd("ddd");
@@ -104,8 +106,10 @@ class PersonController extends AdminController
                     return 'Formal Employment';
                 } else if ($employee_status == 'self employment') {
                     return 'Self Employment';
-                } else {
+                } else if ($employee_status == 'unemployed') {
                     return 'Unemployed';
+                } else {
+                    return 'Not mentioned';
                 }
             })->sortable();
         $grid->column('is_formal_education', __('Formal Education'))->display(
@@ -130,10 +134,10 @@ class PersonController extends AdminController
 
         $grid->column('district_id', __('Attached District'))->display(
             function ($x) {
-                if ($this->district == null) {
+                if ($this->districtOfOrigin == null) {
                     return '-';
                 }
-                return $this->district->name;
+                return $this->districtOfOrigin->name;
             }
         )->sortable();
 
@@ -154,6 +158,10 @@ class PersonController extends AdminController
                 }
             );
 
+        $grid->column('is_verified', __('Verified'))->label([
+            0 => 'No',
+            1 => 'Yes',
+        ])->sortable();
         return $grid;
     }
 
@@ -280,12 +288,14 @@ class PersonController extends AdminController
             $form->select('district_of_residence', __('District Of Residence'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
             $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
             $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
-            $form->select('marital_status', __('Marital Status'))->options([
-                'Single' => 'Single',
-                'Married' => 'Married',
-                'Divorced' => 'Divorced',
-                'Widowed' => 'Widowed'
-            ])->rules('required');
+            //if age < 18, then marital status must be disabled
+            $form->select('marital_status', __('Marital Status'))->options(function ($age) {
+                if ($age > 18) {
+                    return ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed'];
+                } else {
+                    return ['Single' => 'Single'];
+                }
+            })->rules('required');
             $form->text('ethnicity', __('Ethnicity'))->rules('required')
                 ->help('Your Tribe');
             $form->text('religion', __('Religion'))->rules('required');
@@ -348,7 +358,7 @@ class PersonController extends AdminController
         $form->tab('Employment', function ($form) {
             $form->radio('is_employed', __('Are you Employed'))->options([1 => 'Yes', 2 => 'No'])->rules('required')
                 ->when(1, function (Form $form) {
-                    $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment'])->rules('required')
+                    $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment', 'unemployed' => 'Unemployed'])->rules('required')
                         ->when('formal employment', function (Form $form) {
                             $form->text('position', __('Current position'))->placeholder('What is your current position')->rules('required');
                         })
@@ -415,36 +425,36 @@ class PersonController extends AdminController
             $form->quill('aspirations', __('Aspirations'));
             $form->divider();
 
-            $form->html('
-            <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-            <button type="submit" class="btn btn-primary float-right">Submit</button>');
+            // $form->html('
+            // <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+            // <button type="submit" class="btn btn-primary float-right">Submit</button>');
         });
-        // if (Admin::user()->inRoles(['district-union', 'opd'])) {
-        //     $form->tab('Profiler Name', function ($form) {
-        //         $form->text('profiler', __('Profiler'))
-        //             ->placeholder('Enter your name as a profiler')
-        //             ->help('Enter your name as a profiler')
-        //             ->rules('required');
+        if (Admin::user()->inRoles(['district-union', 'opd'])) {
+            $form->tab('Profiler Name', function ($form) {
+                $form->text('profiler', __('Profiler'))
+                    ->placeholder('Enter your name as a profiler')
+                    ->help('Enter your name as a profiler')
+                    ->rules('required');
 
-        //         if (Admin::user()->isRole('opd')) {
-        //             $current_user = auth("admin")->user();
-        //             $organisation = Organisation::where('user_id', $current_user->id)->first();
-        //             $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
-        //         }
+                if (Admin::user()->isRole('opd')) {
+                    $current_user = auth("admin")->user();
+                    $organisation = Organisation::where('user_id', $current_user->id)->first();
+                    $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
+                }
 
-        //         $form->divider();
-        //         //Add submit button
-        //         $form->html('
-        //         <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-        //         <button type="submit" class="btn btn-primary float-right">Submit</button>');
-        //     });
-        // }
+                $form->divider();
+                //Add submit button
+                $form->html('
+                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+                <button type="submit" class="btn btn-primary float-right">Submit</button>');
+            });
+        }
         // $form->hidden('district_id');
         // $form->hidden('opd_id');
         // $form->hidden('is_approved');
 
         // Check if district union is doing the registration and send credentials else do not send
-        if (auth("admin")->user()->inRoles(['district-union', 'nopd'])) {
+        if (auth("admin")->user()->inRoles(['district-union', 'opd'])) {
 
             $form->saving(function ($form) {
                 // save the admin in users and map to this du
@@ -493,12 +503,12 @@ class PersonController extends AdminController
                         return back()->with('error', 'You do not have an organisation to register a member under');
                     } else if ($organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
-                    } else if ($organisation->relationship_type == 'nopd') {
-                        $form->nopd_id = $organisation->id;
+                    } else if ($organisation->relationship_type == 'opd') {
+                        $form->opd_id = $organisation->id;
                     }
                 }
             });
-
+            //If user registers themselves, then information must be sent to du admin for approval
 
             $form->saved(function (Form $form) {
                 if ($form->isCreating()) {
@@ -512,12 +522,13 @@ class PersonController extends AdminController
 
                             Mail::to($form->email)->send(new PwdCreated($form->email, $user_password));
                         } else {
-                            // Mail::to($form->pwd_email)->send(new NextOfKin("$form->name $form->other_names", $form->next_of_kin_email, $user_password));
+                            Mail::to($form->pwd_email)->send(new MailNextOfKin("$form->name $form->other_names", $form->next_of_kin_email, $user_password));
                         }
                     }
                 }
             });
         }
+
 
         Admin::script(
             <<<EOT
@@ -534,4 +545,6 @@ class PersonController extends AdminController
 
         return $form;
     }
+    //du must verify a pwd before using the system
+
 }

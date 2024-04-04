@@ -308,45 +308,45 @@ deleted_at
         });
 
 
-        $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
-                //group pesons with disabilities by categories
-                $persons = DB::table('people')
-                    ->join('disability_person', 'people.id', '=', 'disability_person.person_id')
-                    ->join('disabilities', 'disability_person.disability_id', '=', 'disabilities.id')
-                    ->select('disabilities.name', DB::raw('COUNT(*) as count'))
-                    ->groupBy('disabilities.name')
-                    ->get();
+        // $content->row(function (Row $row) {
+        //     $row->column(6, function (Column $column) {
+        //         //group pesons with disabilities by categories
+        //         $persons = DB::table('people')
+        //             ->join('disability_person', 'people.id', '=', 'disability_person.person_id')
+        //             ->join('disabilities', 'disability_person.disability_id', '=', 'disabilities.id')
+        //             ->select('disabilities.name', DB::raw('COUNT(*) as count'))
+        //             ->groupBy('disabilities.name')
+        //             ->get();
 
 
 
-                $column->append(view('widgets.by-categories', [
-                    'title' => 'Persons with Disabilities by Categories',
-                    'data' => $persons->pluck('count')->toArray(),
-                    'labels' =>  $persons->pluck('count', 'name')->map(function ($count, $name) {
-                        return "$name - $count";
-                    })->values()->toArray()
-                ]));
-            });
-            $row->column(6, function (Column $column) {
-                //group pesons with disabilities by categories
-                $persons = DB::table('people')
-                    ->select('place_of_birth', DB::raw('COUNT(*) as count'))
-                    ->groupBy('place_of_birth')
-                    ->get();
+        //         $column->append(view('widgets.by-categories', [
+        //             'title' => 'Persons with Disabilities by Categories',
+        //             'data' => $persons->pluck('count')->toArray(),
+        //             'labels' =>  $persons->pluck('count', 'name')->map(function ($count, $name) {
+        //                 return "$name - $count";
+        //             })->values()->toArray()
+        //         ]));
+        //     });
+        //     $row->column(6, function (Column $column) {
+        //         //group pesons with disabilities by categories
+        //         $persons = DB::table('people')
+        //             ->select('place_of_birth', DB::raw('COUNT(*) as count'))
+        //             ->groupBy('place_of_birth')
+        //             ->get();
 
-                // dd($persons);
+        //         // dd($persons);
 
 
-                $column->append(view('widgets.by-place-of-birth', [
-                    'title' => 'Persons with Disabilities by Place Of Birth',
-                    'data' => $persons->pluck('count')->toArray(),
-                    'labels' =>  $persons->pluck('count', 'place_of_birth')->map(function ($count, $name) {
-                        return "$name - $count";
-                    })->values()->toArray()
-                ]));
-            });
-        });
+        //         $column->append(view('widgets.by-place-of-birth', [
+        //             'title' => 'Persons with Disabilities by Place Of Birth',
+        //             'data' => $persons->pluck('count')->toArray(),
+        //             'labels' =>  $persons->pluck('count', 'place_of_birth')->map(function ($count, $name) {
+        //                 return "$name - $count";
+        //             })->values()->toArray()
+        //         ]));
+        //     });
+        // });
 
 
         $content
@@ -355,12 +355,9 @@ deleted_at
 
         $content->row(function (Row $row) {
             $row->column(6, function (Column $column) {
-                $column->append(Dashboard::dashboard_members());
-            });
-            $row->column(3, function (Column $column) {
                 $column->append(Dashboard::dashboard_events());
             });
-            $row->column(3, function (Column $column) {
+            $row->column(6, function (Column $column) {
                 $column->append(Dashboard::dashboard_news());
             });
         });

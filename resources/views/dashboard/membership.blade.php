@@ -1,9 +1,11 @@
 {{-- This is the view file for the chart. It uses the Chart.js library to display the chart for DUs and OPDs.  --}}
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">DU Vs NOPD per Membership Type</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-6">
-            <label for="membershipChart">Select Chart Type:</label>
+        <div class="col-12" id="heading">
+            <h5 class="text-center">District Unions Vs NOPDs Per Membership</h5>
+        </div>
+        <div class="col-12" id="item-select">
+            <label for="membershipChart">Select DU or NOPD:</label>
             <select name="membershipChart" id="membershipChart">
                 <option value="mebership_all">Show All</option>
                 <option value="membership_du">District Unions</option>
@@ -48,31 +50,6 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: { //label for y-axis
-                    title: {
-                        display: true,
-                        text: 'Count',
-                        font: {
-                            size: 15,
-                            weight: 'bold'
-                        }
-                    },
-                    ticks: {
-                        precision: 0
-                    }
-                },
-                x: { // label for x-axis
-                    title: {
-                        display: true,
-                        text: 'Membership Type',
-                        font: {
-                            size: 15,
-                            weight: 'bold'
-                        }
-                    }
-                }
-            },
             plugins: {
                 legend: {
                     display: true,

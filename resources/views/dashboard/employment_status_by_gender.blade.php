@@ -1,8 +1,10 @@
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">Employment Status by Gender</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-12">
-            <label for="EmploymentStatus">Select Employment Status:</label>
+        <div class="col-12" id="heading">
+            <h5 class="text-center">Employment Status by Gender</h5>
+        </div>
+        <div class="col-12" id="item-select">
+            <label for="EmploymentStatus">Employment Status:</label>
             <select id="employmentStatusSelector">
                 <option value="Formal Employment">Formal Employment</option>
                 <option value="Self Employment">Self Employment</option>
@@ -10,7 +12,7 @@
             </select>
         </div>
     </div>
-    <div class="chart-container">
+    <div class="chart-container p-2 mb-2">
         <canvas id="employmentStatusChart"></canvas>
     </div>
 </div>
@@ -27,13 +29,18 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                aspectRatio: 3,
                 plugins: {
                     legend: {
-                        position: 'top',
-                    },
-                    title: {
                         display: true,
-                        text: 'Employment Status by Gender'
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        formatter: (value, ctx) => {
+                            let sum = ctx.chart._metasets[ctx.datasetIndex].total;
+                            let percentage = (value * 100 / sum).toFixed(2) + "%";
+                            return percentage;
+                        }
                     }
                 }
             },
@@ -55,14 +62,8 @@
                 datasets: [{
                     label: `${selectedStatus} by Gender`,
                     data: Object.values(countsByGender),
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.8)',
-                        'rgba(54, 162, 235, 0.8)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)'
-                    ],
+                    backgroundColor: ['green', '#66c2ff'],
+                    borderColor: 'rgba(75, 192, 192, 2)',
                     borderWidth: 1
                 }]
             };

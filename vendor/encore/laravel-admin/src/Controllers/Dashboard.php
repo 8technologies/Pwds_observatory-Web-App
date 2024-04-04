@@ -123,7 +123,7 @@ class Dashboard
 
     public static function getServiceProviderCount()
     {
-        $service_providers = ServiceProvider::with('districts_of_operations', 'disability_categories')->get(); // Eager load service providers
+        $service_providers = ServiceProvider::with('districts_of_operations', 'disability_categories')->get();
         $serviceCounts = [];
         $districtServiceCounts = [];
 
@@ -134,31 +134,80 @@ class Dashboard
                 if (is_object($district)) {
                     $districtName = $district->name ?? 'Unknown';
 
-                    // Count service providers per district
+                    // Initialize the district in the districtServiceCounts array if it doesn't exist
                     if (!isset($districtServiceCounts[$districtName])) {
-                        $districtServiceCounts[$districtName] = 0;
+                        $districtServiceCounts[$districtName] = [];
                     }
-                    $districtServiceCounts[$districtName]++;
                 }
-            }
 
-            // Count disabilities for each service provider
-            foreach ($service_provider->disability_categories as $disability) {
-                // Ensure $disability is an object before attempting to access its properties
-                if (is_object($disability)) {
-                    if (!isset($serviceCounts[$disability->name])) {
-                        $serviceCounts[$disability->name] = 0;
+                // Loop through each disability category for the service provider
+                foreach ($service_provider->disability_categories as $disability) {
+                    // Ensure $disability is an object
+                    if (is_object($disability)) {
+                        // Initialize the disability category count per district
+                        if (!isset($districtServiceCounts[$districtName][$disability->name])) {
+                            $districtServiceCounts[$districtName][$disability->name] = 0;
+                        }
+                        $districtServiceCounts[$districtName][$disability->name]++;
+
+                        // General count of service providers per disability category
+                        if (!isset($serviceCounts[$disability->name])) {
+                            $serviceCounts[$disability->name] = 0;
+                        }
+                        $serviceCounts[$disability->name]++;
                     }
-                    $serviceCounts[$disability->name]++;
                 }
             }
         }
 
+        // dd($serviceCounts, $districtServiceCounts);
         arsort($serviceCounts);
         arsort($districtServiceCounts);
 
         return view('dashboard.service_providers_per_disability', compact('serviceCounts', 'districtServiceCounts'));
     }
+
+
+    // public static function getServiceProviderCount()
+    // {
+    //     $service_providers = ServiceProvider::with('districts_of_operations', 'disability_categories')->get(); // Eager load service providers
+    //     $serviceCounts = [];
+    //     $districtServiceCounts = [];
+
+    //     foreach ($service_providers as $service_provider) {
+    //         // Loop through each district associated with the service provider
+    //         foreach ($service_provider->districts_of_operations as $district) {
+    //             // Ensure $district is an object before attempting to access its properties
+    //             if (is_object($district)) {
+    //                 $districtName = $district->name ?? 'Unknown';
+
+    //                 // Count service providers per district
+    //                 if (!isset($districtServiceCounts[$districtName])) {
+    //                     $districtServiceCounts[$districtName] = 0;
+    //                 }
+    //                 $districtServiceCounts[$districtName]++;
+    //             }
+    //         }
+
+    //         // Count disabilities for each service provider
+    //         foreach ($service_provider->disability_categories as $disability) {
+    //             // Ensure $disability is an object before attempting to access its properties
+    //             if (is_object($disability)) {
+    //                 if (!isset($serviceCounts[$disability->name])) {
+    //                     $serviceCounts[$disability->name] = 0;
+    //                 }
+    //                 $serviceCounts[$disability->name]++;
+    //             }
+    //         }
+    //     }
+
+    //     // dd($serviceCounts, $districtServiceCounts);
+
+    //     arsort($serviceCounts);
+    //     arsort($districtServiceCounts);
+
+    //     return view('dashboard.service_providers_per_disability', compact('serviceCounts', 'districtServiceCounts'));
+    // }
 
 
 

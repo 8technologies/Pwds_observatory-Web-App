@@ -25,6 +25,17 @@
     <meta name="msapplication-TileColor" content="#080032">
     <meta name="msapplication-config" content="{{ url('') }}/assets/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
+
 
     <!-- Vendor Styles -->
     <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/vendor/boxicons/css/boxicons.min.css" />
@@ -162,10 +173,10 @@
     <div class="bg-light">
 
 
-    @yield('base-content')
+        @yield('base-content')
 
 
-</div>
+    </div>
     @yield('footer')
     @yield('footer-2')
 

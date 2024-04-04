@@ -1,8 +1,10 @@
 {{-- This is the view file for the chart. It uses the Chart.js library to display the chart for DUs and OPDs per region.  --}}
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">District Unions Vs Organisation for Person with Disability By Region</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-12">
+        <div class="col-12" id="heading">
+            <h5 class="text-center">District Unions Vs NOPDs per Region</h5>
+        </div>
+        <div class="col-12" id="item-select">
             <label for="organisationType">Select DU or NOPD:</label>
             <select name="organisationType" id="organisationType">
                 <option value="all">Show All</option>
@@ -42,32 +44,8 @@
         type: 'bar',
         data: initialOrganisationData,
         options: {
+            responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: { //label for y-axis
-                    title: {
-                        display: true,
-                        text: 'Count',
-                        font: {
-                            size: 15,
-                            weight: 'bold'
-                        }
-                    },
-                    ticks: {
-                        precision: 0
-                    }
-                },
-                x: { // label for x-axis
-                    title: {
-                        display: true,
-                        text: 'Region',
-                        font: {
-                            size: 15,
-                            weight: 'bold'
-                        }
-                    }
-                }
-            },
             plugins: {
                 legend: {
                     display: true,

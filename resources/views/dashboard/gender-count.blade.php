@@ -1,8 +1,10 @@
 {{-- View for Creating bar Chart for representing number of people with Disability per district --}}
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">Number of Persons with Disability by Gender</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-12">
+        <div class="col-12" id="heading">
+            <h5 class="text-center">Number of People with Disability Per District</h5>
+        </div>
+        <div class="col-md-12" id="item-select">
             <label for="districtSelect">Select District:</label>
             <select id="districtSelect" onchange="updateDistrict()">
                 <option value="">All Districts</option>
@@ -12,7 +14,7 @@
             </select>
         </div>
     </div>
-    <div class="chart-container">
+    <div class="chart-container p-2 mb-2">
         <canvas id="pieChart"></canvas>
     </div>
 </div>
@@ -44,6 +46,7 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            aspectRatio: 2,
             plugins: {
                 legend: {
                     display: true, // Adjust based on your requirement
@@ -88,6 +91,7 @@
             };
         }
 
+        // districtChart.options.aspectRatio = 0.5;
         // Redraw the chart
         districtChart.update();
     }

@@ -82,6 +82,11 @@ class Person extends Model
         return $this->belongsTo(District::class, 'district_of_origin');
     }
 
+    public function districtOfResidence()
+    {
+        return $this->belongsTo(District::class, 'district_of_residence');
+    }
+
     public function academic_qualifications()
     {
         return $this->hasMany(AcademicQualification::class);
@@ -118,6 +123,11 @@ class Person extends Model
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
+            }
+
+            //if age < 18, marital status should be null
+            if ($person->age < 18) {
+                $person->marital_status = null;
             }
         });
 

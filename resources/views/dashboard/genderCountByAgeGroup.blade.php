@@ -1,7 +1,7 @@
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">Number of Person with Disability by Age-group and Gender</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-12">
+        <div class="col-12" id="heading">
+            <h5 class="text-center">Number of Person with Disability by Age-group and Gender</h5>
         </div>
     </div>
     <div class="chart-container">
@@ -69,11 +69,6 @@
                             return Math.abs(value);
                         }
                     },
-                    title: {
-                        display: true,
-                        text: 'Number of Persons',
-                        color: 'black',
-                    }
                 },
                 y: {
                     stacked: true

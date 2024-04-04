@@ -31,6 +31,7 @@ class ServiceProviderController extends AdminController
     {
 
         $grid = new Grid(new ServiceProvider());
+        $grid->disableRowSelector();
 
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
@@ -109,7 +110,10 @@ class ServiceProviderController extends AdminController
         $grid->column('services_offered', __('Services offered'));
         $grid->column('is_verified', __('Verified'))->display(function ($is_verified) {
             return $is_verified ? 'Yes' : 'No';
-        });
+        })->label([
+            'Yes' => 'success',
+            'No' => 'danger',
+        ]);
 
         return $grid;
     }

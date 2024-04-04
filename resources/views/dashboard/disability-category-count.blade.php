@@ -1,9 +1,11 @@
 <div class="container card pt-5 mb-5" id='chart-description'>
-    <h5 class="text-center">Person With Disability By Disability Category</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-12">
+        <div class="col-12" id="heading">
+            <h5 class="text-center">Number of Persons by Disability Category</h5>
+        </div>
+        <div class="col-12" id="item-select">
             <label for="districtSelect">Select District:</label>
-            <select name="districtSelector" id="districtSelector" class="form-control" onchange="UpdateCategory()">
+            <select name="districtSelector" id="districtSelector" onchange="UpdateCategory()">
                 <option value="all">All Districts</option>
                 @foreach ($districtDisabilityCounts as $districtName => $counts)
                     <option value="{{ $districtName }}">{{ $districtName }}</option>

@@ -1,9 +1,11 @@
 <div class="container card pt-5 mb-5" id="chart-description">
-    <h5 class="text-center">Service Providers per Disability Category</h5>
     <div class="row" id="chart-content">
-        <div class="col-md-12">
+        <div class="col-12" id="heading">
+            <h5 class="text-center">Number of Service Providers Per Disability Category</h5>
+        </div>
+        <div class="col-md-12" id="item-select">
             <label for="selectDistrict">Select District: </label>
-            <select name="districtService" id="districtService" class="form-control" onchange="UpdateDistrictService()">
+            <select name="districtService" id="districtService" onchange="UpdateDistrictService()">
                 <option value="all">All Districts</option>
                 @foreach ($districtServiceCounts as $district_name => $counts)
                     <option value="{{ $district_name }}">{{ $district_name }}</option>
@@ -65,14 +67,33 @@
     function UpdateDistrictService() {
         var selectedDistrict = document.getElementById('districtService').value;
 
+        // Debugging: Log the selected district to ensure it's being captured correctly
+        console.log("Selected District:", selectedDistrict);
+
+        var updatedLabels, updatedData;
+
         if (selectedDistrict === 'all') {
-            serviceCountChart.data.labels = Object.keys(serviceDisabilityData);
-            serviceCountChart.data.datasets[0].data = Object.values(serviceDisabilityData);
+            updatedLabels = Object.keys(serviceDisabilityData);
+            updatedData = Object.values(serviceDisabilityData);
         } else {
-            const districtData = districtServiceData[selectedDistrict] || {};
-            serviceCountChart.data.labels = Object.keys(districtData);
-            serviceCountChart.data.datasets[0].data = Object.values(districtData);
+            const districtDisabData = districtServiceData[selectedDistrict];
+            if (districtDisabData) {
+                updatedLabels = Object.keys(districtDisabData);
+                updatedData = Object.values(districtDisabData);
+            } else {
+                // Fallback or error handling if data for the selected district is not found
+                console.error("No data found for selected district:", selectedDistrict);
+                updatedLabels = [];
+                updatedData = [];
+            }
         }
+
+        // Debugging: Log the updated labels and data
+        console.log("Updated Labels:", updatedLabels, "Updated Data:", updatedData);
+
+        serviceCountChart.data.labels = updatedLabels;
+        serviceCountChart.data.datasets[0].data = updatedData;
+
         serviceCountChart.update();
     }
 </script>

@@ -36,10 +36,11 @@ class EventApiController extends Controller
     {
         //store event
         try {
-            if ($event = Event::create($request->all())) {
-                return Api_Utils::success($event, 'Event created successfully', 200);
+            $event = Event::create($request->all());
+            if (!$event) {
+                return Api_Utils::error('Event not created', 500);
             }
-            return Api_Utils::error('Event not created', 500);
+            return Api_Utils::success($event, 'Event created successfully', 200);
         } catch (\Exception $e) {
             return Api_Utils::error($e->getMessage(), 500);
         }
