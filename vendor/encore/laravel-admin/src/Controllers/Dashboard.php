@@ -167,50 +167,6 @@ class Dashboard
         return view('dashboard.service_providers_per_disability', compact('serviceCounts', 'districtServiceCounts'));
     }
 
-
-    // public static function getServiceProviderCount()
-    // {
-    //     $service_providers = ServiceProvider::with('districts_of_operations', 'disability_categories')->get(); // Eager load service providers
-    //     $serviceCounts = [];
-    //     $districtServiceCounts = [];
-
-    //     foreach ($service_providers as $service_provider) {
-    //         // Loop through each district associated with the service provider
-    //         foreach ($service_provider->districts_of_operations as $district) {
-    //             // Ensure $district is an object before attempting to access its properties
-    //             if (is_object($district)) {
-    //                 $districtName = $district->name ?? 'Unknown';
-
-    //                 // Count service providers per district
-    //                 if (!isset($districtServiceCounts[$districtName])) {
-    //                     $districtServiceCounts[$districtName] = 0;
-    //                 }
-    //                 $districtServiceCounts[$districtName]++;
-    //             }
-    //         }
-
-    //         // Count disabilities for each service provider
-    //         foreach ($service_provider->disability_categories as $disability) {
-    //             // Ensure $disability is an object before attempting to access its properties
-    //             if (is_object($disability)) {
-    //                 if (!isset($serviceCounts[$disability->name])) {
-    //                     $serviceCounts[$disability->name] = 0;
-    //                 }
-    //                 $serviceCounts[$disability->name]++;
-    //             }
-    //         }
-    //     }
-
-    //     // dd($serviceCounts, $districtServiceCounts);
-
-    //     arsort($serviceCounts);
-    //     arsort($districtServiceCounts);
-
-    //     return view('dashboard.service_providers_per_disability', compact('serviceCounts', 'districtServiceCounts'));
-    // }
-
-
-
     //Method for retrieving person with disability by age
     public static function getDisabilityByGenderAndAge()
     {
@@ -322,9 +278,6 @@ class Dashboard
 
         return view('dashboard.employment_status_by_gender', compact('employmentStatuses', 'gender', 'employmentStatusData'));
     }
-
-
-
 
 
     //Method for retrieving service providers residing in a particular district.

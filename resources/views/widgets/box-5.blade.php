@@ -19,11 +19,9 @@ if ($is_dark) {
     $bg = 'bg-primary';
     $text = 'text-white';
     $text2 = 'text-white';
-
-
 }
 
-if($style == 'danger'){
+if ($style == 'danger') {
     $text = 'text-white';
     $bg = 'bg-danger';
     $text2 = 'text-white';

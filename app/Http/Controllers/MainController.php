@@ -61,7 +61,7 @@ class MainController extends BaseController
     // ]);
 
     //HIX CODE STARTS HERE
-    
+
     //get percentage of persons by gender
     $female_pwd = Person::where('sex', 'Female')->count();
     $male_pwd = Person::where('sex', 'Male')->count();
@@ -77,21 +77,21 @@ class MainController extends BaseController
       ->groupBy('district')
       ->orderByRaw('total DESC')
       ->limit(5)
-      ->get(); 
+      ->get();
 
 
     //get persons by disability type
     $persons_by_disability = DB::table('people')
-    ->join('disability_person', 'people.id', '=', 'disability_person.person_id')
-    ->join('disabilities', 'disability_person.disability_id', '=', 'disabilities.id')
-    ->select('disabilities.name', DB::raw('COUNT(*) as count'))
-    ->groupBy('disabilities.name')
-    ->get();
+      ->join('disability_person', 'people.id', '=', 'disability_person.person_id')
+      ->join('disabilities', 'disability_person.disability_id', '=', 'disabilities.id')
+      ->select('disabilities.name', DB::raw('COUNT(*) as count'))
+      ->groupBy('disabilities.name')
+      ->get();
 
 
     //END OF HIX CODE
 
-    return view('index', compact('female_percentage','male_percentage', 'total','districts_count','persons_by_disability'));
+    return view('index', compact('female_percentage', 'male_percentage', 'total', 'districts_count', 'persons_by_disability'));
   }
   public function about_us()
   {

@@ -20,6 +20,8 @@ use App\Mail\PwdCreated;
 use App\Models\NextOfKin;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
+// use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 
 class PersonController extends AdminController
 {
@@ -38,6 +40,8 @@ class PersonController extends AdminController
     protected function grid()
     {
 
+        // echo password_hash('password', PASSWORD_DEFAULT);
+        // die("dd");
         $grid = new Grid(new Person());
 
         //TODO: fix filters, and also display users from the opd, and district unions
@@ -99,7 +103,7 @@ class PersonController extends AdminController
                     return 'Not mentioned';
                 }
             }
-        )->sortable();
+        )->sortable()->hide();
         $grid->column('employment_status', __('Employment Type'))
             ->display(function ($employee_status) {
                 if ($employee_status == 'formal employment') {
@@ -111,7 +115,7 @@ class PersonController extends AdminController
                 } else {
                     return 'Not mentioned';
                 }
-            })->sortable();
+            })->sortable()->hide();;
         $grid->column('is_formal_education', __('Formal Education'))->display(
             function ($is_formal_education) {
                 $levels = [
@@ -129,8 +133,8 @@ class PersonController extends AdminController
                     return 'Not mentioned';
                 }
             }
-        )->sortable();
-        $grid->column('informal_education', __('Informal Education'));
+        )->sortable()->hide();
+        $grid->column('informal_education', __('Informal Education'))->hide();
 
         $grid->column('district_id', __('Attached District'))->display(
             function ($x) {
@@ -429,6 +433,34 @@ class PersonController extends AdminController
             // <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
             // <button type="submit" class="btn btn-primary float-right">Submit</button>');
         });
+
+        //If the person has self registered
+        if (Admin::user()->inRoles(['pwd', 'basic'])) {
+            $form->tab('Submit', function ($form) {
+                $form->html('
+                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+                <button type="submit" class="btn btn-primary float-right">Submit</button>');
+            });
+
+            $form->creating(function ($form) {
+                $form->is_verified = 1;
+                $form->profiler = "Self Registered";
+            });
+
+            $form->saving(function ($form) {
+                $form->is_verified = 1;
+                $form->profiler = "Self Registered";
+            });
+
+            $form->saved(function (Form $form) {
+                $user = auth("admin")->user();
+                $organisation = Organisation::where('user_id', $user->id)->first();
+                if ($organisation != null) {
+                    $form->district_id = $organisation->district_id;
+                }
+                $form->is_verified = 1;
+            });
+        }
         if (Admin::user()->inRoles(['district-union', 'opd'])) {
             $form->tab('Profiler Name', function ($form) {
                 $form->text('profiler', __('Profiler'))
@@ -498,9 +530,16 @@ class PersonController extends AdminController
                     $organisation = Organisation::where('user_id', $current_user->id)->first();
                     error_log("Organisation: " . $organisation->name);
 
-                    if ($organisation == null) {
+                    if ($organisation == null || $organisation->relationship_type == null) {
+                        $du = Organisation::where('district_id', $form->district_of_residence)->where('relationship_type', 'du')->first();
+
+                        if ($du != null) {
+                            $form->district_id = $du->district_id;
+                            $form->is_verified = 0;
+                        } else {
+                            return back()->with('error', 'You do not have an organisation to register a member under');
+                        }
                         //return error
-                        return back()->with('error', 'You do not have an organisation to register a member under');
                     } else if ($organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
                     } else if ($organisation->relationship_type == 'opd') {
@@ -515,6 +554,7 @@ class PersonController extends AdminController
                     $user_password = session('password');
                     error_log("Password: " . $user_password);
                     error_log("Email: " . $form->email);
+
 
                     if ($user_password != null) {
 
@@ -545,6 +585,4 @@ class PersonController extends AdminController
 
         return $form;
     }
-    //du must verify a pwd before using the system
-
 }

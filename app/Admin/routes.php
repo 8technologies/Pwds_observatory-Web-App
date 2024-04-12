@@ -20,7 +20,7 @@ Route::group([
     $router->resource('disabilities', DisabilityController::class);
     $router->resource('institutions', InstitutionController::class);
     $router->resource('counselling-centres', CounsellingCentreController::class);
-    $router->resource('jobs', JobController::class);  
+    $router->resource('jobs', JobController::class);
     $router->resource('job-applications', JobApplicationController::class);
 
     $router->resource('course-categories', CourseCategoryController::class);
@@ -32,8 +32,8 @@ Route::group([
     $router->resource('news-posts', NewsPostController::class);
     $router->resource('events', EventController::class);
     $router->resource('event-bookings', EventBookingController::class);
-    $router->resource('products', ProductController::class); 
-    $router->resource('product-orders', ProductOrderController::class); 
+    $router->resource('products', ProductController::class);
+    $router->resource('product-orders', ProductOrderController::class);
 
     $router->resource('organisations', OrganisationController::class);
     $router->resource('opds', OPDController::class);
@@ -44,5 +44,6 @@ Route::group([
     $router->resource('testimonies', TestimonyController::class);
 
     $router->get('service-providers/{id}/verify', 'ServiceProviderController@verify')->name('service-providers.verify');
-    $router->resource('gens', GenController::class); 
+    $router->resource('gens', GenController::class);
+    $router->resource('guest', GuestController::class);
 });

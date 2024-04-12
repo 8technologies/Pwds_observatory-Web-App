@@ -141,6 +141,14 @@ class Person extends Model
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
             }
+
+            //if age < 18, marital status should be null
+            if ($person->age < 18) {
+                $person->marital_status = null;
+            }
+
+            //Data should be in the district union
+            $person->district_id = Organisation::find($person->district_of_residence);
         });
 
         static::updating(function ($person) {
@@ -162,6 +170,15 @@ class Person extends Model
             $record->name = ucfirst(strtolower($record->name));
             $record->other_names = ucfirst(strtolower($record->other_names));
             $record->save();
+        }
+    }
+
+    public function save_district_of_residence()
+    {
+        $person = $this->all();
+        foreach ($person as $p) {
+            $p->district_of_residence = Organisation::find($p->district_of_origin);
+            $p->save();
         }
     }
 }

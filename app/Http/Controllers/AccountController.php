@@ -22,10 +22,16 @@ class AccountController extends BaseController
         }
         return view('register');
     }
-    public function login()
+    public function login(Request $request)
     {
         if (Auth::guard()->check()) {
-            return redirect("/dashboard");
+            // User is already logged in
+            $user = Auth::user();
+            if ($user->isRole('district-union')) {
+                return redirect("/du-dashboard");
+            } elseif ($user->isRole('administrator') || $user->isRole('NUDIPU')) {
+                return redirect("/dashboard");
+            }
         }
         return view('login');
     }
@@ -57,7 +63,7 @@ class AccountController extends BaseController
         ])->fails()) {
             return back()
                 ->withErrors(['email' => 'Enter a valid email address.'])
-                ->withInput(); 
+                ->withInput();
         }
 
         if (Validator::make($_POST, [
