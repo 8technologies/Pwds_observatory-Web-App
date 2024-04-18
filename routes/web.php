@@ -53,8 +53,6 @@ Route::get('/du-dashboard', [DuDashboardController::class, 'index'])
 Route::get('/pwd-dashboard', [PwdDashboardController::class, 'index'])
     ->name('pwd-dashboard');
 Route::get('/guest', [GuestController::class, 'index']);
-// Route::get('/dashboard/pwd/register', [PersonController::class, 'register'])
-//     ->name('pwd-register');
 
 Route::get('/login', [AccountController::class, 'login'])->name('login')
     ->middleware(RedirectIfAuthenticated::class);
@@ -68,6 +66,14 @@ Route::post('/login', [AccountController::class, 'login_post'])
 
 Route::get('/dashboard', [AccountController::class, 'dashboard'])
     ->middleware(Authenticate::class);
+
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/approval', [PwdDashboardController::class, 'checkApproval'])->name('approval');
+    Route::middleware('verifyProfile')->group(function () {
+        Route::get('/dashboard', [AccountController::class, 'dashboard'])
+            ->middleware(Authenticate::class);
+    });
+});
 //Route for DU dashboard
 // Route::get('/du-dashboard', [DuDashboard::class, 'index'])->middleware(Du_Dashboard::class);
 

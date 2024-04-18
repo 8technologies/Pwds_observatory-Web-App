@@ -39,9 +39,9 @@ class PersonController extends AdminController
      */
     protected function grid()
     {
+        // $admin = Person::updateDistrictOfResidence();
+        // dd($admin);
 
-        // echo password_hash('password', PASSWORD_DEFAULT);
-        // die("dd");
         $grid = new Grid(new Person());
 
         //TODO: fix filters, and also display users from the opd, and district unions
@@ -138,14 +138,20 @@ class PersonController extends AdminController
 
         $grid->column('district_id', __('Attached District'))->display(
             function ($x) {
-                if ($this->districtOfOrigin == null) {
+                if ($this->district == null) {
                     return '-';
                 }
-                return $this->districtOfOrigin->name;
+                return $this->district->name;
             }
         )->sortable();
 
-        $grid->column('profiler', __('Profiler'));
+        $grid->column('profiler', __('Profiler'))->display(function ($profiler) {
+            if (!$profiler) {
+                return "Self Registered";
+            } else {
+                return $profiler;
+            }
+        });
 
         $grid->column('disabilities', __('Disabilities'))
             ->display(
@@ -162,10 +168,13 @@ class PersonController extends AdminController
                 }
             );
 
-        $grid->column('is_verified', __('Verified'))->label([
-            0 => 'No',
-            1 => 'Yes',
-        ])->sortable();
+        $grid->column('is_approved', __('Approval'))->display(function ($x) {
+            if ($x == 1) {
+                return "<span class='badge badge-success'>Yes</span>";
+            } else {
+                return "<span class='badge badge-danger'>No</span>";
+            }
+        });
         return $grid;
     }
 
@@ -288,8 +297,8 @@ class PersonController extends AdminController
             $form->divider();
             $form->text('id_number', __('ID Number'))->placeholder('ID Number')
                 ->help("NIN, Passport Number, Driving Permit Number");
-            $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
-            $form->select('district_of_residence', __('District Of Residence'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+            $form->select('district_id', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+            $form->hidden('district_of_residence', __('District Of Residence'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
             $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
             $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
             //if age < 18, then marital status must be disabled
@@ -429,9 +438,10 @@ class PersonController extends AdminController
             $form->quill('aspirations', __('Aspirations'));
             $form->divider();
 
-            // $form->html('
-            // <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-            // <button type="submit" class="btn btn-primary float-right">Submit</button>');
+            $form->html('
+            <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
+            ');
         });
 
         //If the person has self registered
@@ -442,14 +452,15 @@ class PersonController extends AdminController
                 <button type="submit" class="btn btn-primary float-right">Submit</button>');
             });
 
-            $form->creating(function ($form) {
-                $form->is_verified = 1;
-                $form->profiler = "Self Registered";
-            });
 
             $form->saving(function ($form) {
                 $form->is_verified = 1;
                 $form->profiler = "Self Registered";
+
+                if ($form->isCreating()) {
+                    $form->is_verified = 1;
+                    $form->profiler = "Self Registered";
+                }
             });
 
             $form->saved(function (Form $form) {
@@ -533,6 +544,8 @@ class PersonController extends AdminController
                     if ($organisation == null || $organisation->relationship_type == null) {
                         $du = Organisation::where('district_id', $form->district_of_residence)->where('relationship_type', 'du')->first();
 
+                        return back()->with('error', 'You do not have an organisation to register a member under');
+
                         if ($du != null) {
                             $form->district_id = $du->district_id;
                             $form->is_verified = 0;
@@ -542,6 +555,7 @@ class PersonController extends AdminController
                         //return error
                     } else if ($organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
+                        $form->district_of_residence = $organisation->id;
                     } else if ($organisation->relationship_type == 'opd') {
                         $form->opd_id = $organisation->id;
                     }

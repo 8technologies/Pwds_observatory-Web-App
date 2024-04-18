@@ -110,6 +110,13 @@ class Organisation extends Model
         return $district->region->name;
     }
 
+
+    public function district()
+    {
+        return $this->belongsTo(District::class, 'district_id');
+    }
+
+
     public static function updateRegionIdForOldRecords()
     {
         // Find organisations with region_id set to zero

@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Person extends Model
 {
@@ -129,6 +132,16 @@ class Person extends Model
             if ($person->age < 18) {
                 $person->marital_status = null;
             }
+
+            $current_user = auth()->user();
+            $organisation = Organisation::where('user_id', $current_user->id)->first();
+
+            if ($organisation) {
+                $person->district_of_residence = $organisation->district_id;
+            } else {
+                // Handle the error if no organisation is found or other business logic
+                throw new \Exception("No linked organisation found for setting district residence.");
+            }
         });
 
         static::saving(function ($person) {
@@ -146,9 +159,6 @@ class Person extends Model
             if ($person->age < 18) {
                 $person->marital_status = null;
             }
-
-            //Data should be in the district union
-            $person->district_id = Organisation::find($person->district_of_residence);
         });
 
         static::updating(function ($person) {
@@ -173,12 +183,20 @@ class Person extends Model
         }
     }
 
-    public function save_district_of_residence()
+    public static function updateDistrictOfResidence()
     {
-        $person = $this->all();
-        foreach ($person as $p) {
-            $p->district_of_residence = Organisation::find($p->district_of_origin);
-            $p->save();
+        $admin = Admin::user();
+        $organisation = Organisation::where('name', $admin->name)->first();
+
+        if (!$organisation) {
+            return "Organisation not found";
+        }
+
+        $persons = Person::whereNull('district_of_residence')->get();
+
+        foreach ($persons as $person) {
+            $person->district_of_residence = $organisation->district_id;
+            $person->save();
         }
     }
 }
