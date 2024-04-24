@@ -34,6 +34,7 @@ class HomeController extends Controller
         if ($admin_role == 'pwd') {
             return redirect()->route('pwd-dashboard');
         }
+        
         $content->row(function (Row $row) {
             $row->column(3, function (Column $column) {
                 $column->append(view('widgets.box-5', [
@@ -77,20 +78,22 @@ class HomeController extends Controller
         });
 
 
+
         //Bar Chart for People with Disability count.
         $content->row(function (Row $row) {
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getPeopleWithDisability());
             });
-
+            
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getDisabilityByGenderAndAge());
             });
-
+            
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getDisabilityCount());
             });
         });
+        return $content; 
 
         $content->row(function (Row $row) {
             $row->column(4, function (Column $column) {

@@ -57,9 +57,14 @@
         }
 
     }
+
+    .card {
+        background-color: #fff;
+        margin-bottom: 2rem;
+    }
 </style>
 
-<div class="container card pt-5 mb-5" id="chart-description">
+<div class="container card pt-5 mb-5 bg-white" id="chart-description">
     <div class="row" id="chart-content">
         <div class="col-12" id="heading">
             <h5 class="text-center">Gender percentage of persons with disability in {{ $districtName }} District</h5>

@@ -174,7 +174,9 @@ class Dashboard
         $disabilityCounts = [];
 
         // Get all people, eager loading their disabilities
-        $people = Person::whereNotNull('sex')->where('sex', '<>', '')->get();
+        //$people = Person::where('sex')->where('sex', '<>', '')->get();
+        $people = Person::where('sex')->where('sex', '<>', '')->get();
+        
 
         foreach ($people as $person) {
             // Determine the person's age group
