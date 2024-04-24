@@ -128,10 +128,6 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
-            //if age < 18, marital status should be null
-            if ($person->age < 18) {
-                $person->marital_status = null;
-            }
 
             $current_user = auth()->user();
             $organisation = Organisation::where('user_id', $current_user->id)->first();
@@ -155,10 +151,7 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
-            //if age < 18, marital status should be null
-            if ($person->age < 18) {
-                $person->marital_status = null;
-            }
+        
         });
 
         static::updating(function ($person) {

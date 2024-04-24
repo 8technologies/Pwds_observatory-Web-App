@@ -52,15 +52,14 @@ use App\Models\User;
                         <li class="user-footer">
                             <div class="pull-left">
                                 @php
-                                    $user = User::find(Auth::user()->id);
-                                    
+                                    $user = User::find(Auth::user()->id); 
                                 @endphp
 
                                 @if (Auth::user()->isRole('district-union'))
-                                    <a href="{{ admin_url('district-unions/' . $user->managedOrganisation->id . '/edit') }}"
+                                    <a href="{{ admin_url('district-unions/' . $user->organisation->id . '/edit') }}"
                                         class="btn btn-default btn-flat">Profile</a>
                                 @elseif(Auth::user()->isRole('opd'))
-                                    <a href="{{ admin_url('opds/' . $user->managedOrganisation->id . '/edit') }}"
+                                    <a href="{{ admin_url('opds/' . $user->organisation->id . '/edit') }}"
                                         class="btn btn-default btn-flat">Profile</a>
                                 @elseif(Auth::user()->isRole('service-provider'))
                                     <a href="{{ admin_url('service-providers/' . $user->service_provider . '/edit') }}"

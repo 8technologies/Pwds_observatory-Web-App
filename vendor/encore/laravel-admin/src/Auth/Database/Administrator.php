@@ -53,23 +53,7 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
         parent::__construct($attributes);
     }
 
-    public static function boot()
-    {
-        parent::boot();
-
-        self::creating(function ($m) {
-            $n = $m->first_name . " " . $m->last_name;
-            if (strlen(trim($n)) > 1) {
-                $m->name = trim($n);
-            }
-        });
-        self::updating(function ($m) {
-            $n = $m->first_name . " " . $m->last_name;
-            if (strlen(trim($n)) > 1) {
-                $m->name = trim($n);
-            } 
-        });
-    }
+ 
 
 
     /**

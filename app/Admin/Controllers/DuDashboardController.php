@@ -8,9 +8,11 @@ use App\Models\Product;
 use App\Models\Job;
 use App\Models\Organisation;
 use App\Models\ServiceProvider;
+use App\Models\Utils;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Controllers\District_Union_Dashboard;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
@@ -20,17 +22,22 @@ class DuDashboardController extends Controller
 {
     public function index(Content $content)
     {
-        $user = auth("admin")->user();
-        $organisation = Organisation::where('user_id', $user->id)->first();
+        $user = Admin::user();
+        $organisation = Organisation::find($user->organisation_id);
         if (!$organisation) {
-            return redirect()->route('admin.dashboard');
+            Utils::check_default_organisation();
+            $organisation = Organisation::find($user->organisation_id);
+            if ($organisation == null) {
+                die("Organisation not found");
+            }
         }
         $content
             ->description('Hello, welcome to ' . $organisation->name . ' Dashboard');
 
         $content->row(function (Row $row) {
             $row->column(3, function (Column $column) {
-                $organisation = Organisation::where('user_id', auth("admin")->user()->id)->first();
+                $u = Admin::user();
+                $organisation = Organisation::find($u->organisation_id);
                 $district_id = $organisation->district_id;
                 $count_pwd = Person::where('district_id', $district_id)->count();
                 $box = new Box("Persons with Diability", '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . $count_pwd . '</h3>');
@@ -45,7 +52,8 @@ class DuDashboardController extends Controller
                 ]));
             });
             $row->column(3, function (Column $column) {
-                $organisation = Organisation::where('user_id', auth("admin")->user()->id)->first();
+                $u = Admin::user(); 
+                $organisation = Organisation::find($u->organisation_id);
                 $service_providers = ServiceProvider::with('districts_of_operation')->where('id', $organisation->district_id)->count();
                 $box = new Box("Service Providers",  '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . $service_providers . '</h3>');
                 $box->style('success')
@@ -109,8 +117,6 @@ class DuDashboardController extends Controller
                 $column->append(Dashboard::dashboard_news());
             });
         });
-
-        return $content;
         return $content
             ->title('Dashboard')
             ->description('Hello, welcome to ' . $organisation->name . ' Dashboard')

@@ -2,6 +2,9 @@ lsphp artisan make:component Alert --inline
 
 php artisan migrate
 
+php artisan make:migration add_organisation_id_to_users --table=users
+
+
 php artisan make:migration create_courses_table
 php artisan make:migration create_course_categories_table
 php artisan make:migration create_course_chapters_table

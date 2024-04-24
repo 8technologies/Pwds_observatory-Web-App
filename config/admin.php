@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\User;
+
 return [
 
     /*
@@ -125,6 +127,7 @@ return [
             'admin' => [
                 'driver' => 'eloquent',
                 'model'  => Encore\Admin\Auth\Database\Administrator::class,
+                // 'model'  => User::class,
             ],
         ],
 

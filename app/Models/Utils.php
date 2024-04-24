@@ -904,4 +904,25 @@ DELETE FROM people WHERE id > 8954
         };
         return $data;
     }
+
+    //check if default organisation exists with id 1, if not create it
+    public static function check_default_organisation()
+    {
+        $org = Organisation::find(1);
+        if ($org == null) {
+            $org = new Organisation();
+            $org->name = "Default Organisation";
+            $org->id = 1;
+            $org->district_id = 1;
+            $org->registration_number = "001";
+            $org->date_of_registration = Carbon::now();
+            $org->user_id = 1;
+            $org->region_id = 1;
+            $org->parent_organisation_id = 1;
+            $org->mission = "Default Organisation";
+            $org->vision = "Default Organisation";
+            $org->relationship_type = "opd";
+            $org->save();
+        }
+    }
 }
