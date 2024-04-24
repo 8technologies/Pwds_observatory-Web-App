@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Person;
 use App\Models\Organisation;
 use App\Models\ServiceProvider;
-use Illuminate\Support\Facades\DB;
 use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
@@ -25,13 +24,13 @@ class HomeController extends Controller
         $u = Admin::user();
         $admin_role = $u->roles->first()->slug;
         //if the user is not an admin, redirect to the guests page
-        if ($admin_role == 'basic') {
+        if ($u && $admin_role == 'basic') {
             return redirect()->route('pwd-dashboard');
         }
         if ($admin_role == 'district-union') {
             return redirect()->route('du-dashboard');
         }
-        if ($admin_role == 'pwd') {
+        if ($u && $admin_role == 'pwd') {
             return redirect()->route('pwd-dashboard');
         }
         $content->row(function (Row $row) {

@@ -133,15 +133,18 @@ class Person extends Model
                 $person->marital_status = null;
             }
 
-            $current_user = auth()->user();
-            $organisation = Organisation::where('user_id', $current_user->id)->first();
+            $person->district_of_residence = $person->district_id;
 
-            if ($organisation) {
-                $person->district_of_residence = $organisation->district_id;
-            } else {
-                // Handle the error if no organisation is found or other business logic
-                throw new \Exception("No linked organisation found for setting district residence.");
-            }
+
+            // $current_user = auth()->user();
+            // $organisation = Organisation::where('user_id', $current_user->id)->first();
+
+            // if ($organisation) {
+            //     $person->district_of_residence = $organisation->district_id;
+            // } else {
+            //     // Handle the error if no organisation is found or other business logic
+            //     throw new \Exception("No linked organisation found for setting district residence.");
+            // }
         });
 
         static::saving(function ($person) {
@@ -183,20 +186,12 @@ class Person extends Model
         }
     }
 
-    public static function updateDistrictOfResidence()
-    {
-        $admin = Admin::user();
-        $organisation = Organisation::where('name', $admin->name)->first();
-
-        if (!$organisation) {
-            return "Organisation not found";
-        }
-
-        $persons = Person::whereNull('district_of_residence')->get();
-
-        foreach ($persons as $person) {
-            $person->district_of_residence = $organisation->district_id;
-            $person->save();
-        }
-    }
+    // public static function updateDistrictOfResidence()
+    // {
+    //     $people = Person::select('id', 'district_id', 'district_of_residence')->get();
+    //     foreach ($people as $person) {
+    //         $person->district_of_residence = $person->district_id;
+    //         $person->save();
+    //     }
+    // }
 }

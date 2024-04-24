@@ -5,8 +5,8 @@ use App\Models\Utils;
 if (!isset($header_style)) {
     $header_style = 11;
 }
-
-?>@extends('layouts.layout-main')
+?>
+@extends('layouts.layout-main')
 @section('main-content')
     <!-- Breadcrumb -->
     <nav class="container mt-5   pt-5" aria-label="breadcrumb">
@@ -117,7 +117,7 @@ if (!isset($header_style)) {
     <section class="container mb-5 pt-md-4">
         <div class="d-flex flex-sm-row flex-column align-items-center justify-content-between mb-4 pb-1 pb-md-3">
             <h2 class="h1 mb-sm-0">Related Articles</h2>
-            <a href="{{ url("news") }}" class="btn btn-lg btn-outline-primary ms-4">
+            <a href="{{ url('news') }}" class="btn btn-lg btn-outline-primary ms-4">
                 All posts
                 <i class="bx bx-right-arrow-alt ms-1 me-n1 lh-1 lead"></i>
             </a>

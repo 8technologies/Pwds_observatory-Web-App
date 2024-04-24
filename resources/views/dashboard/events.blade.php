@@ -18,6 +18,10 @@ use App\Models\Utils;
     .case-item:hover {
         background-color: rgb(254, 254, 254);
     }
+
+    .view-all {
+        display: flex;
+    }
 </style>
 <div class="card  mb-4 mb-md-5 border-0">
     <!--begin::Header-->
@@ -25,7 +29,7 @@ use App\Models\Utils;
         <h3>
             <b>Events</b>
         </h3>
-        <div>
+        <div class="view-all">
             <a href="{{ admin_url('/events') }}" class="btn btn-sm btn-primary mt-md-4 mt-4">
                 View All
             </a>

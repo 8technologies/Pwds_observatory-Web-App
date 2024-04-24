@@ -77,3 +77,25 @@
     }
     
 }
+
+.column{
+    margin: 10px;
+}
+
+.job-card {
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: aqua;
+    border: 1px solid #ccc;
+}
+
+.text {
+    margin: 5px 0;
+}
+
+.read-more, .read-less {
+    color: blue;
+    cursor: pointer;
+}
+
+

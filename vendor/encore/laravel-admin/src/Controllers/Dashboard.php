@@ -5,6 +5,7 @@ namespace Encore\Admin\Controllers;
 use App\Models\Disability;
 use App\Models\District;
 use App\Models\Event;
+use App\Models\Job;
 use App\Models\NewsPost;
 use App\Models\Organisation;
 use App\Models\Person;
@@ -42,6 +43,12 @@ class Dashboard
         return view('dashboard.news', [
             'items' => $events
         ]);
+    }
+
+    public static function dashboard_jobs()
+    {
+        $jobs = Job::all();
+        return view('pwd-dashboard.job', ['jobs' => $jobs]);
     }
 
     public static function getDuOpdPerRegion()
