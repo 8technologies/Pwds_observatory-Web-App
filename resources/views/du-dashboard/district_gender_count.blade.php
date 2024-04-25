@@ -57,6 +57,11 @@
         }
 
     }
+
+    .card {
+        background-color: #fff;
+        margin: 10px;
+    }
 </style>
 
 <div class="container card pt-5 mb-5" id="chart-description">

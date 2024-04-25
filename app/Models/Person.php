@@ -128,23 +128,8 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
-            //if age < 18, marital status should be null
-            if ($person->age < 18) {
-                $person->marital_status = null;
-            }
 
             $person->district_of_residence = $person->district_id;
-
-
-            // $current_user = auth()->user();
-            // $organisation = Organisation::where('user_id', $current_user->id)->first();
-
-            // if ($organisation) {
-            //     $person->district_of_residence = $organisation->district_id;
-            // } else {
-            //     // Handle the error if no organisation is found or other business logic
-            //     throw new \Exception("No linked organisation found for setting district residence.");
-            // }
         });
 
         static::saving(function ($person) {
@@ -156,11 +141,6 @@ class Person extends Model
             //is_employed == 0 must be taken as unemployed
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
-            }
-
-            //if age < 18, marital status should be null
-            if ($person->age < 18) {
-                $person->marital_status = null;
             }
         });
 
@@ -185,13 +165,4 @@ class Person extends Model
             $record->save();
         }
     }
-
-    // public static function updateDistrictOfResidence()
-    // {
-    //     $people = Person::select('id', 'district_id', 'district_of_residence')->get();
-    //     foreach ($people as $person) {
-    //         $person->district_of_residence = $person->district_id;
-    //         $person->save();
-    //     }
-    // }
 }

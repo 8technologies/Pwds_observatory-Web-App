@@ -66,7 +66,7 @@ class PersonController extends AdminController
 
         $grid->quickSearch('name')->placeholder('Search by name');
 
-        $user = auth("admin")->user();
+        $user = Admin::user();
         $organisation = Organisation::where('user_id', $user->id)->first();
         if ($user->inRoles(['nudipu', 'administrator'])) {
             $grid->model()->orderBy('id', 'desc');
@@ -300,17 +300,17 @@ class PersonController extends AdminController
             $form->text('id_number', __('ID Number'))->placeholder('ID Number')
                 ->help("NIN, Passport Number, Driving Permit Number");
             $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
-            // $form->hidden('district_id', __('District Of Residence'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+
+            $u = Admin::user();
+            $organisation = Organisation::where('user_id', $u->id)->first();
+            $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
+
             $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
             $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
             //if age < 18, then marital status must be disabled
-            $form->select('marital_status', __('Marital Status'))->options(function ($age) {
-                if ($age > 18) {
-                    return ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed'];
-                } else {
-                    return ['Single' => 'Single'];
-                }
-            })->rules('required');
+            $form->select('marital_status', __('Marital Status'))->options(
+                ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
+            )->rules('required');
             $form->text('ethnicity', __('Ethnicity'))->rules('required')
                 ->help('Your Tribe');
             $form->text('religion', __('Religion'))->rules('required');
@@ -510,7 +510,6 @@ class PersonController extends AdminController
                         return back()->with('error', 'You do not have an organisation to register a member under');
                     } else if ($organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
-                        // $form->district_of_residence = $form->district_id;
                     } else if ($organisation->relationship_type == 'opd') {
                         $form->opd_id = $organisation->id;
                     }

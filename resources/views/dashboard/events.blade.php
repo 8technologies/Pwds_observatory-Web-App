@@ -11,21 +11,24 @@ use App\Models\Utils;
         margin-right: 10px;
     }
 
-    .card {
+    #events {
         border-radius: 5px;
+        background-color: #fff;
     }
 
     .case-item:hover {
         background-color: rgb(254, 254, 254);
     }
 
-    .view-all {
-        display: flex;
+    #view-all {
+        padding: 10px;
+        margin: 5px 10px;
+
     }
 </style>
-<div class="card  mb-4 mb-md-5 border-0">
+<div class="card  mb-4 mb-md-5 border-0" id="events">
     <!--begin::Header-->
-    <div class="d-flex justify-content-between px-3 px-md-4 ">
+    <div class="d-flex justify-content-between px-3 px-md-4 " id="view-all">
         <h3>
             <b>Events</b>
         </h3>

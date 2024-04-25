@@ -12,22 +12,20 @@
 <script>
     const educationData = @json($educationData);
     var gender = @json($gender).filter(label => label !== null && label !== 'N/A');
-    var educationLevels = @json($educationLevels).filter(educ_levels => educ_levels != 'Unknown');
+    const educationLevels = @json($educationLevels).filter(level => level !== 'Unknown');
 
-    var data = {
+    const data = {
         labels: educationLevels,
         datasets: gender.map(g => ({
             label: g,
             backgroundColor: g === 'Male' ? 'skyblue' : 'green',
             data: educationLevels.map(level => {
-                const found = educationData.find(d => d.education_level === level && d.sex ===
-                    g);
-                return found ? found.count : 0;
+                return educationData[level][g] || 0;
             })
         }))
     };
 
-    var configs = {
+    const configs = {
         type: 'bar',
         data: data,
         options: {

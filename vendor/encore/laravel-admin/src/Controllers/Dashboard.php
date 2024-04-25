@@ -229,33 +229,36 @@ class Dashboard
 
     public static function getEducationByGender()
     {
-        $educ_level = [
+        $educ_levels = [
             'formal education' => 'Formal Education',
             'informal education' => 'Informal Education',
             'no education' => 'No Education'
         ];
 
         // Fetch distinct education levels and genders from the database
-        $educationLevelsDb = Person::distinct('education_level')->pluck('education_level')->toArray();
-        $gender = Person::distinct('sex')->pluck('sex')->toArray();
+        $distinctData = Person::select('education_level', 'sex', DB::raw('SUM(sex) as gender_count'))
+            ->groupBy('education_level', 'sex')
+            ->get();
 
+        $educationLevelsDb = $distinctData->pluck('education_level')->toArray();
+        $gender = $distinctData->pluck('sex')->toArray();
 
         // Map the education levels from the database to their names
-        $educationLevels = array_map(function ($el) use ($educ_level) {
-            return $educ_level[$el] ?? 'Unknown'; // Fallback to 'Unknown' if not found
+        $educationLevels = array_map(function ($el) use ($educ_levels) {
+            return $educ_levels[$el] ?? 'Unknown'; // Fallback to 'Unknown' if not found
         }, $educationLevelsDb);
 
-        // Fetch and prepare the education data
-        $educationData = Person::select('education_level', 'sex', DB::raw('count(*) as count'))
-            ->groupBy('education_level', 'sex')
-            ->get()
-            ->each(function ($item) use ($educ_level) {
-                // Map each education level to its name for display
-                $item->education_level = $educ_level[$item->education_level] ?? 'Unknown';
-            });
+        // Prepare the education data
+        $educationData = [];
+        foreach ($distinctData as $item) {
+            $educationData[$item->education_level][$item->sex] = $item->gender_count;
+        }
 
         return view('dashboard.disability-education-gender', compact('educationLevels', 'gender', 'educationData'));
     }
+
+
+
 
     //Method for retrieving emploment status of people with disability according to my system
     public static function getEmploymentStatus()
