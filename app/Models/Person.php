@@ -129,15 +129,7 @@ class Person extends Model
             }
 
 
-            $current_user = auth()->user();
-            $organisation = Organisation::where('user_id', $current_user->id)->first();
-
-            if ($organisation) {
-                $person->district_of_residence = $organisation->district_id;
-            } else {
-                // Handle the error if no organisation is found or other business logic
-                throw new \Exception("No linked organisation found for setting district residence.");
-            }
+            $person->district_of_residence = $person->district_id;
         });
 
         static::saving(function ($person) {
@@ -171,23 +163,6 @@ class Person extends Model
             $record->name = ucfirst(strtolower($record->name));
             $record->other_names = ucfirst(strtolower($record->other_names));
             $record->save();
-        }
-    }
-
-    public static function updateDistrictOfResidence()
-    {
-        $admin = Admin::user();
-        $organisation = Organisation::where('name', $admin->name)->first();
-
-        if (!$organisation) {
-            return "Organisation not found";
-        }
-
-        $persons = Person::whereNull('district_of_residence')->get();
-
-        foreach ($persons as $person) {
-            $person->district_of_residence = $organisation->district_id;
-            $person->save();
         }
     }
 }
