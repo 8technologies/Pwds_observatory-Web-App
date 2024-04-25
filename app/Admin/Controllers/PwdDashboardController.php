@@ -3,23 +3,11 @@
 namespace App\Admin\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Models\Association;
-use App\Models\Group;
-use App\Models\Location;
-use App\Models\Person;
-use App\Models\Product;
 use App\Models\Job;
-use App\Models\Organisation;
-use App\Models\ServiceProvider;
-use Illuminate\Support\Facades\DB;
-use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Dashboard;
-use Encore\Admin\Controllers\District_Union_Dashboard;
-use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Content;
 use Encore\Admin\Layout\Row;
-use Encore\Admin\Widgets\Box;
 use Illuminate\Support\Facades\Auth;
 
 class PwdDashboardController extends Controller
@@ -36,22 +24,49 @@ class PwdDashboardController extends Controller
         $user = auth("admin")->user();
         $admin_role = $user->roles->first()->slug;
 
-        if ($admin_role != 'pwd' && $admin_role != 'basic') {
+        if ($user && $admin_role == null) {
             return redirect()->route('approval');
-        } else {
-            return redirect()->route('admin.people.create');
         }
 
-        return $content
+        $content
             ->title('ICT for Persons With Disabilities - Dashboard')
-            ->description('Hello ' . $user->name . "!")
+            ->description('Hello ' . $user->name . "!");
+
+
+        $content->row(function (Row $row) {
+            $row->column(6, function (Column $column) {
+                $events = Dashboard::dashboard_events();
+                $styledEvents = "<div style='padding: 20px; border: 1px solid #ccc; margin-bottom: 10px;'>{$events}</div>";
+                $column->append($styledEvents);
+            });
+
+            $row->column(6, function (Column $column) {
+                $column->append(Dashboard::dashboard_news());
+            });
+        });
+
+        $content->row(function (Row $row) {
+            $row->column(12, function (Column $column) {
+                $column->append(Dashboard::dashboard_jobs());
+            });
+        });
+        return $content;
+        return $content
+            ->title('Dashboard')
+            ->description('Description...')
+            ->row(Dashboard::title())
             ->row(function (Row $row) {
-                $row->column(6, function (Column $column) {
-                    $person = Person::where('id', auth("admin")->user()->id)->first();
-                    $column->append(Dashboard::dashboard_events());
+
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::environment());
                 });
-                $row->column(6, function (Column $column) {
-                    $column->append(Dashboard::dashboard_news());
+
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::extensions());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::dependencies());
                 });
             });
     }

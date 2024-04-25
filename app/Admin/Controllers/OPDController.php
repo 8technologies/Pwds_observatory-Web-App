@@ -24,7 +24,7 @@ class OPDController extends AdminController
      *
      * @var string
      */
-    protected $title = 'OPDs';
+    protected $title = 'NOPDs';
     /**
      * Make a grid builder.
      *
@@ -98,11 +98,11 @@ class OPDController extends AdminController
                 $tools->disableList();
                 $tools->disableDelete();
                 if ($model->membership_type == 'member') {
-                    $tools->append('<a class="btn btn-sm btn-primary mx-3" href="' . url('admin/opds/create') . '">Add OPD</a>');
+                    $tools->append('<a class="btn btn-sm btn-primary mx-3" href="' . url('admin/opds/create') . '">Add NOPD</a>');
                     $tools->append('<a class="btn btn-sm btn-info mx-3" href="' . url('admin/district-unions/create') . '">Add District Union</a>');
                 } else if ($model->membership_type == 'all') {
                     $tools->append('<a class="btn btn-sm btn-info mx-3" href="' . url('admin/people/create') . '">Add Person With Disability</a>');
-                    $tools->append('<a class="btn btn-sm btn-primary mx-3" href="' . url('admin/opds/create') . '">Add OPD</a>');
+                    $tools->append('<a class="btn btn-sm btn-primary mx-3" href="' . url('admin/opds/create') . '">Add NOPD</a>');
                     $tools->append('<a class="btn btn-sm btn-info mx-3" href="' . url('admin/district-unions/create') . '">Add District Union</a>');
                 } else {
                     $tools->append('<a class="btn btn-sm btn-info mx-3" href="' . url('admin/people/create') . '">Add Person With Disability</a>');
@@ -156,7 +156,7 @@ class OPDController extends AdminController
         });
 
         $form->tab('Info', function ($form) {
-            $form->text('name', __('OPD NName'))->placeholder('Name')->rules("required");
+            $form->text('name', __('NOPD NName'))->placeholder('Name')->rules("required");
             $form->text('registration_number', __('Registration number'))->placeholder('RegNo.')->rules("required");;
             $form->date('date_of_registration', __('Date of registration'));
             $form->textarea('mission', __('Mission'))->placeholder('Org. Mission')->rules("required");

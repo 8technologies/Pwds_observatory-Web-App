@@ -40,8 +40,10 @@ class PersonController extends AdminController
      */
     protected function grid()
     {
-        // $admin = Person::updateDistrictOfResidence();
-        // dd($admin);
+        // $u = Admin::user();
+        // $organisation = Organisation::where('user_id', $u->id)->first();
+        // dd($u, $organisation->district_id);
+
 
         $grid = new Grid(new Person());
 
@@ -65,9 +67,14 @@ class PersonController extends AdminController
 
         $grid->quickSearch('name')->placeholder('Search by name');
 
+<<<<<<< HEAD
         $user = auth("admin")->user();
         $organisation = Organisation::find($user->organisation_id);
 
+=======
+        $user = Admin::user();
+        $organisation = Organisation::where('user_id', $user->id)->first();
+>>>>>>> pwd_changes
         if ($user->inRoles(['nudipu', 'administrator'])) {
             $grid->model()->orderBy('created_at', 'desc');
         } elseif ($user->isRole('district-union')) {
@@ -284,6 +291,7 @@ class PersonController extends AdminController
             // $footer->disableCreatingCheck();
             //$footer->disableSubmit();
         });
+<<<<<<< HEAD
         $form->divider('Bio Data');
 
 
@@ -365,6 +373,38 @@ class PersonController extends AdminController
             ->when('informal education', function (Form $form) {
                 $form->text('informal_education', __('Informal Education'))->placeholder("Enter any informal education forexample: tailoring, carpentry, etc")->rules('required');
             })->rules('required');
+=======
+        $form->tab('Bio', function ($form) {
+            $form->image('photo', __('Photo'))->uniqueName();
+            $form->text('name', __('Surname'))->placeholder('Surname')->rules('required');
+            $form->text('other_names', __('Other Names'))->placeholder('Other Names')->rules('required');
+            $form->select('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
+            $form->multipleSelect('disabilities', __('Select disabilities'))
+                ->rules('required')
+                ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+            $form->date('dob', __('Date of Birth'))->rules('required')->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY')->rules('required');
+            $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
+            $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
+            $form->email('email', __('Email'))->placeholder('Email');
+            $form->divider();
+            $form->text('id_number', __('ID Number'))->placeholder('ID Number')
+                ->help("NIN, Passport Number, Driving Permit Number");
+            $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+
+            $u = Admin::user();
+            $organisation = Organisation::where('user_id', $u->id)->first();
+            $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
+
+            $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
+            $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
+            //if age < 18, then marital status must be disabled
+            $form->select('marital_status', __('Marital Status'))->options(
+                ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
+            )->rules('required');
+            $form->text('ethnicity', __('Ethnicity'))->rules('required')
+                ->help('Your Tribe');
+            $form->text('religion', __('Religion'))->rules('required');
+>>>>>>> pwd_changes
 
         $form->divider('Skills');
 
@@ -393,12 +433,19 @@ class PersonController extends AdminController
         /*  $form->html('
                 <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
                 <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
+<<<<<<< HEAD
             '); */
 
         $user = auth("admin")->user();
         $user = Administrator::find($user->id);
 
 
+=======
+            ');
+        });
+
+        $user = auth("admin")->user();
+>>>>>>> pwd_changes
         if (!$user->inRoles(['district-union', 'opd'])) {
             $form->divider('Memberships');
             $form->radio('is_member', __('Membership'))->options([1 => 'Yes', 0 => 'No'])->rules('required')
@@ -446,6 +493,7 @@ class PersonController extends AdminController
         $form->quill('aspirations', __('Aspirations'));
 
 
+<<<<<<< HEAD
         //If the person has self registered
         if (Admin::user()->inRoles(['pwd', 'basic'])) {
 
@@ -481,6 +529,26 @@ class PersonController extends AdminController
                 $organisation = Organisation::where('user_id', $current_user->id)->first();
                 $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
             }
+=======
+
+        if (Admin::user()->inRoles(['district-union', 'opd'])) {
+            $form->tab('Profiler Name', function ($form) {
+                $form->text('profiler', __('Profiler'))
+                    ->placeholder('Enter your name as a profiler')
+                    ->help('Enter your name as a profiler')
+                    ->rules('required');
+                if (Admin::user()->isRole('opd')) {
+                    $current_user = auth("admin")->user();
+                    $organisation = Organisation::where('user_id', $current_user->id)->first();
+                    $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
+                }
+                $form->divider();
+                //Add submit button
+                $form->html('
+                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+                <button type="submit" class="btn btn-primary float-right">Submit</button>');
+            });
+>>>>>>> pwd_changes
         }
         // $form->hidden('district_id');
         // $form->hidden('opd_id');
@@ -489,24 +557,19 @@ class PersonController extends AdminController
 
         // Check if district union is doing the registration and send credentials else do not send
         if (auth("admin")->user()->inRoles(['district-union', 'opd'])) {
-
             $form->saving(function ($form) {
                 // save the admin in users and map to this du
                 if ($form->isCreating()) {
                     //generate random password for user and send it to the user's email
                     $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
                     $password = substr(str_shuffle($alpha_list), 0, 8);
-
                     //TODO: check if email was given, if not consider next_of_kin else no account
                     if ($form->email != null) {
-
                         $pwd_email = $form->email;
-
                         $new_password = $password;
                         $password = Hash::make($password);
                         //check if user exists
                         $admin = User::where('email', $pwd_email)->first();
-
                         if ($admin == null) {
                             $admin = User::create([
                                 'username' => $pwd_email,
@@ -517,43 +580,29 @@ class PersonController extends AdminController
                                 'gender' => $form->sex,
                                 'avatar' => $form->photo
                             ]);
-
                             $admin->assignRole('pwd');
                         }
-
                         session(['password' => $new_password]);
                     } else {
                         //TODO: Send user has no email
                     }
 
                     $form->is_approved = 1; //Approve if registered by an organisation
-
                     $current_user = auth("admin")->user();
                     $organisation = Organisation::where('user_id', $current_user->id)->first();
                     error_log("Organisation: " . $organisation->name);
 
-                    if ($organisation == null || $organisation->relationship_type == null) {
-                        $du = Organisation::where('district_id', $form->district_of_residence)->where('relationship_type', 'du')->first();
-
-                        return back()->with('error', 'You do not have an organisation to register a member under');
-
-                        if ($du != null) {
-                            $form->district_id = $du->district_id;
-                            $form->is_verified = 0;
-                        } else {
-                            return back()->with('error', 'You do not have an organisation to register a member under');
-                        }
+                    if ($organisation == null) {
                         //return error
+                        return back()->with('error', 'You do not have an organisation to register a member under');
                     } else if ($organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
-                        $form->district_of_residence = $organisation->id;
                     } else if ($organisation->relationship_type == 'opd') {
                         $form->opd_id = $organisation->id;
                     }
                 }
             });
             //If user registers themselves, then information must be sent to du admin for approval
-
             $form->saved(function (Form $form) {
                 if ($form->isCreating()) {
                     $user_password = session('password');
@@ -564,7 +613,6 @@ class PersonController extends AdminController
                     if ($user_password != null) {
 
                         if ($form->email != null) {
-
                             Mail::to($form->email)->send(new PwdCreated($form->email, $user_password));
                         } else {
                             Mail::to($form->pwd_email)->send(new MailNextOfKin("$form->name $form->other_names", $form->next_of_kin_email, $user_password));

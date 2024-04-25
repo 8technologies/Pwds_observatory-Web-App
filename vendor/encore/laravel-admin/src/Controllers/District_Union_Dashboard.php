@@ -151,9 +151,9 @@ class District_Union_Dashboard
 
         // Define education levels
         $educ_levels = [
-            'formal' => 'Formal Education',
-            'informal' => 'Informal Education',
-            'none' => 'No Education'
+            'formal education' => 'Formal Education',
+            'informal education' => 'Informal Education',
+            'no education' => 'No Education'
         ];
 
         // Fetch education data
@@ -171,8 +171,12 @@ class District_Union_Dashboard
 
 
         // Separate education levels and genders
-        $district_educationLevels = $districtEducationData->pluck('education_level')->unique()->toArray();
+        $district_educationLevels = array_values($districtEducationData->pluck('education_level')->unique()->toArray());
         $genders = $districtEducationData->pluck('sex')->unique()->toArray();
+
+
+        // dd($districtEducationData, $district_educationLevels, $genders);
+
 
         return view('du-dashboard.district_education_levels', compact('districtName', 'district_educationLevels', 'genders', 'districtEducationData'));
     }

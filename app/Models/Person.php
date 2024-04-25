@@ -150,8 +150,6 @@ class Person extends Model
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
             }
-
-        
         });
 
         static::updating(function ($person) {

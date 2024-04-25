@@ -10,7 +10,7 @@
 </div>
 
 <script>
-    const districtEducationData = @json($districtEducationData);
+    var districtEducationData = @json($districtEducationData);
     var gender = @json($genders).filter(label => label !== null && label !== 'N/A');
     var districtEducationLevels = @json($district_educationLevels).filter(educ_levels => educ_levels != 'Unknown');
 
