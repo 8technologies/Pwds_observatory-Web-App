@@ -131,10 +131,6 @@ class HomeController extends Controller
                 $column->append(Dashboard::dashboard_news());
             });
         });
-
-
-
-
         return $content;
         return $content
             ->title('Dashboard')
