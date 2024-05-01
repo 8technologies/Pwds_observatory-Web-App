@@ -33,14 +33,14 @@ class HomeController extends Controller
         if ($u && $admin_role == 'pwd') {
             return redirect()->route('pwd-dashboard');
         }
-        
+
         $content->row(function (Row $row) {
             $row->column(3, function (Column $column) {
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Number Of DUs',
-                    'sub_title' => 'dus',
                     'number' => Organisation::where('relationship_type', '=', 'du')->count(),
+                    'sub_title' => 'dus',
                     'link' => admin_url('district-unions'),
                     'font_size' => '1.5em'
                 ]));
@@ -49,9 +49,9 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Number Of NOPDs',
-                    'sub_title' => 'nopds',
                     'font_size' => '1.5em',
                     'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
+                    'sub_title' => 'nopd',
                     'link' => admin_url('opds'),
                 ]));
             });
@@ -59,8 +59,8 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Service providers',
-                    'sub_title' => 'service providers',
                     'number' => ServiceProvider::count(),
+                    'sub_title' => 'service providers',
                     'link' => admin_url('service-providers'),
                 ]));
             });
@@ -69,8 +69,8 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
-                    'sub_title' => 'pwds',
                     'number' => Person::count(),
+                    'sub_title' => 'pwd',
                     'link' => admin_url('people'),
                 ]));
             });
@@ -83,20 +83,20 @@ class HomeController extends Controller
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getPeopleWithDisability());
             });
-            
+
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getDisabilityByGenderAndAge());
             });
-            
+
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getDisabilityCount());
             });
         });
-        return $content; 
+
 
         $content->row(function (Row $row) {
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getEducationByGender());
+                $column->append(Dashboard::getEmploymentStatus());
             });
 
             $row->column(4, function (Column $column) {
@@ -111,9 +111,6 @@ class HomeController extends Controller
         //Bar Chart for People with Service count.
         $content->row(function (Row $row) {
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getEmploymentStatus());
-            });
-            $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getServiceProviderCount());
             });
 
@@ -121,7 +118,6 @@ class HomeController extends Controller
                 $column->append(Dashboard::getTargetGroupByService());
             });
         });
-
 
         $content
             ->title('ICT for Persons With Disabilities - Dashboard')

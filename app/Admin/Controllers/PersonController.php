@@ -40,10 +40,6 @@ class PersonController extends AdminController
      */
     protected function grid()
     {
-        // $u = Admin::user();
-        // $organisation = Organisation::where('user_id', $u->id)->first();
-        // dd($u, $organisation->district_id);
-
 
         $grid = new Grid(new Person());
 
@@ -67,18 +63,12 @@ class PersonController extends AdminController
 
         $grid->quickSearch('name')->placeholder('Search by name');
 
-<<<<<<< HEAD
-        $user = auth("admin")->user();
-        $organisation = Organisation::find($user->organisation_id);
-
-=======
         $user = Admin::user();
         $organisation = Organisation::where('user_id', $user->id)->first();
->>>>>>> pwd_changes
         if ($user->inRoles(['nudipu', 'administrator'])) {
             $grid->model()->orderBy('created_at', 'desc');
         } elseif ($user->isRole('district-union')) {
-            $grid->model()->where('district_of_residence', $organisation->district_id)->orderBy('created_at', 'desc');
+            $grid->model()->where('district_id', $organisation->district_id)->orderBy('created_at', 'desc');
         } else if ($user->isRole('opd')) {
             $grid->model()->where('opd_id', $organisation->id)->orderBy('created_at', 'desc');
         }
@@ -101,18 +91,16 @@ class PersonController extends AdminController
         $grid->column('sex', __('Gender'))->sortable();
         $grid->column('education_level', __('Education'))->display(
             function ($education_level) {
-                $levels = [
-                    'formal education' => 'Formal Education',
-                    'informal education' => 'Informal Education',
-                    'no education' => 'No Education'
-                ];
-                if (array_key_exists($education_level, $levels)) {
-                    return $levels[$education_level];
+                if ($education_level == 'formal Education' || $education_level == 1) {
+                    return 'Formal Education';
+                } else if ($education_level == 'informal Education') {
+                    return "Informal Education";
                 } else {
-                    return 'Not mentioned';
+                    return "No Education";
                 }
             }
-        )->sortable()->hide();
+        )
+            ->sortable()->hide();
         $grid->column('employment_status', __('Employment Type'))
             ->display(function ($employee_status) {
                 if ($employee_status == 'formal employment') {
@@ -128,13 +116,13 @@ class PersonController extends AdminController
         $grid->column('is_formal_education', __('Formal Education'))->display(
             function ($is_formal_education) {
                 $levels = [
-                    'phd' => 'PHD',
-                    'master\'s degree' => 'Master\'s Degree',
-                    'bachelor\'s degree' => 'Bachelor\'s Degree',
-                    'diploma' => 'Diploma',
-                    'secondary-uace' => 'Secondary - UACE',
-                    'secondary-uce' => 'Secondary - UCE',
-                    'primary' => 'Primary - PLE',
+                    'PHD' => 'PHD',
+                    'Masters' => 'Master\'s Degree',
+                    'Bachelors' => 'Bachelor\'s Degree',
+                    'Diploma' => 'Diploma',
+                    'Secondary-UACE' => 'Secondary - UACE',
+                    'Secondary-UCE' => 'Secondary - UCE',
+                    'Primary' => 'Primary - PLE',
                 ];
                 if (array_key_exists($is_formal_education, $levels)) {
                     return $levels[$is_formal_education];
@@ -280,52 +268,74 @@ class PersonController extends AdminController
      */
     protected function form()
     {
-        // $education_level = Dashboard::getEducationByGender();
-        // dd($education_level);
         $form = new Form(new Person());
 
         $form->footer(function ($footer) {
             $footer->disableReset();
-            // $footer->disableViewCheck();
-            // $footer->disableEditingCheck();
-            // $footer->disableCreatingCheck();
-            //$footer->disableSubmit();
+            $footer->disableViewCheck();
+            $footer->disableEditingCheck();
+            $footer->disableCreatingCheck();
+            $footer->disableSubmit();
         });
-        $form->tab('Bio', function ($form) {
-            $form->image('photo', __('Photo'))->uniqueName();
-            $form->text('name', __('Surname'))->placeholder('Surname')->rules('required');
-            $form->text('other_names', __('Other Names'))->placeholder('Other Names')->rules('required');
-            $form->select('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
-            $form->multipleSelect('disabilities', __('Select disabilities'))
-                ->rules('required')
-                ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
-            $form->date('dob', __('Date of Birth'))->rules('required')->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY')->rules('required');
-            $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
-            $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
-            $form->email('email', __('Email'))->placeholder('Email');
-            $form->divider();
-            $form->text('id_number', __('ID Number'))->placeholder('ID Number')
-                ->help("NIN, Passport Number, Driving Permit Number");
-            $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
+        $form->divider('Bio Data');
+        $form->image('photo', __('Photo'))->uniqueName();
+        $form->text('name', __('Surname'))->placeholder('Surname')->rules('required');
+        $form->text('other_names', __('Other Names'))->placeholder('Other Names')->rules('required');
+        $form->select('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
+        $form->multipleSelect('disabilities', __('Select disabilities'))
+            ->rules('required')
+            ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+        $form->date('dob', __('Date of Birth'))->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY');
+        $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
+        $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
+        $form->email('email', __('Email'))->placeholder('Email');
+        $form->divider();
+        $form->text('id_number', __('ID Number'))->placeholder('ID Number')
+            ->help("NIN, Passport Number, Driving Permit Number");
+        $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
 
-            $u = Admin::user();
-            $organisation = Organisation::where('user_id', $u->id)->first();
-            $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
+        $u = Admin::user();
+        $organisation = Organisation::where('user_id', $u->id)->first();
+        $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
 
-            $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
-            $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
-            //if age < 18, then marital status must be disabled
-            $form->select('marital_status', __('Marital Status'))->options(
-                ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
-            )->rules('required');
-            $form->text('ethnicity', __('Ethnicity'))->rules('required')
-                ->help('Your Tribe');
-            $form->text('religion', __('Religion'))->rules('required');
+        $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
+        $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
+        //if age < 18, then marital status must be disabled
+        $form->select('marital_status', __('Marital Status'))->options(
+            ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
+        )->rules('required');
+        $form->text('ethnicity', __('Ethnicity'))->help('Your Tribe');
+        $form->text('religion', __('Religion'));
+
+        $form->divider('Academics');
+        $form->select('education_level', __('Education'))->options(
+            ['formal Education' => 'Formal Education', 'informal Education' => 'Informal Education', 'no Education' => 'No Education']
+        )
+            ->when('formal Education', function (Form $form) {
+                $form->select('is_formal_education', __('Formal Education'))->options(['PHD' => 'PHD', 'Masters' => 'Masters', 'Bachelors' => 'Bachelors', 'Diploma' => 'Diploma', 'Secondary-UACE' => 'Secondary-UACE', 'Secondary-UCE' => 'Secondary-UCE', 'Primary' => 'Primary'])->rules('required')
+                    ->when('PHD', function (Form $form) {
+                        $form->text('indicate_class', 'Indicate class')->placeholder('Class');
+                    })->when('Masters', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Bachelors', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Diploma', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Secondary-UACE', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Secondary-UCE', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Primary', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    });
+            })->rules('required')
+            ->when('informal Education', function (Form $form) {
+                $form->text('informal_education', __('Informal Education'))->placeholder("Enter any informal education forexample: tailoring, carpentry, etc")->rules('required');
+            })->rules('required')
+            ->default('no Education');
+
 
         $form->divider('Skills');
-
-        /*             $form->html(' <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>'); */
 
         $form->textarea('skills', __('Skills'))->rows(10)->placeholder("Enter skills forexample: knitting, dancing, teamwork, etc");
         $form->divider();
@@ -336,21 +346,21 @@ class PersonController extends AdminController
 
         $form->radio('is_employed', __('Are you Employed'))->options([1 => 'Yes', 2 => 'No'])->rules('required')
             ->when(1, function (Form $form) {
-                $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment', 'unemployed' => 'Unemployed'])->rules('required')
+                $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment'])->rules('required')
                     ->when('formal employment', function (Form $form) {
                         $form->text('position', __('Current position'))->placeholder('What is your current position')->rules('required');
                     })
                     ->when('self employment', function (Form $form) {
                         $form->text('occupation', __('Occupation'))->placeholder('What is your occupation?')->rules('required')->help('e.g Farming, Fishing, Retailer');
                     });
-            })->default(2)
+            })->required()->default('Unemployed')
             ->help("Are you currently employed? or have you ever been employed?");
         $form->divider();
-        /*  $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
-        });
+        // /*  $form->html('
+        //         <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
+        //         <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
+        //     ');
+        // });
 
         $user = auth("admin")->user();
         if (!$user->inRoles(['district-union', 'opd'])) {

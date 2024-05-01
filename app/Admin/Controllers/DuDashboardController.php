@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Job;
 use App\Models\Organisation;
 use App\Models\ServiceProvider;
+use App\Models\User;
 use App\Models\Utils;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\Dashboard;
@@ -48,37 +49,58 @@ class DuDashboardController extends Controller
                     'title' => 'Persons with Disability',
                     'sub_title' => 'pwds',
                     'number' => $count_pwd,
-                    'font_size' => '1.5em'
+                    'font_size' => '1.5em',
+                    'link' => admin_url('people'),
                 ]));
             });
             $row->column(3, function (Column $column) {
-                $u = Admin::user(); 
+                $u = Admin::user();
                 $organisation = Organisation::find($u->organisation_id);
-                $service_providers = ServiceProvider::with('districts_of_operation')->where('id', $organisation->district_id)->count();
-                $box = new Box("Service Providers",  '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . $service_providers . '</h3>');
+                $service_providers_count = ServiceProvider::with('districts_of_operation')
+                    ->where('id', $organisation->district_id)
+                    ->count();
+
+                // Retrieve the total services count using the getDistrictServiceProviders() function
+                $totalServices = District_Union_Dashboard::getDistrictServiceProviders()->getData()['totalServices'];
+
+                $box = new Box(
+                    "Service Providers",
+                    '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' .
+                        $totalServices . '</h3>'
+                );
                 $box->style('success')
                     ->solid();
                 $column->append($box, view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Service Providers',
-                    'sub_title' => 'service providers',
                     'font_size' => '1.5em',
-                    'number' => $service_providers,
-                    // 'link' => admin_url('opds'),
+                    'number' => $totalServices,
+                    'link' => admin_url('service-providers'),
                 ]));
             });
+
+
             $row->column(3, function (Column $column) {
                 $box = new Box("Jobs",  '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . Job::count() . '</h3>');
                 $box->style('success')
                     ->solid();
-                $column->append($box);
+                $column->append(
+                    $box,
+                    view(
+                        'widgets.box-5',
+                        ['link' => admin_url('jobs'),]
+                    )
+                );
             });
 
             $row->column(3, function (Column $column) {
                 $box = new Box("Products and Services",  '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . Product::count() . '</h3>');
                 $box->style('success')
                     ->solid();
-                $column->append($box);
+                $column->append(
+                    $box,
+                    ['link' => admin_url('products'),]
+                );
             });
         });
 
@@ -117,6 +139,7 @@ class DuDashboardController extends Controller
                 $column->append(Dashboard::dashboard_news());
             });
         });
+        return $content;
         return $content
             ->title('Dashboard')
             ->description('Hello, welcome to ' . $organisation->name . ' Dashboard')

@@ -924,5 +924,6 @@ DELETE FROM people WHERE id > 8954
             $org->relationship_type = "opd";
             $org->save();
         }
+        return;
     }
 }

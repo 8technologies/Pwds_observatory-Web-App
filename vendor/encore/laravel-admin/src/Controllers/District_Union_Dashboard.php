@@ -25,9 +25,9 @@ class District_Union_Dashboard
     public static function getGenderCountDisability()
     {
         // Get the district union ID of the logged-in user
-        $u = auth()->user(); 
-        $organisation = Organisation::find($u->organisation_id); 
-        $district_union_id = $organisation->district_id; 
+        $u = auth()->user();
+        $organisation = Organisation::find($u->organisation_id);
+        $district_union_id = $organisation->district_id;
 
         $districtName = District::where('id', $district_union_id)->first()->name;
 
@@ -50,7 +50,7 @@ class District_Union_Dashboard
     public static function getDistrictByGenderAndAge()
     {
         // Initialize the array to hold counts
-        $user = auth()->user(); 
+        $user = auth()->user();
         $organisation = Organisation::find($user->organisation_id);
         $district_union_id = $organisation->district_id;
 
@@ -112,7 +112,7 @@ class District_Union_Dashboard
     public static function getDistrictDisabilityCount()
     {
         $user = auth()->user();
-        $organisation = Organisation::find($user->organisation_id); 
+        $organisation = Organisation::find($user->organisation_id);
         $district_union_id = $organisation->district_id;
 
         // Assuming District::find() is sufficient since we already know the district ID.
@@ -143,7 +143,7 @@ class District_Union_Dashboard
     public static function getDistrictEducationByGender()
     {
         $user = auth()->user();
-        $organisation = Organisation::find($user->organisation_id); 
+        $organisation = Organisation::find($user->organisation_id);
         $district_union_id = $organisation->district_id;
 
         // Fetch district name
@@ -151,9 +151,9 @@ class District_Union_Dashboard
 
         // Define education levels
         $educ_levels = [
-            'formal education' => 'Formal Education',
-            'informal education' => 'Informal Education',
-            'no education' => 'No Education'
+            'formal Education' => 'Formal Education',
+            'informal Education' => 'Informal Education',
+            'no Education' => 'No Education'
         ];
 
         // Fetch education data
@@ -175,16 +175,13 @@ class District_Union_Dashboard
         $genders = $districtEducationData->pluck('sex')->unique()->toArray();
 
 
-        // dd($districtEducationData, $district_educationLevels, $genders);
-
-
         return view('du-dashboard.district_education_levels', compact('districtName', 'district_educationLevels', 'genders', 'districtEducationData'));
     }
 
     public static function getDistrictEmploymentStatus()
     {
         $user = auth()->user();
-        $organisation = Organisation::find($user->organisation_id); 
+        $organisation = Organisation::find($user->organisation_id);
         $district_union_id = $organisation->district_id;
 
         // Fetch district name
@@ -219,7 +216,7 @@ class District_Union_Dashboard
     public static function getDistrictServiceProviders()
     {
         $user = auth()->user();
-        $organisation = Organisation::find($user->organisation_id); 
+        $organisation = Organisation::find($user->organisation_id);
         $district_union_id = $organisation->district_id;
 
         // Fetch district name
@@ -247,11 +244,13 @@ class District_Union_Dashboard
             }
         }
 
+        $totalServices = array_sum($serviceCounts);
+
         // Sort counts array
         arsort($serviceCounts);
 
         // Pass counts data to view
-        return view('du-dashboard.district_service_provider', compact('serviceCounts', 'districtName'));
+        return view('du-dashboard.district_service_provider', compact('serviceCounts', 'districtName', 'totalServices'));
     }
 
 

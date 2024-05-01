@@ -230,9 +230,9 @@ class Dashboard
     public static function getEducationByGender()
     {
         $educ_levels = [
-            'formal education' => 'Formal Education',
-            'informal education' => 'Informal Education',
-            'no education' => 'No Education'
+            'formal Education' => 'Formal Education',
+            'informal Education' => 'Informal Education',
+            'no Education' => 'No Education'
         ];
 
         // Fetch distinct education levels and genders from the database
@@ -240,7 +240,7 @@ class Dashboard
             ->groupBy('education_level', 'sex')
             ->get();
 
-        $educationLevelsDb = $distinctData->pluck('education_level')->toArray();
+        $educationLevelsDb = array_values($distinctData->pluck('education_level')->toArray());
         $gender = $distinctData->pluck('sex')->toArray();
 
         // Map the education levels from the database to their names

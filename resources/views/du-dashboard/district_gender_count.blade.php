@@ -60,11 +60,7 @@
 
     .card {
         background-color: #fff;
-<<<<<<< HEAD
-        margin-bottom: 2rem;
-=======
         margin: 10px;
->>>>>>> pwd_changes
     }
 </style>
 
