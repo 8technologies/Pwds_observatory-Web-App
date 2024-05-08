@@ -4,13 +4,14 @@
             <h5 class="text-center">Number of Persons by Disability Category</h5>
         </div>
         <div class="col-12" id="item-select">
-            <label for="districtSelect">Select District:</label>
-            <select name="districtSelector" id="districtSelector" onchange="UpdateCategory()">
-                <option value="all">All Districts</option>
-                @foreach ($districtDisabilityCounts as $districtName => $counts)
-                    <option value="{{ $districtName }}">{{ $districtName }}</option>
-                @endforeach
-            </select>
+            <label for="districtSelect">
+                <select name="districtSelector" id="districtSelector" onchange="UpdateCategory()" class="form-select">
+                    <option value="all">All Districts</option>
+                    @foreach ($districtDisabilityCounts as $districtName => $counts)
+                        <option value="{{ $districtName }}">{{ $districtName }}</option>
+                    @endforeach
+                </select>
+            </label>
 
         </div>
     </div>

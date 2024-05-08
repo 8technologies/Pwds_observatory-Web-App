@@ -128,6 +128,14 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
+            $user = Admin::user();
+            $organisation = Organisation::find($user->organisation_id);
+            if ($organisation->relationship_type == 'opd') {
+                $person->opd_id = $organisation->id;
+            }
+            if ($organisation->relationship_type == 'du') {
+                $person->district_id = $organisation->district_id;
+            }
 
             $person->district_of_residence = $person->district_id;
         });
@@ -139,8 +147,16 @@ class Person extends Model
             $person->village = ucfirst(strtolower($person->village));
 
             //is_employed == 0 must be taken as unemployed
-            if ($person->is_employed == 0) {
-                $person->employment_status = 'Unemployed';
+            if ($person->is_employed == 2) {
+                $person->employment_status = 'unemployed';
+            }
+
+            $user = Admin::user();
+            $organisation = Organisation::find($user->organisation_id);
+            if (!$organisation) {
+                die('Wait for admin approval');
+            } else {
+                $person->is_approved = 1;
             }
         });
 
@@ -152,6 +168,14 @@ class Person extends Model
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
+            }
+
+            $user = Admin::user();
+            $organisation = Organisation::find($user->organisation_id);
+            if (!$organisation) {
+                die('Wait for admin approval');
+            } else {
+                $person->is_approved = 1;
             }
         });
     }

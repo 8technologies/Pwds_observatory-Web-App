@@ -5,12 +5,13 @@
             <h5 class="text-center">District Unions Vs NOPDs per Region</h5>
         </div>
         <div class="col-12" id="item-select">
-            <label for="organisationType">Select DU or NOPD:</label>
-            <select name="organisationType" id="organisationType">
-                <option value="all">Show All</option>
-                <option value="du">District Unions</option>
-                <option value="opd">NOPDs</option>
-            </select>
+            <label for="organisationType">
+                <select name="organisationType" id="organisationType" class="form-select">
+                    <option value="all">Show All</option>
+                    <option value="du">District Unions</option>
+                    <option value="opd">NOPDs</option>
+                </select>
+            </label>
         </div>
     </div>
     <div class="chart-container">

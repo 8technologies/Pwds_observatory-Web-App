@@ -34,9 +34,29 @@ class PwdDashboardController extends Controller
             return redirect()->route('approval');
         }
 
+        $contentTitle = 'ICT for Persons With Disabilities - Dashboard';
+        $userGreeting = '';
+
+        // Check the user role 
+        if ($user && $admin_role == 'pwd') {
+            // For 'pwd', use 'first_name'
+            $userGreeting = 'Hello ' . $user->first_name . '!';
+        } elseif ($user && $admin_role == 'basic') {
+            // For basic, use 'name'
+            $userGreeting = 'Hello ' . $user->name . '!';
+        } else {
+            // Default greeting 
+            $userGreeting = 'Hello!';
+        }
+
+        // Set the content title and description.
         $content
-            ->title('ICT for Persons With Disabilities - Dashboard')
-            ->description('Hello ' . $user->name . "!");
+            ->title($contentTitle)
+            ->description($userGreeting);
+
+        // $content
+        //     ->title('ICT for Persons With Disabilities - Dashboard')
+        //     ->description('Hello ' . $user->first_name . "!");
 
         // $content->row(function (Row $row) {
         //     $row->column(3, function (Column $column) {

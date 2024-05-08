@@ -41,6 +41,9 @@ class PersonController extends AdminController
     protected function grid()
     {
 
+        // $user = Admin::user();
+        // $organisation = Organisation::find($user->organisation_id);
+        // dd($user, $organisation);
         $grid = new Grid(new Person());
 
         //TODO: fix filters, and also display users from the opd, and district unions
@@ -275,7 +278,7 @@ class PersonController extends AdminController
             $footer->disableViewCheck();
             $footer->disableEditingCheck();
             $footer->disableCreatingCheck();
-            $footer->disableSubmit();
+            // $footer->disableSubmit();
         });
         $form->divider('Bio Data');
         $form->image('photo', __('Photo'))->uniqueName();
@@ -294,9 +297,9 @@ class PersonController extends AdminController
             ->help("NIN, Passport Number, Driving Permit Number");
         $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
 
-        $u = Admin::user();
-        $organisation = Organisation::where('user_id', $u->id)->first();
-        $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
+        // $u = Admin::user();
+        // $organisation = Organisation::where('user_id', $u->id)->where('relationship_type', '=', 'du')->first();
+        // $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
 
         $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
         $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
@@ -352,8 +355,8 @@ class PersonController extends AdminController
                     })
                     ->when('self employment', function (Form $form) {
                         $form->text('occupation', __('Occupation'))->placeholder('What is your occupation?')->rules('required')->help('e.g Farming, Fishing, Retailer');
-                    });
-            })->required()->default('Unemployed')
+                    })->default('formal employment');
+            })->default(2)->required()
             ->help("Are you currently employed? or have you ever been employed?");
         $form->divider();
         // /*  $form->html('
@@ -417,6 +420,8 @@ class PersonController extends AdminController
                     ->placeholder('Enter your name as a profiler')
                     ->help('Enter your name as a profiler')
                     ->rules('required');
+
+
                 if (Admin::user()->isRole('opd')) {
                     $current_user = auth("admin")->user();
                     $organisation = Organisation::where('user_id', $current_user->id)->first();
@@ -474,10 +479,10 @@ class PersonController extends AdminController
                     if ($organisation == null) {
                         //return error
                         return back()->with('error', 'You do not have an organisation to register a member under');
-                    } else if ($organisation->relationship_type == 'du') {
+                    } else if ($organisation && $organisation->relationship_type == 'du') {
                         $form->district_id = $organisation->district_id;
-                    } else if ($organisation->relationship_type == 'opd') {
-                        $form->opd_id = $organisation->id;
+                    } else if ($organisation && $organisation->relationship_type == 'opd') {
+                        $form->opd_id = $current_user->organisation_id;
                     }
                 }
             });

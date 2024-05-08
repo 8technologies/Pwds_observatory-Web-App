@@ -1,29 +1,31 @@
 <div class="container card pt-5 mb-5" id="chart-description">
     <div class="row" id="chart-content">
         <div class="col-12" id="heading">
-            <h5 class="text-center">Employment Status by Gender</h5>
+            <h5 class="text-center">Employment Status by Gender in {{ $opdName }}</h5>
         </div>
         <div class="col-12" id="item-select">
-            <label for="EmploymentStatus">
-                <select id="employmentStatusSelector" class="form-select">
-                    <option value="Formal Employment">Formal Employment</option>
-                    <option value="Self Employment">Self Employment</option>
-                    <option value="unemployed">Unemployed</option>
-                </select>
-            </label>
+            <label for="EmploymentStatus">Employment Status:</label>
+            <select id="opd-employmentSelector">
+                <option value="Formal Employment">Formal Employment</option>
+                <option value="Self Employment">Self Employment</option>
+                <option value="unemployed">Unemployed</option>
+            </select>
         </div>
     </div>
     <div class="chart-container p-2 mb-2">
-        <canvas id="employmentStatusChart"></canvas>
+        <canvas id="opdEmploymentStatusChart"></canvas>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var employmentStatusData = @json($employmentStatusData); // Assume this is your data
+        var opdEmploymentData =
+            @json($opdEmploymentData); // Importing opdEmploymentData from PHP
 
-        var ctx = document.getElementById('employmentStatusChart').getContext('2d');
+        var ctx = document.getElementById('opdEmploymentStatusChart').getContext('2d');
+        Chart.register(ChartDataLabels);
         var employmentStatusChart = new Chart(ctx, {
             type: 'pie',
             data: null, // Data will be set by updateChart function
@@ -49,7 +51,7 @@
 
         // Function to update chart based on selected employment status
         function updateChart(selectedStatus) {
-            var filteredData = employmentStatusData.filter(function(item) {
+            var filteredData = opdEmploymentData.filter(function(item) {
                 return item.employment_status === selectedStatus;
             });
 
@@ -73,10 +75,10 @@
         }
 
         // Initial chart update
-        updateChart(document.getElementById('employmentStatusSelector').value);
+        updateChart(document.getElementById('opd-employmentSelector').value);
 
         // Event listener for the selector
-        document.getElementById('employmentStatusSelector').addEventListener('change', function() {
+        document.getElementById('opd-employmentSelector').addEventListener('change', function() {
             updateChart(this.value);
         });
     });

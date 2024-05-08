@@ -229,36 +229,32 @@ class Dashboard
 
     public static function getEducationByGender()
     {
+        // Define education levels
         $educ_levels = [
             'formal Education' => 'Formal Education',
             'informal Education' => 'Informal Education',
             'no Education' => 'No Education'
         ];
 
-        // Fetch distinct education levels and genders from the database
-        $distinctData = Person::select('education_level', 'sex', DB::raw('SUM(sex) as gender_count'))
+        // Fetch education data
+        $educationData = Person::select('education_level', 'sex', DB::raw('count(*) as count'))
+            ->whereNotNull('sex')
+            ->where('sex', '<>', '')
             ->groupBy('education_level', 'sex')
-            ->get();
+            ->get()
+            ->map(function ($item) use ($educ_levels) {
+                // Map education level to its name
+                $item->education_level = $educ_levels[$item->education_level] ?? 'Unknown';
+                return $item;
+            });
 
-        $educationLevelsDb = array_values($distinctData->pluck('education_level')->toArray());
-        $gender = $distinctData->pluck('sex')->toArray();
+        // Separate education levels and genders
+        $educationLevels = array_values($educationData->pluck('education_level')->unique()->toArray());
+        $gender = $educationData->pluck('sex')->unique()->toArray();
 
-        // Map the education levels from the database to their names
-        $educationLevels = array_map(function ($el) use ($educ_levels) {
-            return $educ_levels[$el] ?? 'Unknown'; // Fallback to 'Unknown' if not found
-        }, $educationLevelsDb);
-
-        // Prepare the education data
-        $educationData = [];
-        foreach ($distinctData as $item) {
-            $educationData[$item->education_level][$item->sex] = $item->gender_count;
-        }
 
         return view('dashboard.disability-education-gender', compact('educationLevels', 'gender', 'educationData'));
     }
-
-
-
 
     //Method for retrieving emploment status of people with disability according to my system
     public static function getEmploymentStatus()
@@ -277,6 +273,7 @@ class Dashboard
             ->toArray();
         $gender = Person::distinct('sex')->pluck('sex')->toArray();
 
+        $employment_status = Person::distinct()->pluck('employment_status');
         // Fetch employment status data with count
         $employmentStatusData = Person::select('employment_status', 'sex', DB::raw('count(*) as count'))
             ->groupBy('employment_status', 'sex')

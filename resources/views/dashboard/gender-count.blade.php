@@ -5,15 +5,17 @@
             <h5 class="text-center">Number of People with Disability Per District</h5>
         </div>
         <div class="col-md-12" id="item-select">
-            <label for="districtSelect">Select District:</label>
-            <select id="districtSelect" onchange="updateDistrict()">
-                <option value="">All Districts</option>
-                @foreach ($barChart->pluck('district')->unique() as $district)
-                    <option value="{{ $district }}">{{ $district }}</option>
-                @endforeach
-            </select>
+            <label for="districtSelect">
+                <select id="districtSelect" onchange="updateDistrict()" class="form-select">
+                    <option value="">All Districts</option>
+                    @foreach ($barChart->pluck('district')->unique() as $district)
+                        <option value="{{ $district }}">{{ $district }}</option>
+                    @endforeach
+                </select>
+            </label>
         </div>
     </div>
+
     <div class="chart-container p-2 mb-2">
         <canvas id="pieChart"></canvas>
     </div>

@@ -30,6 +30,9 @@ class HomeController extends Controller
         if ($admin_role == 'district-union') {
             return redirect()->route('du-dashboard');
         }
+        if ($admin_role == 'opd') {
+            return redirect()->route('opd-dashboard');
+        }
         if ($u && $admin_role == 'pwd') {
             return redirect()->route('pwd-dashboard');
         }
@@ -116,6 +119,9 @@ class HomeController extends Controller
 
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getTargetGroupByService());
+            });
+            $row->column(4, function (Column $column) {
+                $column->append(Dashboard::getEducationByGender());
             });
         });
 

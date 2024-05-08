@@ -21,11 +21,12 @@
                 <div class="col-lg-5 d-flex flex-column pt-lg-4 pt-xl-5">
                     <h5 class="h4 my-2">Welcome!</h5>
                     <h1 class="display-3 mb-4"> <span class="text-primary">ICT</span> for Persons With Disabilities</h1>
-                    
-                    
-                    <p class="fs-lg mb-5"><b>NUDIPU</b> in collaboration with UCC, 8Tech Consults and other  stakeholders.!
-                        join hands together to  put in place for you this System that will help you, Enhance your Knowledge Management, ICT Adoption, Digital
-                        Skills, And Access To E-Services For Persons With Disabilities.!</p>  
+
+
+                    <p class="fs-lg mb-5"><b>NUDIPU</b> in collaboration with UCC, 8Tech Consults and other stakeholders.!
+                        join hands together to put in place for you this System that will help you, Enhance your Knowledge
+                        Management, ICT Adoption, Digital
+                        Skills, And Access To E-Services For Persons With Disabilities.!</p>
 
                     {{-- <!-- Desktop form -->
                     <form class="d-none d-sm-flex mb-5">
@@ -317,7 +318,8 @@
                 </div>
                 <div class="step-body">
                     <h3 class="h4 mb-3">Enjoy!</h3>
-                    <p cl ass="mb-0">Once we aprove your profile, you will then be able to access all system features!</p>
+                    <p cl ass="mb-0">Once we aprove your profile, you will then be able to access all system features!
+                    </p>
                 </div>
             </div>
         </div>
@@ -348,12 +350,13 @@
                         Disabilities.</p>
                     <hr>
                     <div class="row  pt-4 pt-lg-5">
-                        
-                        @foreach($districts_count as $district)
-                        <div class="col mx-3 mx-md-0">
-                            <div class="display-3 text-dark mb-1">{{round($district->total / $districts_count->sum('total'))}}%</div>
-                            <span>{{$district->district}}</span>
-                        </div>
+
+                        @foreach ($districts_count as $district)
+                            <div class="col mx-3 mx-md-0">
+                                <div class="display-3 text-dark mb-1">
+                                    {{ round(($district->total / $districts_count->sum('total')) * 100), 2 }}%</div>
+                                <span>{{ $district->district }}</span>
+                            </div>
                         @endforeach
 
                         {{-- <div class="col mx-3 mx-md-0">
@@ -417,11 +420,12 @@
     <script>
         const ctx = document.getElementById('myChart');
         const data = {
-            labels: @json($persons_by_disability->pluck('count', 'name')->map(function ($count, $name) {
-                                        return "$name - $count";
-                                    })->values()),
+            labels: @json(
+                $persons_by_disability->pluck('count', 'name')->map(function ($count, $name) {
+                        return "$name - $count";
+                    })->values()),
             datasets: [{
-                label: 'My First Dataset',
+                label: 'Disability Count',
                 data: @json($persons_by_disability->pluck('count')),
                 backgroundColor: [
                     '#8EFCDF',
@@ -439,10 +443,23 @@
             }]
         };
         const config = {
-            type: 'doughnut',
+            type: 'bar',
             data: data,
             options: {
                 responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'logarithmic',
+                        ticks: {
+                            callback: function(value, index, values) {
+                                if (value === 10 || value === 100 || value === 1000 || value === 10000) {
+                                    return value.toString();
+                                }
+                            }
+                        }
+                    }
+                },
                 plugins: {
                     legend: {
                         position: 'top',
@@ -462,7 +479,7 @@
             data: {
                 labels: @json($districts_count->pluck('district')),
                 datasets: [{
-                    label: 'My First Dataset',
+                    label: 'Count',
                     data: @json($districts_count->pluck('total')),
                     backgroundColor: [
                         '#23A2E9',
@@ -493,12 +510,16 @@
             },
         });
 
+        @php
+
+        @endphp
+
 
         new Chart(document.getElementById('months'), {
             type: 'bar',
             data: {
                 labels: [
-                    'Janiary',
+                    'January',
                     'February',
                     'March',
                     'April',

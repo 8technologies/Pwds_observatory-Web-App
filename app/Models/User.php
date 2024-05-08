@@ -95,7 +95,6 @@ class User extends Administrator implements JWTSubject
                 ->update(['organisation_id' => $organisationId]);
         }
 
-        // Optional: Return the count of updated users or any other relevant information
         return count($usersToUpdate);
     }
 }

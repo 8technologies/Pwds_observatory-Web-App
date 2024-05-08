@@ -31,7 +31,7 @@
 <div class="container">
     <h3 class="all-jobs">View available jobs</h3>
     @foreach ($jobs as $job)
-        <div class="container-fluid job-card">
+        <div class="card job-card">
             <h4>{{ $job->title }}</h4>
             <p><span>Location: </span>{{ $job->location }}</p>
             <p><span>Type: </span>{{ $job->type }}</p>

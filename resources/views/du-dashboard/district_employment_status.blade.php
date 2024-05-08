@@ -18,12 +18,14 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         var districtEmploymentData =
             @json($employmentData); // Assuming $employmentData is correctly passed from the backend
 
         var ctx = document.getElementById('districtEmploymentStatus').getContext('2d');
+        Chart.register(ChartDataLabels);
         var employmentStatusChart = new Chart(ctx, {
             type: 'pie',
             data: null, // Data will be set by updateChart function

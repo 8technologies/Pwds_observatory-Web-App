@@ -5,12 +5,13 @@
             <h5 class="text-center">District Unions Vs NOPDs Per Membership</h5>
         </div>
         <div class="col-12" id="item-select">
-            <label for="membershipChart">Select DU or NOPD:</label>
-            <select name="membershipChart" id="membershipChart">
-                <option value="mebership_all">Show All</option>
-                <option value="membership_du">District Unions</option>
-                <option value="membership_nopd">NOPDs</option>
-            </select>
+            <label for="membershipChart">
+                <select name="membershipChart" id="membershipChart" class="form-select">
+                    <option value="mebership_all">Show All</option>
+                    <option value="membership_du">District Unions</option>
+                    <option value="membership_nopd">NOPDs</option>
+                </select>
+            </label>
         </div>
     </div>
     <div class="chart-container">

@@ -8,6 +8,7 @@ use App\Models\Gen;
 use Illuminate\Support\Facades\Route;
 use App\Admin\Controllers\DuDashboardController;
 use App\Admin\Controllers\GuestController;
+use App\Admin\Controllers\OPDDashboardController;
 use App\Admin\Controllers\PersonController;
 use App\Admin\Controllers\PwdDashboardController;
 use App\Http\Middleware\Du_Dashboard;
@@ -50,6 +51,9 @@ Route::get('resources/{id}', [MainController::class, 'resource']);
 Route::get('/du-dashboard', [DuDashboardController::class, 'index'])
     ->middleware('auth:admin')
     ->name('du-dashboard');
+Route::get('/opd-dashboard', [OPDDashboardController::class, 'index'])
+    ->middleware('auth:admin')
+    ->name('opd-dashboard');
 Route::get('/guest', [GuestController::class, 'index']);
 
 Route::get('/login', [AccountController::class, 'login'])->name('login')
