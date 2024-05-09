@@ -37,124 +37,128 @@ class HomeController extends Controller
             return redirect()->route('pwd-dashboard');
         }
 
-        $content->row(function (Row $row) {
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Number Of DUs',
-                    'number' => Organisation::where('relationship_type', '=', 'du')->count(),
-                    'sub_title' => 'dus',
-                    'link' => admin_url('district-unions'),
-                    'font_size' => '1.5em'
-                ]));
-            });
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Number Of NOPDs',
-                    'font_size' => '1.5em',
-                    'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
-                    'sub_title' => 'nopd',
-                    'link' => admin_url('opds'),
-                ]));
-            });
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Service providers',
-                    'number' => ServiceProvider::count(),
-                    'sub_title' => 'service providers',
-                    'link' => admin_url('service-providers'),
-                ]));
-            });
+        if ($u && $admin_role = 'nudipu') {
 
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Persons with Disability',
-                    'number' => Person::count(),
-                    'sub_title' => 'pwd',
-                    'link' => admin_url('people'),
-                ]));
-            });
-        });
+            $content->row(function (Row $row) {
+                $row->column(3, function (Column $column) {
+                    $column->append(view('widgets.box-5', [
+                        'is_dark' => false,
+                        'title' => 'Number Of DUs',
+                        'number' => Organisation::where('relationship_type', '=', 'du')->count(),
+                        'sub_title' => 'dus',
+                        'link' => admin_url('district-unions'),
+                        'font_size' => '1.5em'
+                    ]));
+                });
+                $row->column(3, function (Column $column) {
+                    $column->append(view('widgets.box-5', [
+                        'is_dark' => false,
+                        'title' => 'Number Of NOPDs',
+                        'font_size' => '1.5em',
+                        'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
+                        'sub_title' => 'nopd',
+                        'link' => admin_url('opds'),
+                    ]));
+                });
+                $row->column(3, function (Column $column) {
+                    $column->append(view('widgets.box-5', [
+                        'is_dark' => false,
+                        'title' => 'Service providers',
+                        'number' => ServiceProvider::count(),
+                        'sub_title' => 'service providers',
+                        'link' => admin_url('service-providers'),
+                    ]));
+                });
 
-
-
-        //Bar Chart for People with Disability count.
-        $content->row(function (Row $row) {
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getPeopleWithDisability());
+                $row->column(3, function (Column $column) {
+                    $column->append(view('widgets.box-5', [
+                        'is_dark' => false,
+                        'title' => 'Persons with Disability',
+                        'number' => Person::count(),
+                        'sub_title' => 'pwd',
+                        'link' => admin_url('people'),
+                    ]));
+                });
             });
 
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getDisabilityByGenderAndAge());
-            });
-
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getDisabilityCount());
-            });
-        });
 
 
-        $content->row(function (Row $row) {
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getEmploymentStatus());
-            });
-
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getDuOpdPerRegion());
-            });
-
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getMembershipChart());
-            });
-        });
-
-        //Bar Chart for People with Service count.
-        $content->row(function (Row $row) {
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getServiceProviderCount());
-            });
-
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getTargetGroupByService());
-            });
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getEducationByGender());
-            });
-        });
-
-        $content
-            ->title('ICT for Persons With Disabilities - Dashboard')
-            ->description('Hello ' . $u->name . "!");
-
-        $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
-                $column->append(Dashboard::dashboard_events());
-            });
-            $row->column(6, function (Column $column) {
-                $column->append(Dashboard::dashboard_news());
-            });
-        });
-        return $content;
-        return $content
-            ->title('Dashboard')
-            ->description('Description...')
-            ->row(Dashboard::title())
-            ->row(function (Row $row) {
-
+            //Bar Chart for People with Disability count.
+            $content->row(function (Row $row) {
                 $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::environment());
+                    $column->append(Dashboard::getPeopleWithDisability());
                 });
 
                 $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::extensions());
+                    $column->append(Dashboard::getDisabilityByGenderAndAge());
                 });
 
                 $row->column(4, function (Column $column) {
-                    $column->append(Dashboard::dependencies());
+                    $column->append(Dashboard::getDisabilityCount());
                 });
             });
+
+
+            $content->row(function (Row $row) {
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::getEmploymentStatus());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::getDuOpdPerRegion());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::getMembershipChart());
+                });
+            });
+
+            //Bar Chart for People with Service count.
+            $content->row(function (Row $row) {
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::getServiceProviderCount());
+                });
+
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::getTargetGroupByService());
+                });
+                $row->column(4, function (Column $column) {
+                    $column->append(Dashboard::getEducationByGender());
+                });
+            });
+
+            $content
+                ->title('ICT for Persons With Disabilities - Dashboard')
+                ->description('Hello ' . $u->name . "!");
+
+            $content->row(function (Row $row) {
+                $row->column(6, function (Column $column) {
+                    $column->append(Dashboard::dashboard_events());
+                });
+                $row->column(6, function (Column $column) {
+                    $column->append(Dashboard::dashboard_news());
+                });
+            });
+            return $content;
+            return $content
+
+                ->title('Dashboard')
+                ->description('Description...')
+                ->row(Dashboard::title())
+                ->row(function (Row $row) {
+
+                    $row->column(4, function (Column $column) {
+                        $column->append(Dashboard::environment());
+                    });
+
+                    $row->column(4, function (Column $column) {
+                        $column->append(Dashboard::extensions());
+                    });
+
+                    $row->column(4, function (Column $column) {
+                        $column->append(Dashboard::dependencies());
+                    });
+                });
+        }
     }
 }
