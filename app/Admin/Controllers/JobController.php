@@ -3,7 +3,9 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Job;
+use App\Models\Utils;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -26,9 +28,22 @@ class JobController extends AdminController
     {
         $grid = new Grid(new Job());
 
-        $grid->column('created_at', __('Published at'))->display(function ($created_at) {
-            return date('d-m-Y', strtotime($created_at));
-        });
+        $auth_user = Admin::user();
+
+        $display = $grid->model()->where('user_id', '!=', $auth_user->id);
+        if ($display) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+        }
+
+        $grid->disableBatchActions();
+
+
+        $grid->column('created_at', __('Published at'))->display(function ($x) {
+            return Utils::my_date($x);
+        })->sortable();
         $grid->column('user_id', __('Publisher'))->display(function ($user_id) {
             return \App\Models\User::find($user_id)->name;
         });
@@ -94,16 +109,16 @@ class JobController extends AdminController
             'Other' => 'Other',
         ])->rules('required');
         $form->select('minimum_academic_qualification', __('Minimum academic qualification'))
-        ->options([
-            'None' => 'None - (Not educated at all)',
-            'Below primary' => 'Below primary - (Did not complete P.7)',
-            'Primary' => 'Primary - (Completed P.7)',
-            'Secondary' => 'Secondary - (Completed S.4)',
-            'A-Level' => 'Advanced level - (Completed S.6)',
-            'Bachelor' => 'Bachelor - (Degree)',
-            'Masters' => 'Masters',
-            'PhD' => 'PhD',
-        ])->rules('required');
+            ->options([
+                'None' => 'None - (Not educated at all)',
+                'Below primary' => 'Below primary - (Did not complete P.7)',
+                'Primary' => 'Primary - (Completed P.7)',
+                'Secondary' => 'Secondary - (Completed S.4)',
+                'A-Level' => 'Advanced level - (Completed S.6)',
+                'Bachelor' => 'Bachelor - (Degree)',
+                'Masters' => 'Masters',
+                'PhD' => 'PhD',
+            ])->rules('required');
         $form->text('required_experience', __('Required experience'));
         $form->image('photo', __('Photo'));
         $form->textarea('how_to_apply', __('How to apply'));

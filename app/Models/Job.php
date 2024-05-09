@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +22,19 @@ class Job extends Model
         'hiring_firm',
         'deadline',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Define the updating event listener
+        static::updating(function ($job) {
+            $auth_user = Admin::user();
+            if ($job->user_id !== $auth_user->id) {
+                throw new \Exception("You are not authorized to update this job.");
+            }
+        });
+    }
     //
     // public static function boot()
     // {

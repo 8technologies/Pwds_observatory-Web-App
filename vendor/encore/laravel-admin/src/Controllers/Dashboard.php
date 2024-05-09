@@ -47,7 +47,7 @@ class Dashboard
 
     public static function dashboard_jobs()
     {
-        $jobs = Job::all();
+        $jobs = Job::orderBy('created_at', 'desc')->paginate(10);
         return view('pwd-dashboard.job', ['jobs' => $jobs]);
     }
 
