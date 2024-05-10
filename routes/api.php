@@ -25,31 +25,31 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::POST("users/register", [ApiAuthController::class, "register"]);
-// Route::POST("users/login", [ApiAuthController::class, "login"]);
-// Route::resource('people', PersonController::class);
-// Route::resource('district-unions', District_UnionAPIController::class);
-// Route::resource('opds', OPD::class);
-// Route::resource('service-providers', ServiceProviderAPIController::class);
-// Route::resource('jobs', JobApiController::class);
-// Route::resource('innovations', InnovationApiController::class);
-// Route::resource('events', EventApiController::class);
-// Route::resource('news-posts', NewsPostApiController::class);
-// Route::resource('products', ProductServiceAPIController::class);
+Route::POST("users/register", [ApiAuthController::class, "register"]);
+Route::POST("users/login", [ApiAuthController::class, "login"]);
+Route::resource('people', PersonController::class);
+Route::resource('district-unions', District_UnionAPIController::class);
+Route::resource('opds', OPD::class);
+Route::resource('service-providers', ServiceProviderAPIController::class);
+Route::resource('jobs', JobApiController::class);
+Route::resource('innovations', InnovationApiController::class);
+Route::resource('events', EventApiController::class);
+Route::resource('news-posts', NewsPostApiController::class);
+Route::resource('products', ProductServiceAPIController::class);
 
-Route::POST("people", [ApiResurceController::class, "person_create"]);
-Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);
-Route::get("people", [ApiResurceController::class, "people"]);
-Route::get("jobs", [ApiResurceController::class, "jobs"]);
-Route::get('api/{model}', [ApiResurceController::class, 'index']);
-Route::get('groups', [ApiResurceController::class, 'groups']);
-Route::get('associations', [ApiResurceController::class, 'associations']);
-Route::get('institutions', [ApiResurceController::class, 'institutions']);
-Route::get('service-providers', [ApiResurceController::class, 'service_providers']);
-Route::get('counselling-centres', [ApiResurceController::class, 'counselling_centres']);
-Route::get('products', [ApiResurceController::class, 'products']);
-Route::get('events', [ApiResurceController::class, 'events']);
-Route::get('news-posts', [ApiResurceController::class, 'news_posts']);
+// Route::POST("people", [ApiResurceController::class, "person_create"]);
+// Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);
+// Route::get("people", [ApiResurceController::class, "people"]);
+// Route::get("jobs", [ApiResurceController::class, "jobs"]);
+// Route::get('api/{model}', [ApiResurceController::class, 'index']);
+// Route::get('groups', [ApiResurceController::class, 'groups']);
+// Route::get('associations', [ApiResurceController::class, 'associations']);
+// Route::get('institutions', [ApiResurceController::class, 'institutions']);
+// Route::get('service-providers', [ApiResurceController::class, 'service_providers']);
+// Route::get('counselling-centres', [ApiResurceController::class, 'counselling_centres']);
+// Route::get('products', [ApiResurceController::class, 'products']);
+// Route::get('events', [ApiResurceController::class, 'events']);
+// Route::get('news-posts', [ApiResurceController::class, 'news_posts']);
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
