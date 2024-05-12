@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CounsellingCentre;
 use App\Models\Course;
+use App\Models\Disability;
+use App\Models\District;
 use App\Models\Event;
 use App\Models\NewsPost;
 use Encore\Admin\Auth\Database\Administrator;
@@ -106,6 +109,8 @@ class MainController extends BaseController
     return view('news-category');
   }
 
+
+
   public function dinner()
   {
     $p = Event::find(1);
@@ -144,6 +149,24 @@ class MainController extends BaseController
       'post' => $p,
       'posts' => $_posts,
     ]);
+  }
+
+  public function counseling_centres()
+  {
+    $counselingCentres = CounsellingCentre::all();
+
+    foreach ($counselingCentres as $centre) {
+      $district = District::find($centre->district_id);
+      $centre->district_name = $district ? $district->name : 'Unknown District';
+    }
+
+    foreach ($counselingCentres as $centre) {
+      $disability = Disability::find($centre->disability_id);
+      $centre->disability_name = $disability ? $disability->name : 'Unknown Disability';
+    }
+
+    // Pass the data to the Blade view
+    return view('counseling', ['counselingCentres' => $counselingCentres]);
   }
 
   /**
@@ -201,8 +224,8 @@ class MainController extends BaseController
    */
   public function jobs(Request $r)
   {
-    $jobs = \App\Models\Job::orderBy('id', 'desc')->paginate(12);
-    return view('jobs', [
+    $jobs = \App\Models\Job::orderBy('id', 'desc')->paginate(8);
+    return view('jobs/index', [
       'jobs' => $jobs
     ]);
   }
@@ -251,7 +274,7 @@ class MainController extends BaseController
    */
   public function innovations(Request $r)
   {
-    $innovations = \App\Models\Innovation::orderBy('id', 'desc')->paginate(12);
+    $innovations = \App\Models\Innovation::orderBy('id', 'desc')->paginate(8);
     return view('innovations', [
       'innovations' => $innovations
     ]);

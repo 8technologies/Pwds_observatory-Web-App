@@ -46,11 +46,12 @@ if (!isset($header_style)) {
                         <li>
                             <a href="{{ url('constitution') }}" class="dropdown-item">Partnerships</a>
                         </li>
-
-                        {{-- Commented due to lack of information here --}}
                         {{-- <li>
                             <a href="{{ url('our-team') }}" class="dropdown-item">Message from the program lead </a>
-                        </li>
+                        </li> --}}
+
+                        {{-- Commented due to lack of information here --}}
+                        {{-- 
                         <li>
                             <a href="?" class="dropdown-item">Who can use the system</a>
                         </li> --}}
@@ -62,18 +63,23 @@ if (!isset($header_style)) {
                 <li class="nav-item dropdown">
                     <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" class="dropdown-item">Persons with disabilites - national profiling</a>
-                        </li>
-                        <li><a href="#" class="dropdown-item">Guidance and counseling </a></li>
-                        <li><a href="#" class="dropdown-item">Jobs and opportunities </a></li>
-                        <li><a href="#" class="dropdown-item">Training and capacity building </a></li>
-                        <li><a href="#" class="dropdown-item">Research and innovation </a></li>
-                        <li><a href="#" class="dropdown-item">Testimonials</a></li>
-                    </ul>
+                        {{-- No details yet for this link --}}
+                        {{-- <li><a href="#" class="dropdown-item">Persons with disabilites - national profiling</a> --}}
                 </li>
-                <li class="nav-item">
-                    <a href="{{ url('news') }}" class="nav-link">News</a>
+                <li><a href="{{ url('counseling-and-guidance') }}" class="dropdown-item">Guidance and counseling
+                    </a></li>
+                <li><a href="{{ url('jobs') }}" class="dropdown-item">Jobs and opportunities </a>
                 </li>
+                {{-- No details yet for this link --}}
+                {{-- <li><a href="#" class="dropdown-item">Training and capacity building </a></li> --}}
+                <li><a href="innovations" class="dropdown-item">Research and innovation </a></li>
+                {{-- No details yet for this link --}}
+                {{-- <li><a href="#" class="dropdown-item">Testimonials</a></li> --}}
+            </ul>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url('news') }}" class="nav-link">News</a>
+            </li>
 
             </ul>
         </div>

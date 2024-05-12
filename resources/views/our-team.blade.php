@@ -36,8 +36,8 @@
         <h1 class="h1 text-center pt-1 pb-3 mb-3 mb-lg-4">Our Team</h1>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
 
-        
- 
+
+
 
             <!-- Item -->
             <div class="col">
@@ -95,7 +95,7 @@
                 </div>
             </div>
 
- 
+
             <!-- Item -->
             <div class="col">
                 <div class="card card-hover border-0 bg-transparent">
@@ -123,7 +123,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <!-- Item -->
             <div class="col">
                 <div class="card card-hover border-0 bg-transparent">
@@ -151,7 +151,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <!-- Item -->
             <div class="col">
                 <div class="card card-hover border-0 bg-transparent">
@@ -206,7 +206,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <!-- Item -->
             <div class="col">
                 <div class="card card-hover border-0 bg-transparent">
@@ -234,7 +234,7 @@
                     </div>
                 </div>
             </div>
- 
+
             <!-- Item -->
             <div class="col">
                 <div class="card card-hover border-0 bg-transparent">
@@ -264,8 +264,8 @@
             </div>
 
 
- 
- 
+
+
 
 
         </div>
@@ -279,7 +279,8 @@
                 style="background-image: url(assets/img/landing/digital-agency/contact-bg.png);">
                 <div class="py-md-5 py-4 text-center">
                     <h3 class="h4 fw-normal text-light opacity-75">Want to work with us? Let's talk</h3>
-                    <a href="mailto:info@ict4personswithdisabilities.org" class="display-6 text-light">info@ict4personswithdisabilities.org</a>
+                    <a href="mailto:info@ict4personswithdisabilities.org"
+                        class="display-6 text-light">info@ict4personswithdisabilities.org</a>
                     <div class="pt-md-5 pt-4 pb-md-2">
                         <a href="mailto:info@ict4personswithdisabilities.org" class="btn btn-lg btn-light">Contact us</a>
                     </div>
