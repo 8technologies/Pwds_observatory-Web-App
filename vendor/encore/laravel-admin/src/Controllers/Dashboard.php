@@ -271,7 +271,10 @@ class Dashboard
             ->whereIn('employment_status', $employmentStatus)
             ->pluck('employment_status')
             ->toArray();
-        $gender = Person::distinct('sex')->pluck('sex')->toArray();
+        $gender = Person::distinct('sex')
+            ->whereNotNull('sex')
+            ->where('sex', '<>', 'N/A')
+            ->pluck('sex')->toArray();
 
         $employment_status = Person::distinct()->pluck('employment_status');
         // Fetch employment status data with count

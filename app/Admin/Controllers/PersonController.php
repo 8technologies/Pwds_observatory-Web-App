@@ -278,7 +278,7 @@ class PersonController extends AdminController
             $footer->disableViewCheck();
             $footer->disableEditingCheck();
             $footer->disableCreatingCheck();
-            // $footer->disableSubmit();
+            $footer->disableSubmit();
         });
         $form->divider('Bio Data');
         $form->image('photo', __('Photo'))->uniqueName();
@@ -430,7 +430,6 @@ class PersonController extends AdminController
                 $form->divider();
                 //Add submit button
                 $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
                 <button type="submit" class="btn btn-primary float-right">Submit</button>');
             });
         }

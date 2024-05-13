@@ -1,15 +1,16 @@
 <div class="container card pt-5 mb-5" id="chart-description">
     <div class="row" id="chart-content">
         <div class="col-12" id="heading">
-            <h5 class="text-center">Employment Status by Gender in {{ $opdName }}</h5>
+            <h5 class="text-center">Employment Status by Gender</h5>
         </div>
         <div class="col-12" id="item-select">
-            <label for="EmploymentStatus">Employment Status:</label>
-            <select id="opd-employmentSelector">
-                <option value="Formal Employment">Formal Employment</option>
-                <option value="Self Employment">Self Employment</option>
-                <option value="unemployed">Unemployed</option>
-            </select>
+            <label for="EmploymentStatus">
+                <select id="opdEmploymentSelector" class="form-select">
+                    <option value="Formal Employment">Formal Employment</option>
+                    <option value="Self Employment">Self Employment</option>
+                    <option value="Unemployed">Unemployed</option>
+                </select>
+            </label>
         </div>
     </div>
     <div class="chart-container p-2 mb-2">
@@ -18,15 +19,12 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var opdEmploymentData =
-            @json($opdEmploymentData); // Importing opdEmploymentData from PHP
+        var opdEmploymentData = @json($opdEmploymentData); // Assume this is your data
 
         var ctx = document.getElementById('opdEmploymentStatusChart').getContext('2d');
-        Chart.register(ChartDataLabels);
-        var employmentStatusChart = new Chart(ctx, {
+        var opdEmploymentStatusChart = new Chart(ctx, {
             type: 'pie',
             data: null, // Data will be set by updateChart function
             options: {
@@ -52,7 +50,8 @@
         // Function to update chart based on selected employment status
         function updateChart(selectedStatus) {
             var filteredData = opdEmploymentData.filter(function(item) {
-                return item.employment_status === selectedStatus;
+                return item.employment_status === selectedStatus && item.sex !== null && item.sex !==
+                    'N/A';
             });
 
             var countsByGender = filteredData.reduce(function(acc, item) {
@@ -60,7 +59,7 @@
                 return acc;
             }, {});
 
-            employmentStatusChart.data = {
+            opdEmploymentStatusChart.data = {
                 labels: Object.keys(countsByGender),
                 datasets: [{
                     label: `${selectedStatus} by Gender`,
@@ -71,14 +70,14 @@
                 }]
             };
 
-            employmentStatusChart.update();
+            opdEmploymentStatusChart.update();
         }
 
         // Initial chart update
-        updateChart(document.getElementById('opd-employmentSelector').value);
+        updateChart(document.getElementById('opdEmploymentSelector').value);
 
         // Event listener for the selector
-        document.getElementById('opd-employmentSelector').addEventListener('change', function() {
+        document.getElementById('opdEmploymentSelector').addEventListener('change', function() {
             updateChart(this.value);
         });
     });

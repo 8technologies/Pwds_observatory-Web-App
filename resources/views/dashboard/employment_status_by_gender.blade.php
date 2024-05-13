@@ -8,7 +8,7 @@
                 <select id="employmentStatusSelector" class="form-select">
                     <option value="Formal Employment">Formal Employment</option>
                     <option value="Self Employment">Self Employment</option>
-                    <option value="unemployed">Unemployed</option>
+                    <option value="Unemployed">Unemployed</option>
                 </select>
             </label>
         </div>
@@ -50,7 +50,8 @@
         // Function to update chart based on selected employment status
         function updateChart(selectedStatus) {
             var filteredData = employmentStatusData.filter(function(item) {
-                return item.employment_status === selectedStatus;
+                return item.employment_status === selectedStatus && item.sex !== null && item.sex !==
+                    'N/A';
             });
 
             var countsByGender = filteredData.reduce(function(acc, item) {

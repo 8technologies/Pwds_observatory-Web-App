@@ -69,12 +69,16 @@ Route::post('/login', [AccountController::class, 'login_post'])
 
 Route::get('/dashboard', [AccountController::class, 'dashboard'])
     ->middleware(Authenticate::class);
-Route::middleware(['auth:admin', 'verifyProfile'])->group(function () {
-    Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
-    Route::get('/approval', [PwdDashboardController::class, 'checkApproval'])->name('approval');
-    Route::get('/pwd-dashboard', [PwdDashboardController::class, 'index'])->name('pwd-dashboard');
-});
 
+Route::middleware('auth:admin')->group(function () {
+    Route::get('/approval', [PwdDashboardController::class, 'checkApproval'])->name('approval');
+    Route::get('/pwd-dashboard', [PwdDashboardController::class, 'index'])
+        ->name('pwd-dashboard');
+
+    Route::middleware('verifyProfile')->group(function () {
+        Route::get('/dashboard', [AccountController::class, 'dashboard'])->name('dashboard');
+    });
+});
 
 //Route for DU dashboard
 // Route::get('/du-dashboard', [DuDashboard::class, 'index'])->middleware(Du_Dashboard::class);
