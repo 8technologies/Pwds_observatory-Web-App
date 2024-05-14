@@ -103,25 +103,26 @@ class HomeController extends Controller
             });
 
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getDuOpdPerRegion());
+                $column->append(Dashboard::getEducationByGender());
             });
 
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getMembershipChart());
+                $column->append(Dashboard::getServiceProviderCount());
             });
         });
 
         //Bar Chart for People with Service count.
         $content->row(function (Row $row) {
-            $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getServiceProviderCount());
-            });
 
+            $row->column(4, function (Column $column) {
+                $column->append(Dashboard::getDuOpdPerRegion());
+            });
             $row->column(4, function (Column $column) {
                 $column->append(Dashboard::getTargetGroupByService());
             });
+
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getEducationByGender());
+                $column->append(Dashboard::getMembershipChart());
             });
         });
 

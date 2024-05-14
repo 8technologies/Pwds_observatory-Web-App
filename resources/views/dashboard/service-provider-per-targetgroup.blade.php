@@ -29,14 +29,6 @@
             maintainAspectRatio: false,
             scales: {
                 y: { //label for y-axis
-                    title: {
-                        display: true,
-                        text: 'Count',
-                        font: {
-                            size: 15,
-                            weight: 'bold'
-                        }
-                    },
                     ticks: {
                         beginAtZero: true
                     }
