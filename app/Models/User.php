@@ -21,9 +21,6 @@ class User extends Administrator implements JWTSubject
     use HasFactory;
     use Notifiable;
 
-    //table
-    protected $table = 'admin_users';
-
 
     //boot
     protected static function boot()
