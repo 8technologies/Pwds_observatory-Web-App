@@ -17,7 +17,22 @@
  * Admin::js('/packages/prettydocs/js/main.js');
  *
  */
-
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+ini_set('memory_limit', '1024M');
+ini_set('max_execution_time', 300);
+ini_set('max_input_time', 300);
+ini_set('post_max_size', '100M');
+ini_set('upload_max_filesize', '100M');
+ini_set('max_file_uploads', '100');
+ini_set('default_socket_timeout', 300);
+ini_set('max_input_vars', 10000);
+ini_set('session.gc_maxlifetime', 86400);
+ini_set('session.cookie_lifetime', 86400);
+ini_set('session.cookie_secure', 1);
+ini_set('session.cookie_httponly', 1);
+ini_set('session.use_only_cookies', 1);
 use App\Models\Utils;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Auth;
