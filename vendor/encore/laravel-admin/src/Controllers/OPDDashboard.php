@@ -225,6 +225,7 @@ class OPDDashboard
         // Fetch district name
         $user_id = $user->id;
         $opdName = $organisation->name ?? 'Unknown';
+        $service_user_id = ServiceProvider::where('user_id', $user_id)->pluck('name', 'id');
 
         // Retrieve service providers operating in the district
         $service_providers = ServiceProvider::with('disability_categories', 'districts_of_operations')
@@ -255,7 +256,7 @@ class OPDDashboard
         arsort($opdServiceCounts);
 
         $queryParams = http_build_query([
-            'opd_id' => $organisation->id,
+            'user_id' => $user_id,
             'districts_of_operations' => ['name' => $opdName],
             'target_group' => '',  // 
             'disability_categories' => ['name' => '']

@@ -39,7 +39,7 @@ class ServiceProviderController extends AdminController
 
             // $user = Admin::user();
             // $organisation = Organisation::where('user_id', $user->id)->first();
-            // if ($user->isRole('opd')) {
+            // if ($organisation && $organisation->relationship_type == 'opd') {
             //     $filter->like('districts_of_operations.name', 'Filter by district')
             //         ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'name'));
             // }
