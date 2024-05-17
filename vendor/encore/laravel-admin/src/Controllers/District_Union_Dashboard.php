@@ -232,6 +232,8 @@ class District_Union_Dashboard
         // Initialize array to store counts
         $serviceCounts = [];
 
+        $districtServiceProviders = [];
+
         // Calculate counts of service providers per disability category
         foreach ($service_providers as $service_provider) {
             foreach ($service_provider->disability_categories as $disability) {
@@ -240,17 +242,28 @@ class District_Union_Dashboard
                         $serviceCounts[$disability->name] = 0;
                     }
                     $serviceCounts[$disability->name]++;
+
+                    $districtServiceProviders[] = $service_provider;
                 }
             }
         }
 
-        $totalServices = array_sum($serviceCounts);
+        $totalServices = $service_providers->count();
 
         // Sort counts array
         arsort($serviceCounts);
 
+        $queryParams = http_build_query([
+            'districts_id' => $district_union_id,
+            'districts_of_operations' => ['name' => $districtName],
+            'target_group' => '',  // 
+            'disability_categories' => ['name' => '']
+        ]);
+
+        $link = admin_url("service-providers") . "?" . $queryParams;
+
         // Pass counts data to view
-        return view('du-dashboard.district_service_provider', compact('serviceCounts', 'districtName', 'totalServices'));
+        return view('du-dashboard.district_service_provider', compact('serviceCounts', 'districtName', 'totalServices', 'link', 'districtServiceProviders'));
     }
 
 

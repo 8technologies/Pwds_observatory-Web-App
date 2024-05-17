@@ -36,12 +36,10 @@ class Product extends Model
         parent::boot();
 
         static::creating(function ($product) {
-            $product->service_provider_id = 137;
             $product->details = strip_tags($product->details);
         });
 
         static::updating(function ($product) {
-            $product->service_provider_id = 137;
             $product->details = strip_tags($product->details);
         });
 

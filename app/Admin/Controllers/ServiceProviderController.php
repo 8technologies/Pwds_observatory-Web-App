@@ -12,6 +12,7 @@ use App\Models\District;
 use Encore\Admin\Facades\Admin;
 use App\Admin\Extensions\ServiceProvidersExcelExporter;
 use App\Models\Disability;
+use App\Models\Organisation;
 
 class ServiceProviderController extends AdminController
 {
@@ -35,6 +36,13 @@ class ServiceProviderController extends AdminController
 
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
+
+            // $user = Admin::user();
+            // $organisation = Organisation::where('user_id', $user->id)->first();
+            // if ($user->isRole('opd')) {
+            //     $filter->like('districts_of_operations.name', 'Filter by district')
+            //         ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'name'));
+            // }
             $filter->like('districts_of_operations.name', 'Filter by district')
                 ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'name'));
 

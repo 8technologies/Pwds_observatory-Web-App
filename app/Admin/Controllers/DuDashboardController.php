@@ -37,64 +37,94 @@ class DuDashboardController extends Controller
 
         $content->row(function (Row $row) {
             $row->column(3, function (Column $column) {
-                $u = Admin::user();
-                $organisation = Organisation::find($u->organisation_id);
+                $user = Admin::user();
+                $organisation = Organisation::find($user->organisation_id);
                 $district_id = $organisation->district_id;
                 $count_pwd = Person::where('district_id', $district_id)->count();
-                $box = new Box("Persons with Diability", '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . $count_pwd . '</h3>');
-                $box->style('success')
-                    ->solid();
-                $column->append($box, view('widgets.box-5', [
+
+                // Prepare data for the view
+                $widgetData = [
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
                     'sub_title' => 'pwds',
                     'number' => $count_pwd,
                     'font_size' => '1.5em',
-                    'link' => admin_url('people'),
-                ]));
+                    'link' => admin_url("people?district_id={$district_id}"),
+                ];
+
+                $box_content = "<h3 style='text-align:center; margin:0; font-size:40px; font-weight: bold;'>{$widgetData['number']}</h3> 
+                                <p>{$widgetData['sub_title']}</p>";
+                $box_content .= '<a href="' . $widgetData['link'] . '" style="display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></a>';
+
+                $box = new Box($widgetData['title'], $box_content);
+                $box->style('success')
+                    ->solid();
+                $column->append($box);
             });
             $row->column(3, function (Column $column) {
                 // Retrieve the total services count using the getDistrictServiceProviders() function
-                $totalServices = District_Union_Dashboard::getDistrictServiceProviders()->getData()['totalServices'];
+                $totalServices = District_Union_Dashboard::getDistrictServiceProviders()['totalServices'];
+                $link = District_Union_Dashboard::getDistrictServiceProviders()->getData()['link'];
 
-                $box = new Box(
-                    "Service Providers",
-                    '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' .
-                        $totalServices . '</h3>'
-                );
-                $box->style('success')
-                    ->solid();
-                $column->append($box, view('widgets.box-5', [
+                $widgetData = [
                     'is_dark' => false,
                     'title' => 'Service Providers',
-                    'font_size' => '1.5em',
+                    'sub_title' => 'service providers',
                     'number' => $totalServices,
-                    'link' => admin_url('service-providers'),
-                ]));
+                    'font_size' => '1.5em',
+                    'link' => admin_url($link),
+                ];
+
+                $box_content = "<h3 style='text-align:center; margin:0; font-size:40px; font-weight: bold;'>{$widgetData['number']}</h3> 
+                <p>{$widgetData['sub_title']}</p>";
+                $box_content .= '<a href="' . $widgetData['link'] . '" style="display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></a>';
+
+                $box = new Box($widgetData['title'], $box_content);
+                $box->style('success')
+                    ->solid();
+                $column->append($box);
             });
 
 
             $row->column(3, function (Column $column) {
-                $box = new Box("Jobs",  '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . Job::count() . '</h3>');
+
+                $widgetData = [
+                    'is_dark' => false,
+                    'title' => 'Available jobs',
+                    'sub_title' => 'jobs',
+                    'number' => Job::count(),
+                    'font_size' => '1.5em',
+                    'link' => admin_url('jobs'),
+                ];
+
+                $box_content = "<h3 style='text-align:center; margin:0; font-size:40px; font-weight: bold;'>{$widgetData['number']}</h3> 
+                <p>{$widgetData['sub_title']}</p>";
+                $box_content .= '<a href="' . $widgetData['link'] . '" style="display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></a>';
+
+                $box = new Box($widgetData['title'], $box_content);
                 $box->style('success')
                     ->solid();
-                $column->append(
-                    $box,
-                    view(
-                        'widgets.box-5',
-                        ['link' => admin_url('jobs'),]
-                    )
-                );
+                $column->append($box);
             });
 
             $row->column(3, function (Column $column) {
-                $box = new Box("Products and Services",  '<h3 style="text-align:center; margin:0; font-size:40px; font-weight: bold;">' . Product::count() . '</h3>');
+                $widgetData = [
+                    'is_dark' => false,
+                    'title' => 'Products',
+                    'sub_title' => 'products',
+                    'number' => Product::count(),
+                    'font_size' => '1.5em',
+                    'link' => admin_url('products'),
+                ];
+
+                $box_content = "<h3 style='text-align:center; margin:0; font-size:40px; font-weight: bold;'>{$widgetData['number']}</h3> 
+                <p>{$widgetData['sub_title']}</p>";
+                $box_content .= '<a href="' . $widgetData['link'] . '" style="display: block; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></a>';
+
+                $box = new Box($widgetData['title'], $box_content);
                 $box->style('success')
                     ->solid();
-                $column->append(
-                    $box,
-                    ['link' => admin_url('products'),]
-                );
+                $column->append($box);
             });
         });
 

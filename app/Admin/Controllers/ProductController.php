@@ -3,10 +3,13 @@
 namespace App\Admin\Controllers;
 
 use App\Models\Product;
+use App\Models\ServiceProvider;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use \Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Calculation\Web\Service;
 
 class ProductController extends AdminController
 {
@@ -30,16 +33,46 @@ class ProductController extends AdminController
         $grid->model()->orderBy('id', 'desc');
         $grid->disableRowSelector();
 
-        $grid->column('id', __('Id'))->sortable();
-        $grid->column('service_provider_id', __('Service provider id'));
-        $grid->column('name', __('Name'));
-        $grid->column('type', __('Type'));
-        $grid->column('photo', __('Photo'));
-        $grid->column('details', __('Details'));
+        $grid->column('id', __('Id'))->sortable()->hide();
+        $grid->column('photo', __('Photo'))->image('', 50, 50);
+        $grid->column('name', __('Name'))->sortable();
+        $grid->column('type', __('Type'))->sortable()->display(function ($type) {
+            $formattedType = ucfirst($type);
+            return $formattedType;
+        })->label([
+            'product' => 'primary',
+            'service' => 'danger'
+        ]);
+        $grid->column('service_provider_id', __('Service Provider'))->display(function ($service_provider_id) {
+            $service_provider = ServiceProvider::find($service_provider_id);
+            if ($service_provider) {
+                return $service_provider->name;
+            } else {
+                return "N/A";
+            }
+        })->sortable();
+        $grid->column('details', __('Details'))->display(function ($details) {
+            return Str::words($details, 100, '...');
+        });
+
         $grid->column('price', __('Price'));
-        $grid->column('offer_type', __('Offer type'));
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('offer_type', __('Offer type'))->display(function ($offerType) {
+            //Converting the first letter to caps
+            $formattedOfferType = ucfirst($offerType);
+            return $formattedOfferType;
+        })->label([
+            'sale' => 'success',
+            'hire' => 'info',
+            'free' => 'primary',
+        ]);
+        $grid->column('created_at', __('Created at'))
+            ->display(function ($created_at) {
+                return date('Y-m-d', strtotime($created_at));
+            });
+        $grid->column('updated_at', __('Updated at'))
+            ->display(function ($updated_at) {
+                return date('Y-m-d', strtotime($updated_at));
+            })->sortable();
 
         return $grid;
     }
@@ -77,14 +110,15 @@ class ProductController extends AdminController
     {
         $form = new Form(new Product());
 
-        $form->hidden('service_provider_id');
+        $form->select('service_provider_id', __('Service Provider'))->options(ServiceProvider::orderBy('name', 'asc')->pluck('name', 'id'));
+        return $form;
         $form->text('name', __('Name'))->rules("required");
         $form->radio('type', __('Type'))->options(['product' => 'Product', 'service' => 'Service'])
             ->when('product', function () {
             })
             ->when('service', function () {
             })->default('product')->rules("required");
-        $form->image('photo', __('Photo'))->rules("required");
+        $form->image('photo', __('Photo'))->rules("required")->uniqueName();
         $form->radio('offer_type', __('Offer type'))->options(['free' => 'Free', 'hire' => 'Hire', 'sale' => 'Sale'])
             ->when('hire', function ($form) {
                 $form->text('hire_description', __('Describe the rates'))->rules('required');
