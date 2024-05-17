@@ -111,7 +111,6 @@ class ProductController extends AdminController
         $form = new Form(new Product());
 
         $form->select('service_provider_id', __('Service Provider'))->options(ServiceProvider::orderBy('name', 'asc')->pluck('name', 'id'));
-        return $form;
         $form->text('name', __('Name'))->rules("required");
         $form->radio('type', __('Type'))->options(['product' => 'Product', 'service' => 'Service'])
             ->when('product', function () {
