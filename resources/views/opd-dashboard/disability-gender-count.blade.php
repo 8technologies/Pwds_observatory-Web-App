@@ -3,7 +3,8 @@
         position: relative;
         margin: auto;
         width: 100%;
-        height: 60vh;
+        height: 50vh;
+        padding-bottom: 5px;
         /* 70% of the viewport height */
     }
 
