@@ -26,30 +26,50 @@
         font-size: 18px;
         font-weight: 700;
     }
+
+    .main-container {
+        background-color: #ffffff;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+
+    }
+
+    #inner-container {
+        background-color: #ffffff;
+    }
 </style>
 
-<div class="container">
-    <h3 class="all-jobs">View available jobs</h3>
-    @foreach ($jobs as $job)
-        <div class="card job-card">
-            <h4>{{ $job->title }}</h4>
-            <p><span>Location: </span>{{ $job->location }}</p>
-            <p><span>Type: </span>{{ $job->type }}</p>
-            <p><span>Created Date: </span>{{ $job->created_at->format('Y-m-d') }}</p>
-            <p><span>Deadline: </span>{{ $job->deadline }}</p>
+<div class="main-container">
+    <h3 class="all-jobs text-center">View available jobs</h3>
+    <div class="container" id="inner-container">
+        @foreach ($jobs as $job)
+            <div class="card job-card mb-4 shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">{{ $job->title }}</h4>
+                    <p class="card-text"><span class="font-weight-bold">Location: </span>{{ $job->location }}</p>
+                    <p class="card-text"><span class="font-weight-bold">Type: </span>{{ $job->type }}</p>
+                    <p class="card-text"><span class="font-weight-bold">Created Date:
+                        </span>{{ $job->created_at->format('Y-m-d') }}</p>
+                    <p class="card-text"><span class="font-weight-bold">Deadline: </span>{{ $job->deadline }}</p>
 
-            <div id="short_{{ $job->id }}" class="text">
-                {!! Str::limit($job->description, 400) !!}
-                <span onclick="expandText('{{ $job->id }}')" class="read-more">...........Read More</span>
-            </div>
+                    <div id="short_{{ $job->id }}" class="text">
+                        {!! Str::limit($job->description, 400) !!}
+                        <a href="javascript:void(0);" onclick="expandText('{{ $job->id }}')"
+                            class="text-primary font-weight-bold">Read More</a>
+                    </div>
 
-            <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
-                {!! $job->description !!}
-                <span onclick="collapseText('{{ $job->id }}')" class="read-less">........Read Less</span>
+                    <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
+                        {!! $job->description !!}
+                        <a href="javascript:void(0);" onclick="collapseText('{{ $job->id }}')"
+                            class="text-primary font-weight-bold">Read Less</a>
+                    </div>
+                </div>
             </div>
-        </div>
-        <hr>
-    @endforeach
+            <hr>
+        @endforeach
+    </div>
 </div>
 
 <script>

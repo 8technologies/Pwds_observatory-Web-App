@@ -28,15 +28,6 @@ class JobController extends AdminController
     {
         $grid = new Grid(new Job());
 
-        $auth_user = Admin::user();
-
-        $display = $grid->model()->where('user_id', '!=', $auth_user->id);
-        if ($display) {
-            $grid->actions(function (Grid\Displayers\Actions $actions) {
-                $actions->disableEdit();
-                $actions->disableDelete();
-            });
-        }
 
         $grid->disableBatchActions();
 

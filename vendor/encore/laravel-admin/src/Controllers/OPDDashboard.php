@@ -255,14 +255,14 @@ class OPDDashboard
         // Sort counts array
         arsort($opdServiceCounts);
 
-        $queryParams = http_build_query([
-            'user_id' => $user_id,
-            'districts_of_operations' => ['name' => $opdName],
-            'target_group' => '',  // 
-            'disability_categories' => ['name' => '']
-        ]);
+        // $queryParams = http_build_query([
+        //     'user_id' => $user_id,
+        //     'districts_of_operations' => ['name' => $opdName],
+        //     'target_group' => '',  // 
+        //     'disability_categories' => ['name' => '']
+        // ]);
 
-        $link = admin_url("service-providers") . "?" . $queryParams;
+        $link = admin_url("service-providers");
 
         // Pass counts data to view
         return view('opd-dashboard.opd-service-counts', compact('opdServiceCounts', 'opdName', 'opdTotalServices', 'link'));
