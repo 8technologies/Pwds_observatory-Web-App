@@ -32,6 +32,9 @@ class DistrictUnionController extends AdminController
      */
     protected function grid()
     {
+
+
+
         $grid = new Grid(new Organisation());
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by Name');
@@ -52,7 +55,7 @@ class DistrictUnionController extends AdminController
         $grid->model()->where('relationship_type', 'du')->orderBy('updated_at', 'desc');
         $grid->exporter(new DistrictUnionsExcelExporter());
 
-        $grid->column('name', __('Name'));
+        $grid->column('name', __('Name'))->sortable();
         $grid->column('registration_number', __('Registration number'));
         $grid->column('date_of_registration', __('Date of registration'));
         $grid->column('membership_type', __('Membership type'));

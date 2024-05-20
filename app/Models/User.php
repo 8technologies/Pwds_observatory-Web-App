@@ -83,17 +83,20 @@ class User extends Administrator implements JWTSubject
 
     public static function updateUserOrganisationId()
     {
-        // Get users with organisation_id set to 1
-        $usersToUpdate = self::where('organisation_id', 1)->get();
+        // Get users with organisation_id set to 0
+        $usersToUpdate = self::where('organisation_id', 0)->get();
 
         foreach ($usersToUpdate as $user) {
             // Get the corresponding organisation_id from the Organisation table
             $organisationId = Organisation::where('user_id', $user->id)->value('id');
 
-            // Update the user's organisation_id
-            self::where('id', $user->id)
-                ->update(['organisation_id' => $organisationId]);
+            if (!is_null($organisationId)) {
+                // Update the user's organisation_id
+                self::where('id', $user->id)
+                    ->update(['organisation_id' => $organisationId]);
+            }
         }
+
 
         return count($usersToUpdate);
     }

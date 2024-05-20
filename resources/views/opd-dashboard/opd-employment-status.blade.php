@@ -8,7 +8,8 @@
                 <select id="opdEmploymentSelector" class="form-select">
                     <option value="Formal Employment">Formal Employment</option>
                     <option value="Self Employment">Self Employment</option>
-                    <option value="Unemployed">Unemployed</option>
+                    {{-- To be worked on --}}
+                    {{-- <option value="Unemployed">Unemployed</option> --}}
                 </select>
             </label>
         </div>

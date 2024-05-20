@@ -32,14 +32,13 @@ class OPDController extends AdminController
      */
     protected function grid()
     {
+
         $grid = new Grid(new Organisation());
         $grid->disableBatchActions();
-        $grid->quickSearch('name')->placeholder('Search by Name');
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             //Filters for region, Membership type and date of registration
-            $filter->equal('region.name', 'Region')
-                ->select(Region::pluck('name', 'name'));
+            $filter->like('name', 'Name');
             $filter->equal('membership_type', 'Membership Type')
                 ->select(Organisation::pluck('membership_type', 'membership_type'));
             $filter->between('date_of_registration', 'Date of Registration')->date();
@@ -71,7 +70,6 @@ class OPDController extends AdminController
 
         $grid->column('membership_type', __('Membership type'));
         $grid->column('physical_address', __('Physical address'));
-        $grid->column('website', __('Website'));
         // $grid->column('contact_persons', __('Contact persons'));
 
         return $grid;

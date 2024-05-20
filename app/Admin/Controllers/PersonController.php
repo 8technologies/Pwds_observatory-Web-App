@@ -351,7 +351,11 @@ class PersonController extends AdminController
             ->when(1, function (Form $form) {
                 $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment'])->rules('required')
                     ->when('formal employment', function (Form $form) {
-                        $form->text('position', __('Current position'))->placeholder('What is your current position')->rules('required');
+                        $form->hasMany('employment_history', 'Previous Employment', function (Form\NestedForm $form) {
+                            $form->text('employer', __('Employer Name'));
+                            $form->text('position', __('Position'))->placeholder("Position");
+                            $form->text('year_of_employment', __('Period of service'))->placeholder("2022 - 2023");
+                        });
                     })
                     ->when('self employment', function (Form $form) {
                         $form->text('occupation', __('Occupation'))->placeholder('What is your occupation?')->rules('required')->help('e.g Farming, Fishing, Retailer');
