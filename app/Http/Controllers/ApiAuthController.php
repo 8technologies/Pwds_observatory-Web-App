@@ -52,65 +52,58 @@ class ApiAuthController extends Controller
 
     public function login(Request $r)
     {
-        try {
-            if ($r->username == null) {
-                return $this->error('Username is required.');
-            }
-
-            if ($r->password == null) {
-                return $this->error('Password is required.');
-            }
-
-            $r->username = trim($r->username);
-
-            $u = User::where('phone_number', $r->username)
-                ->orWhere('username', $r->username)
-                ->orWhere('email', $r->username)
-                ->first();
-
-
-
-            if ($u == null) {
-
-                $phone_number = Utils::prepare_phone_number($r->username);
-
-                if (Utils::phone_number_is_valid($phone_number)) {
-                    $phone_number = $r->phone_number;
-
-                    $u = User::where('phone_number', $phone_number)
-                        ->orWhere('username', $phone_number)
-                        ->orWhere('email', $phone_number)
-                        ->first();
-                }
-            }
-
-            if ($u == null) {
-                return $this->error('User account not found.');
-            }
-
-
-            JWTAuth::factory()->setTTL(60 * 24 * 30 * 365);
-
-            $token = auth('api')->attempt([
-                'id' => $u->id,
-                'password' => trim($r->password),
-            ]);
-
-
-            if ($token == null) {
-                return $this->error('Wrong credentials.');
-            }
-
-            $u->token = $token;
-            $u->remember_token = $token;
-
-            return $this->success($u, 'Logged in successfully.');
-        } catch (\Exception $e) {
-            \Log::error('Login error: ' . $e->getMessage());
-
-            // Return a generic error response
-            return response()->json(['message' => 'Server error'], 500);
+        if ($r->username == null) {
+            return $this->error('Username is required.');
         }
+
+        if ($r->password == null) {
+            return $this->error('Password is required.');
+        }
+
+        $r->username = trim($r->username);
+
+        $u = User::where('phone_number', $r->username)
+            ->orWhere('username', $r->username)
+            ->orWhere('email', $r->username)
+            ->first();
+
+
+
+        if ($u == null) {
+
+            $phone_number = Utils::prepare_phone_number($r->username);
+
+            if (Utils::phone_number_is_valid($phone_number)) {
+                $phone_number = $r->phone_number;
+
+                $u = User::where('phone_number', $phone_number)
+                    ->orWhere('username', $phone_number)
+                    ->orWhere('email', $phone_number)
+                    ->first();
+            }
+        }
+
+        if ($u == null) {
+            return $this->error('User account not found.');
+        }
+
+
+        JWTAuth::factory()->setTTL(60 * 24 * 30 * 365);
+
+        $token = auth('api')->attempt([
+            'id' => $u->id,
+            'password' => trim($r->password),
+        ]);
+
+
+        if ($token == null) {
+            return $this->error('Wrong credentials.');
+        }
+
+        $u->token = $token;
+        $u->remember_token = $token;
+
+        return $this->success($u, 'Logged in successfully.');
     }
 
     public function register(Request $r)
