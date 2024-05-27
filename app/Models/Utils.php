@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 use SplFileObject;
 
 class Utils extends Model
@@ -51,6 +52,9 @@ administrator_id
 [9] => RELATIONSHIP WITH CAREGIVER
 [] => District
 */
+
+
+    //mail sender
 
 
     public static function importPwdsProfiles($path)
@@ -925,5 +929,43 @@ DELETE FROM people WHERE id > 8954
             $org->save();
         }
         return;
+    }
+
+
+    public static function mail_send($data)
+    {
+        //$data['email'] is not set
+        if (!isset($data['email'])) {
+            throw new \Exception('Failed to send email because email is not set');
+        }
+
+        //if $data['name'] is not set, set name to be mail
+        if (!isset($data['name'])) {
+            $data['name'] = $data['email'];
+        }
+
+        // check if $data['subject'] not set, throw an error
+        if (!isset($data['subject'])) {
+            throw new \Exception('Failed to send email because subject is not set');
+        }
+        // do the same to body $data['body']
+        if (!isset($data['body'])) {
+            throw new \Exception('Failed to send email because body is not set');
+        }
+
+        try {
+            Mail::send(
+                'emails.mail-template-1',
+                $data,
+                function ($m) use ($data) {
+                    $m->to($data['email'], $data['name'])
+                        ->subject($data['subject']);
+                    $m->from(env('MAIL_USERNAME', 'info@ict4personswithdisabilities.org'), $data['subject']);
+                }
+            );
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        return 'success';
     }
 }
