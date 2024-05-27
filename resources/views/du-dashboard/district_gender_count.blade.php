@@ -15,7 +15,7 @@
     }
 
     #chart-description {
-        height: 50vh;
+        height: 52vh;
         /* Adjust the height as needed */
         width: 100%;
 
