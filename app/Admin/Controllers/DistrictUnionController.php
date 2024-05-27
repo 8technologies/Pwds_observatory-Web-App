@@ -16,6 +16,7 @@ use Encore\Admin\Admin;
 use App\Models\District;
 use App\Models\Region;
 use Encore\Admin\Controllers\Dashboard;
+use Exception;
 
 class DistrictUnionController extends AdminController
 {
@@ -329,12 +330,13 @@ class DistrictUnionController extends AdminController
         });
 
 
-        $form->saved(function (Form $form) {
-            // if ($form->isCreating()) {
-            //     $admin_password = session('password');
 
-            //     Mail::to($form->admin_email)->send(new CreatedDistrictUnionMail($form->name, $form->admin_email, $admin_password));
-            // }
+        $form->saved(function (Form $form) {
+            if ($form->isCreating()) {
+                $admin_password = session('password');
+
+                Mail::to($form->admin_email)->send(new CreatedDistrictUnionMail($form->name, $form->admin_email, $admin_password));
+            }
         });
 
         Admin::script(

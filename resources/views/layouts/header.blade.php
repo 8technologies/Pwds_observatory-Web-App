@@ -46,9 +46,9 @@ if (!isset($header_style)) {
                         <li>
                             <a href="{{ url('constitution') }}" class="dropdown-item">Partnerships</a>
                         </li>
-                        {{-- <li>
-                            <a href="{{ url('our-team') }}" class="dropdown-item">Message from the program lead </a>
-                        </li> --}}
+                        <li>
+                            <a href="{{ url('our-team') }}" class="dropdown-item">Our Team </a>
+                        </li>
 
                         {{-- Commented due to lack of information here --}}
                         {{-- 

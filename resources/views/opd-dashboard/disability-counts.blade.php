@@ -1,7 +1,7 @@
 <div class="container card pt-5 mb-5" id='chart-description'>
     <div class="row" id="chart-content">
         <div class="col-12" id="heading">
-            <h5 class="text-center">Persons with Disability by Disability Category in {{ $opdName }}</h5>
+            <h5 class="text-center">PWDs By Disability Category in {{ $opdName }}</h5>
         </div>
 
     </div>

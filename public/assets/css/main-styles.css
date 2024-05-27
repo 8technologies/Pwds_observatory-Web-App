@@ -1,0 +1,155 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+
+
+ p{
+     font-family: "Montserrat", sans-serif;
+      line-height: 1.8;
+      font-size:15px;
+ }
+.hero-content h1{
+      font-size: 45px;
+      text-transform:uppercase;
+     font-family: "Lora", serif;
+      color:#136ad5;
+ }
+ 
+.hero-content p{
+      font-size: 15px !important;
+     
+ }
+ .parallax{
+     overflow:hidden;
+ }
+h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
+    font-family: "Lora", serif;
+   font-size:36px;
+  color:#136ad5; }
+
+.count-numbers .counter {
+  font-size: 26px;
+  font-family: "Montserrat", serif;
+  color: #136ad5; }
+  .category {
+  display: inline-block;
+  padding: 20px;
+  background: rgba(19, 106, 213, 0.05);
+  border-radius: 4px;
+  text-decoration: none !important; }
+  .category, .category h3, .category span {
+    -webkit-transition: .3s all ease;
+    -o-transition: .3s all ease;
+    transition: .3s all ease; }
+  .category h3 {
+    font-family: "Montserrat", sans-serif;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1;
+    color: #343a40; }
+  .category span {
+    font-size: 13px;
+    color: rgba(52, 58, 64, 0.4); }
+  .category .uil {
+    text-align: center;
+    display: inline-block;
+    color: #00aeff;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    margin-right: 20px;
+    background: #ffffff;
+    font-size: 30px;
+    line-height: 40px; }
+  .category:hover {
+    background: #00aeff; }
+    .category:hover h3, .category:hover span {
+      color: #ffffff; }
+    .category:hover span {
+      color: rgba(255, 255, 255, 0.5); }
+      
+.display-font{
+    font-size:24px;
+    font-family: "Montserrat", sans-serif;
+    font-weight:bold;
+}
+.step h3{
+    font-size:25px !important;
+}
+.services-item h3{
+    color:#136ad5;
+}
+
+
+.untree_co-section {
+  padding: 100px 0;
+  position: relative; }
+  .feature {
+  margin-bottom: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 4px;
+  text-align: center; }
+  .feature h3 {
+    font-size: 18px;
+    color: #136ad5; }
+  .feature p {
+    font-size: 15px;
+     }
+.feature .uil{
+    font-size:30px;
+    color:#136ad5;
+}
+ .feature [class^="flaticon-"],
+  .feature [class^="icon-"],
+  .feature [class^="uil uil-"] {
+    position: relative;
+    margin-bottom: 30px;
+    font-size: 30px;
+    color: #136ad5;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    display: inline-block;
+    border-radius: 50%;
+    text-align: center; }
+    .feature [class^="flaticon-"]:after,
+    .feature [class^="icon-"]:after,
+    .feature [class^="uil uil-"]:after {
+      content: "";
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      left: -5px;
+      top: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(19, 106, 213, 0.2); }
+      
+     .news-item h3{
+    font-size:23px !important;
+    
+     }
+     .news-item a{
+    color:#136ad5;
+    
+     }
+     
+.service-hero{
+    padding:250px 200px;
+       background-image: linear-gradient(rgba(120, 128, 120, 0.8), rgba(0, 0, 0, 0.3)),url('/assets/images/Smart Wearable.jpg');
+    background-size:cover;
+    background-position:center;
+ 
+}
+.service-hero p{
+    color:#fff!important;
+}
+.service-hero h2{
+    color:#fff!important;
+    text-transform:uppercase;
+}
+
+#barchart_material{
+    overflow:hidden;
+}
+

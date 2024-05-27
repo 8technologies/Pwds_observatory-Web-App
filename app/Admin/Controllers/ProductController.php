@@ -87,12 +87,14 @@ class ProductController extends AdminController
     {
         $show = new Show(Product::findOrFail($id));
 
-        $show->field('id', __('Id'));
-        $show->field('service_provider_id', __('Service provider id'));
+        // $show->field('id', __('Id'));
+        // $show->field('service_provider_id', __('Service provider id'));
         $show->field('name', __('Name'));
         $show->field('type', __('Type'));
-        $show->field('photo', __('Photo'));
-        $show->field('details', __('Details'));
+        $show->field('photo', __('Photo'))->image();
+        $show->field('details', __('Details'))->as(function ($details) {
+            return strip_tags($details);
+        });
         $show->field('price', __('Price'));
         $show->field('offer_type', __('Offer type'));
         $show->field('created_at', __('Created at'));

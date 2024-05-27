@@ -2,7 +2,7 @@
 <div class="container card pt-5 mb-5" id="chart-description">
     <div class="row" id="chart-content">
         <div class="col-12" id="heading">
-            <h5 class="text-center">District Unions Vs NOPDs per Region</h5>
+            <h5 class="text-center">District Unions Vs NOPDs Per Region</h5>
         </div>
         <div class="col-12" id="item-select">
             <label for="organisationType">

@@ -59,17 +59,19 @@ class JobController extends AdminController
     {
         $show = new Show(Job::findOrFail($id));
 
-        $show->field('id', __('Id'));
+        // $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('user_id', __('User id'));
+        // $show->field('user_id', __('User id'));
         $show->field('title', __('Title'));
         $show->field('location', __('Location'));
-        $show->field('description', __('Description'));
+        $show->field('description', __('Description'))->as(function ($description) {
+            return strip_tags($description);
+        });;
         $show->field('type', __('Type'));
         $show->field('minimum_academic_qualification', __('Minimum academic qualification'));
         $show->field('required_experience', __('Required experience'));
-        $show->field('photo', __('Photo'));
+        $show->field('photo', __('Photo'))->image();
         $show->field('how_to_apply', __('How to apply'));
         $show->field('hiring_firm', __('Hiring firm'));
         $show->field('deadline', __('Deadline'));
