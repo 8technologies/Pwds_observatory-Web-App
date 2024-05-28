@@ -38,7 +38,7 @@ use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Auth;
 use App\Admin\Extensions\Nav\Shortcut;
 use App\Admin\Extensions\Nav\Dropdown;
-
+//inclide css blade view
 Utils::system_boot();
 
 

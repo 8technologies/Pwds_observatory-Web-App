@@ -13,36 +13,50 @@ use App\Admin\Controllers\PersonController;
 use App\Admin\Controllers\PwdDashboardController;
 use App\Http\Middleware\Du_Dashboard;
 use App\Mail\CreatedDistrictUnionMail;
+use App\Models\Organisation;
 use App\Models\Utils;
 use Illuminate\Support\Facades\Mail;
 
+Route::get('du-admin-password-reset', function () {
+    $du_id = $_GET['du_id'];
+    $d  = Organisation::find($du_id);
+    if ($d  == null) {
+        die("District Union not found.");
+    }
+    try {
+        $d->reset_admin_pass();
+        echo "Password reset successfully.";
+    } catch (\Throwable $th) {
+        echo $th->getMessage();
+    }
+});
 Route::get('mail-test', function () {
 
-    $admin_password = session('password') ?? '';
-    Mail::to('nanaphiona9@gmail.com')->send(new CreatedDistrictUnionMail('Test Name', 'nankyaphio15@gmail.com', $admin_password));
-    return 'Test email sent.';
+    /*   $admin_password = session('password') ?? '';
+    Mail::to('mubahood360@gmail.com')->send(new CreatedDistrictUnionMail('Test Name', 'nankyaphio15@gmail.com', $admin_password));
+    return 'Test email sent.'; */
 
-    // $name = 'Muhindo mubaraka';
-    // $body = <<<EOF
-    //     Dear {$name},
-    //     <br>
-    //     <br>
-    //     We are pleased to inform you that your account has been approved. You can now login to the PWD website and access all the features.
-    //     <br>
-    //     <br>
-    //     Regards,
-    //     <br>
-    //     PWD Team.
-    // EOF;
+    $name = 'Muhindo mubaraka';
+    $body = <<<EOF
+        Dear {$name},
+        <br>
+        <br>
+        We are pleased to inform you that your account has been approved. You can now login to the PWD website and access all the features.
+        <br>
+        <br>
+        Regards,
+        <br>
+        PWD Team.
+    EOF;
 
-    // $data = [
-    //     'email' => 'nankyaphio15@gmail.com',
-    //     'name' => 'Phiona',
-    //     'subject' => 'Test Mail',
-    //     'body' => $body
-    // ];
+    $data = [
+        'email' => 'mubahood360@gmail.com',
+        'name' => 'Phiona',
+        'subject' => 'Test Mail',
+        'body' => $body
+    ];
 
-    // Utils::mail_send($data);
+    Utils::mail_send($data);
 });
 
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Admin\Extensions\Column\OpenMap;
 use App\Mail\CreatedDistrictUnionMail;
 use Error;
+use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
@@ -112,6 +113,9 @@ class Organisation extends Model
         if (!$district) {
             return null;
         }
+        if ($district->region == null) {
+            return 'N/A';
+        }
         return $district->region->name;
     }
 
@@ -145,116 +149,204 @@ class Organisation extends Model
         parent::boot();
 
         static::creating(function ($model) {
-
-            $district = District::find($model->district_id);
-            if (!$district) {
-                return 'District not found';
-            }
-            $model->region_id = $district->region_id;
-
-            if ($this->relationship_type == 'opd') {
-                $model->opd_id = $this->id;
-            }
-            if ($this->relationship_type == 'du') {
-                $model->district_id = $model->district_id;
-            }
-
-
-            if ($model->relationship_type == 'du') {
-                $admin_password = session('password') ?? '';
-
-                try {
-                    // Ensuring model has a valid email
-                    if (isset($model->admin_email) && filter_var($model->admin_email, FILTER_VALIDATE_EMAIL)) {
-                        Mail::to($model->admin_email)->send(new CreatedDistrictUnionMail($model->name, $model->admin_email, $admin_password));
-                    } else {
-                        Log::error('Invalid admin email: ' . $model->admin_email);
-                    }
-                } catch (\Exception $e) {
-                    Log::error('Failed to send email: ' . $e->getMessage());
-                    return "Mail cannot be sent";
-                }
-            }
-        });
-
-        static::saving(function ($model) {
-            if ($model->isCreating() && $model->relationship_type == 'du') {
-                $du_exists = self::where('district_id', $model->district_id)
-                    ->where('relationship_type', 'du')
-                    ->exists();
-
-                if ($du_exists) {
-                    // Handling error in a model context might differ, depending on your application structure
-                    Log::error('District Union already exists for the specified district');
-                    throw new \Exception('District Union already exists for the specified district');
-                }
-
-                // Generate random password for user and send it to the user's email
-                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
-                $new_password = substr(str_shuffle($alpha_list), 0, 8);
-                $hashed_password = Hash::make($new_password);
-
-                $admin_email = $model->admin_email;
-
-                // Check if user exists
-                $admin = User::where('email', $admin_email)->first();
-
-                if ($admin == null) {
-                    $admin = User::create([
-                        'username' => $admin_email,
-                        'email' => $admin_email,
-                        'password' => $hashed_password,
-                        'name' => $model->name,
-                        'avatar' => $model->logo,
-                    ]);
-
-                    $admin->assignRole('district-union');
-                }
-
-                // Assign relevant fields to the model
-                $model->user_id = $admin->id;
-                $model->relationship_type = 'du';
-                $model->parent_organisation_id = session('organisation_id');
-
-                // Store the new password in the session for email use
-                session(['password' => $new_password]);
-
-                // Send the email
-                try {
-                    Mail::to($admin_email)->send(new CreatedDistrictUnionMail($model->name, $admin_email, $new_password));
-                } catch (\Exception $e) {
-                    Log::error('Failed to send email: ' . $e->getMessage());
-                }
-            }
+            $model = self::do_validate($model);
+            return true;
         });
 
         static::updating(function ($model) {
-            // Retrieve the input values
-            if ($model->relationship_type == 'du') {
-                $password = request()->input('password');
-                $new_password = request()->input('new_password');
-                $confirm_new_password = request()->input('confirm_new_password');
+            $model = self::do_validate($model);
+            return true;
+        });
 
-                if ($new_password !== $confirm_new_password) {
-                    // Handling error 
-                    Log::error('Passwords do not match. Please check the new password and try again.');
-                    throw new \Exception('Passwords do not match. Please check the new password and try again.');
-                }
+        static::created(function ($model) {
+            self::do_finalization($model);
+        });
 
-                // Checking if both password fields are not empty
-                if (!empty($password) && !empty($new_password)) {
-                    // Assuming $model is the Administrator instance being updated
-                    if (Hash::check($password, $model->password, ['rounds' => 12])) {
-                        // Old password is correct, update to new password
-                        $model->password = Hash::make($new_password);
-                        Log::info('Password updated successfully.');
-                    } else {
-                        // Old password is incorrect
-                        Log::error('Old password is incorrect. Please check the old password and try again.');
-                        throw new \Exception('Old password is incorrect. Please check the old password and try again.');
-                    }
+        static::updated(function ($model) {
+            self::do_finalization($model);
+        });
+    }
+
+
+    public static function do_validate($model)
+    {
+        $district = District::find($model->district_id);
+        if (!$district) {
+            throw new Error('District not found.');
+        }
+
+
+        $model->region_id = $district->region_id;
+
+        if ($model->relationship_type == 'du') {
+            if (!filter_var($model->admin_email, FILTER_VALIDATE_EMAIL)) {
+                throw new Error('Invalid email address. => ' . $model->admin_email . " <= ");
+            }
+
+            $model->district_id = $model->district_id;
+            $du_in_same_dis = self::where('district_id', $model->district_id)
+                ->where('relationship_type', 'du')
+                ->first();
+            if ($du_in_same_dis != null) {
+                if ($du_in_same_dis->id != $model->id) {
+                    throw new Error('District Union already exists for the specified district. id #' . $du_in_same_dis->id);
                 }
             }
-        });
+        }
+
+        return $model;
+    }
+
+    public static function do_finalization($model)
+    {
+
+        if ($model->relationship_type == 'du') {
+            $exist = User::where('email', $model->admin_email)->first();
+            $created_new_admin = false;
+            $udpate_admin = false;
+            if ($exist != null) {
+                $org = Organisation::find($exist->organisation_id);
+                if ($org == null) {
+                    $udpate_admin = true;
+                }
+            } else {
+                $created_new_admin = true;
+            }
+
+            if ($udpate_admin) {
+                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+                $new_password = substr(str_shuffle($alpha_list), 0, 8);
+                $hashed_password = Hash::make($new_password);
+                $exist->password = $hashed_password;
+                $exist->username = $model->admin_email;
+                $exist->email = $model->admin_email;
+                $exist->password = $new_password;
+                $exist->approved = 1;
+                $DIS = District::find($model->district_id);
+                $exist->first_name = $DIS->name . ' DU';
+                $exist->last_name = 'Admin';
+                $exist->organisation_id = $model->id;
+                $exist->save();
+                $exist->assignRole('district-union');
+                try {
+                    $model->reset_admin_pass();
+                } catch (\Exception $e) {
+                    Log::error('Failed to send email: ' . $e->getMessage());
+                }
+            }
+
+
+            if ($created_new_admin) {
+                $exist = new User();
+                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+                $new_password = substr(str_shuffle($alpha_list), 0, 8);
+                $hashed_password = Hash::make($new_password);
+                $exist->password = $hashed_password;
+                $exist->username = $model->admin_email;
+                $exist->email = $model->admin_email;
+                $exist->password = $new_password;
+                $exist->approved = 1;
+                $DIS = District::find($model->district_id);
+                $exist->first_name = $DIS->name . ' DU';
+                $exist->last_name = 'Admin';
+                $exist->organisation_id = $model->id;
+                $exist->save();
+                $exist->assignRole('district-union');
+                try {
+                    $model->reset_admin_pass();
+                } catch (\Exception $e) {
+                    Log::error('Failed to send email: ' . $e->getMessage());
+                }
+            }
+        }
+    }
+
+    //reset admin password
+    public function reset_admin_pass()
+    {
+        $model = $this;
+        $exist = User::where('email', $model->admin_email)->first();
+        $created_new_admin = false;
+        $udpate_admin = false;
+        $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+        $new_password = substr(str_shuffle($alpha_list), 0, 8);
+        $hashed_password = Hash::make($new_password);
+
+        if ($exist != null) {
+            $org = Organisation::find($exist->organisation_id);
+            if ($org == null) {
+                $udpate_admin = true;
+            }
+        } else {
+            $created_new_admin = true;
+        }
+
+        if ($udpate_admin) {
+            $exist->password = $hashed_password;
+            $exist->username = $model->admin_email;
+            $exist->email = $model->admin_email;
+            $exist->approved = 1;
+            $DIS = District::find($model->district_id);
+            $exist->first_name = $DIS->name . ' DU';
+            $exist->last_name = 'Admin';
+            $exist->organisation_id = $model->id;
+            $exist->name = $exist->first_name . ' ' . $exist->last_name;
+            $exist->save();
+        }
+
+
+        if ($created_new_admin) {
+            $exist = new User();
+            $exist->username = $model->admin_email;
+            $exist->email = $model->admin_email;
+            $exist->password = $hashed_password;
+            $exist->approved = 1;
+            $DIS = District::find($model->district_id);
+            $exist->first_name = $DIS->name . ' DU';
+            $exist->last_name = 'Admin';
+            $exist->name = $exist->first_name . ' ' . $exist->last_name;
+            $exist->organisation_id = $model->id;
+            $exist->save();
+            $exist->assignRole('district-union');
+        }
+
+        $du_admin = User::where('email', $model->admin_email)->first();
+        //msg to admin to login using $new_password
+        $url = url('login');
+        $url = $url . "?my_email=" . $model->admin_email;
+        $url = $url . "&my_pass=" . $new_password;
+
+        if ($du_admin != null) {
+            $exist->password = $hashed_password;
+            $exist->save();
+
+            $body = <<<EOF
+            Dear Sir/Madam,
+            <br>
+            <br>
+            Your password has been reset. You can now login to the Persons with Disability Observatory using the following credentials:
+            <br>
+            <br><b>EMAIL:</b> {$model->admin_email}
+            <br><b>PASSWORD:</b> {$new_password}
+            <br>
+            <br>
+            <b>OR click the link below to login:</b>
+            <br>
+            <br><b>LINK:</b> {$url}
+            <br>
+            <br>
+            Regards,
+            <br>
+            8Tech Team.
+        EOF;
+
+            $data = [
+                'email' => $model->admin_email,
+                'name' => $du_admin->name,
+                'subject' => 'Password Reset - ' . env('APP_NAME') . date('Y-m-d H:i:s'),
+                'body' => $body
+            ];
+            Utils::mail_send($data);
+        }
     }
 }

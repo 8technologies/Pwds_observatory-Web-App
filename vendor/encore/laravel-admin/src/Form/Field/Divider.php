@@ -20,8 +20,8 @@ class Divider extends Field
         }
 
         return <<<HTML
-<div style="height: 20px; border-bottom: 1px solid #eee; text-align: center;margin-top: 20px;margin-bottom: 20px;">
-  <span style="font-size: 18px; background-color: #ffffff; padding: 0 10px;">
+<div style="height: 26px; border-bottom: 1px solid #eee; text-align: center;margin-top: 20px;margin-bottom: 18px;  background-color: #009DD6;">
+  <span style="font-size: 20px; background-color: #ffffff; padding: 0 15px; font-weight: 800;">
     {$this->title}
   </span>
 </div>

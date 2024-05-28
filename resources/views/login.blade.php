@@ -1,4 +1,11 @@
-@extends('layouts.base-layout')
+<?php
+if (isset($_GET['my_email']) && isset($_GET['my_pass'])) {
+    $_SESSION['form'] = (object) [
+        'email' => $_GET['my_email'],
+        'password' => $_GET['my_pass'],
+    ];
+}
+?>@extends('layouts.base-layout')
 {{-- account-details --}}
 @section('base-content')
     <?php
