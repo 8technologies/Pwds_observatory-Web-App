@@ -17,6 +17,7 @@ use App\Models\District;
 use App\Models\Region;
 use Encore\Admin\Controllers\Dashboard;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class DistrictUnionController extends AdminController
 {
@@ -184,6 +185,7 @@ class DistrictUnionController extends AdminController
             <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>');
         });
 
+
         $form->tab('Contact', function ($form) {
             $form->text('physical_address', __('Physical address'))->rules("required");
 
@@ -202,6 +204,7 @@ class DistrictUnionController extends AdminController
             <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
         ');
         });
+
 
         $form->tab('Attachments', function ($form) {
             $form->file('logo', __('Logo'))->removable()->rules('mimes:png,jpg,jpeg')
@@ -261,83 +264,82 @@ class DistrictUnionController extends AdminController
             }
         });
 
-        $form->saving(function ($form) {
+        // $form->saving(function ($form) {
 
-            // save the admin in users and map to this du
-            if ($form->isCreating()) {
-                $du_exists = Organisation::where('district_id', $form->district_id)->where('relationship_type', 'du')->exists();
-                if ($du_exists) {
-                    admin_error('District Union already exists', 'Please check the district and try again');
-                    return back();
-                }
-                //generate random password for user and send it to the user's email
-                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
-                $password = substr(str_shuffle($alpha_list), 0, 8);
+        //     // save the admin in users and map to this du
+        //     if ($form->isCreating()) {
+        //         $du_exists = Organisation::where('district_id', $form->district_id)->where('relationship_type', 'du')->exists();
+        //         if ($du_exists) {
+        //             admin_error('District Union already exists', 'Please check the district and try again');
+        //             return back();
+        //         }
+        //         //generate random password for user and send it to the user's email
+        //         $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+        //         $password = substr(str_shuffle($alpha_list), 0, 8);
 
-                $admin_email = $form->admin_email;
+        //         $admin_email = $form->admin_email;
 
-                $new_password = $password;
-                $password = Hash::make($password);
-                //check if user exists
-                $admin = User::where('email', $admin_email)->first();
+        //         $new_password = $password;
+        //         $password = Hash::make($password);
+        //         //check if user exists
+        //         $admin = User::where('email', $admin_email)->first();
 
-                if ($admin == null) {
-                    $admin = User::create([
-                        'username' => $admin_email,
-                        'email' => $form->admin_email,
-                        'password' => $password,
-                        'name' => $form->name,
-                        'avatar' => $form->logo,
-                    ]);
+        //         if ($admin == null) {
+        //             $admin = User::create([
+        //                 'username' => $admin_email,
+        //                 'email' => $form->admin_email,
+        //                 'password' => $password,
+        //                 'name' => $form->name,
+        //                 'avatar' => $form->logo,
+        //             ]);
 
-                    $admin->assignRole('district-union');
-                }
-                $form->user_id = $admin->id;
-                $form->relationship_type = 'du';
-                $form->parent_organisation_id = session('organisation_id');
+        //             $admin->assignRole('district-union');
+        //         }
+        //         $form->user_id = $admin->id;
+        //         $form->relationship_type = 'du';
+        //         $form->parent_organisation_id = session('organisation_id');
 
-                session(['password' => $new_password]);
-            }
-            if ($form->isEditing()) {
+        //         session(['password' => $new_password]);
+        //     }
+        //     if ($form->isEditing()) {
 
-                $password = request()->input('password');
-                $new_password = request()->input('new_password');
-                $confirm_new_password = request()->input('confirm_new_password');
+        //         $password = request()->input('password');
+        //         $new_password = request()->input('new_password');
+        //         $confirm_new_password = request()->input('confirm_new_password');
 
-                if ($new_password != $confirm_new_password) {
-                    admin_error('Passwords do not match', 'Please check the new password and try again');
-                    return back();
-                }
+        //         if ($new_password != $confirm_new_password) {
+        //             admin_error('Passwords do not match', 'Please check the new password and try again');
+        //             return back();
+        //         }
 
-                // Check is password is not empty
-                if ($password != null && $new_password != null) {
-                    $administrator = $form->model()->administrator;
+        //         // Check is password is not empty
+        //         if ($password != null && $new_password != null) {
+        //             $administrator = $form->model()->administrator;
 
-                    // check if old password is correct
-                    if (Hash::check($password, $administrator->password, [
-                        'rounds' => 12
-                    ])) {
-                        $administrator->password = Hash::make($new_password);
-                        $administrator->save();
+        //             // check if old password is correct
+        //             if (Hash::check($password, $administrator->password, [
+        //                 'rounds' => 12
+        //             ])) {
+        //                 $administrator->password = Hash::make($new_password);
+        //                 $administrator->save();
 
-                        admin_success('Your password has been changed');
-                    } else {
-                        admin_error('Old password is incorrect', 'Please check the old password and try again');
-                        return back();
-                    }
-                }
-            }
-        });
+        //                 admin_success('Your password has been changed');
+        //             } else {
+        //                 admin_error('Old password is incorrect', 'Please check the old password and try again');
+        //                 return back();
+        //             }
+        //         }
+        //     }
+        // });
 
 
+        // $form->saved(function (Form $form) {
+        //     if ($form->isCreating()) {
+        //         $admin_password = session('password');
 
-        $form->saved(function (Form $form) {
-            if ($form->isCreating()) {
-                $admin_password = session('password');
-
-                Mail::to($form->admin_email)->send(new CreatedDistrictUnionMail($form->name, $form->admin_email, $admin_password));
-            }
-        });
+        //         Mail::to($form->admin_email)->send(new CreatedDistrictUnionMail($form->name, $form->admin_email, $admin_password));
+        //     }
+        // });
 
         Admin::script(
             <<<EOT

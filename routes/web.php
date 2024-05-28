@@ -12,32 +12,37 @@ use App\Admin\Controllers\OPDDashboardController;
 use App\Admin\Controllers\PersonController;
 use App\Admin\Controllers\PwdDashboardController;
 use App\Http\Middleware\Du_Dashboard;
+use App\Mail\CreatedDistrictUnionMail;
 use App\Models\Utils;
 use Illuminate\Support\Facades\Mail;
 
 Route::get('mail-test', function () {
-    
-    $name = 'Muhindo mubaraka';
-    $body = <<<EOF
-        Dear {$name},
-        <br>
-        <br>
-        We are pleased to inform you that your account has been approved. You can now login to the PWD website and access all the features.
-        <br>
-        <br>
-        Regards,
-        <br>
-        PWD Team.
-    EOF;
 
-    $data = [
-        'email' => 'mubahood360@gmail.com',
-        'name' => 'Mubarak',
-        'subject' => 'Test Mail',
-        'body' => $body
-    ];
+    $admin_password = session('password') ?? '';
+    Mail::to('nanaphiona9@gmail.com')->send(new CreatedDistrictUnionMail('Test Name', 'nankyaphio15@gmail.com', $admin_password));
+    return 'Test email sent.';
 
-    Utils::mail_send($data);
+    // $name = 'Muhindo mubaraka';
+    // $body = <<<EOF
+    //     Dear {$name},
+    //     <br>
+    //     <br>
+    //     We are pleased to inform you that your account has been approved. You can now login to the PWD website and access all the features.
+    //     <br>
+    //     <br>
+    //     Regards,
+    //     <br>
+    //     PWD Team.
+    // EOF;
+
+    // $data = [
+    //     'email' => 'nankyaphio15@gmail.com',
+    //     'name' => 'Phiona',
+    //     'subject' => 'Test Mail',
+    //     'body' => $body
+    // ];
+
+    // Utils::mail_send($data);
 });
 
 

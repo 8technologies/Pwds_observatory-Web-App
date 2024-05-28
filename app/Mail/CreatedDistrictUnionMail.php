@@ -27,6 +27,6 @@ class CreatedDistrictUnionMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.district-union');
+        return $this->markdown('emails.mail-template-1');
     }
 }
