@@ -16,13 +16,15 @@
     const ageGroups = Object.keys(genderCountData)
         .filter(label => label !== null)
         .sort((a, b) => {
-            // Handle the '65+' age group separately
-            if (a === '65+') return 1;
-            if (b === '65+') return -1;
+            // Place '65+' at the top of the list
+            if (a === '65+') return -1;
+            if (b === '65+') return 1;
+            // Compare start ages of other age groups descending
             const startAgeA = parseInt(a.split(' - ')[0], 10);
             const startAgeB = parseInt(b.split(' - ')[0], 10);
-            return startAgeB - startAgeA;
+            return startAgeB - startAgeA; // Keep as descending order
         });
+
     const maleData = ageGroups.map(ageGroup => genderCountData[ageGroup]['Male'] || 0);
     const femaleData = ageGroups.map(ageGroup => (genderCountData[ageGroup]['Female'] || 0)).map(dataPoint =>
         dataPoint * -1);
