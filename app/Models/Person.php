@@ -123,6 +123,7 @@ class Person extends Model
             $person->other_names = ucfirst(strtolower($person->other_names));
             $person->sub_county = ucfirst(strtolower($person->sub_county));
             $person->village = ucfirst(strtolower($person->village));
+            $person->profile = ucfirst(strtolower($person->profiler));
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
@@ -145,6 +146,7 @@ class Person extends Model
             $person->other_names = ucfirst(strtolower($person->other_names));
             $person->sub_county = ucfirst(strtolower($person->sub_county));
             $person->village = ucfirst(strtolower($person->village));
+            $person->profile = ucfirst(strtolower($person->profiler));
 
             //is_employed == 0 must be taken as unemployed
             if ($person->is_employed == 2) {
@@ -165,6 +167,7 @@ class Person extends Model
             $person->other_names = ucfirst(strtolower($person->other_names));
             $person->sub_county = ucfirst(strtolower($person->sub_county));
             $person->village = ucfirst(strtolower($person->village));
+            $person->profile = ucfirst(strtolower($person->profiler));
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';

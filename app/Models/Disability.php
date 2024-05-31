@@ -9,6 +9,8 @@ class Disability extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name'];
+
     public function people()
     {
         return $this->belongsToMany(Person::class);

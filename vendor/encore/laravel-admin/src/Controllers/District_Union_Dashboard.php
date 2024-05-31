@@ -92,8 +92,10 @@ class District_Union_Dashboard
         if (is_null($age)) {
             return null;
         }
-        if ($age <= 12) {
-            return '0 - 12';
+        if ($age <= 5) {
+            return '0 - 5';
+        } elseif ($age <= 12) {
+            return '6 - 12';
         } elseif ($age <= 18) {
             return '13 - 18';
         } elseif ($age <= 30) {

@@ -41,9 +41,6 @@ class PersonController extends AdminController
     protected function grid()
     {
 
-        // $user = Admin::user();
-        // $organisation = Organisation::find($user->organisation_id);
-        // dd($user, $organisation);
         $grid = new Grid(new Person());
 
         //TODO: fix filters, and also display users from the opd, and district unions

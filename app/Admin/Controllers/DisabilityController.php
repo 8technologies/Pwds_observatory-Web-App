@@ -24,15 +24,17 @@ class DisabilityController extends AdminController
      */
     protected function grid()
     {
+        $add_disability = Disability::create(['name' => 'New Disability']);
+        dd($add_disability);
         $grid = new Grid(new Disability());
 
         $grid->disableBatchActions();
         $grid->column('id', __('ID'))->sortable();
         $grid->column('name', __('Name'))->sortable();
-        $grid->column('count', __('Count'))->display(function(){
+        $grid->column('count', __('Count'))->display(function () {
             return $this->people()->count();
         });
-/*         $grid->photo('photo', __('Photo')); */
+        /*         $grid->photo('photo', __('Photo')); */
         $grid->column('description', __('Description'))->hide();
 
         return $grid;
