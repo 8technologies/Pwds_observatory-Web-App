@@ -49,7 +49,7 @@ class OPDController extends AdminController
         if ($user->inRoles(['district-union', 'nudipu', 'organisation'])) {
 
             $grid->disableCreateButton();
-            $grid->disableActions();
+            // $grid->disableActions();
         }
 
         if ($user->isRole('district-union')) {
@@ -149,126 +149,76 @@ class OPDController extends AdminController
             $footer->disableReset();
             $footer->disableViewCheck();
             $footer->disableEditingCheck();
-            $footer->disableCreatingCheck();
-            $footer->disableSubmit();
+            // $footer->disableCreatingCheck();
+            // $footer->disableSubmit();
         });
 
-        $form->tab('Info', function ($form) {
-            $form->text('name', __('NOPD NName'))->placeholder('Name')->rules("required");
-            $form->text('registration_number', __('Registration number'))->placeholder('RegNo.')->rules("required");;
-            $form->date('date_of_registration', __('Date of registration'));
-            $form->textarea('mission', __('Mission'))->placeholder('Org. Mission')->rules("required");
-            $form->textarea('vision', __('Vision'))->placeholder('Org. Vision')->rules("required");
-            $form->textarea('core_values', __('Core values'))->placeholder('Org. Core Values')->rules("required");
-            $form->quill('brief_profile', __('Brief profile'))->placeholder('Org. Brief profile')->rules("required");
-            $form->hidden('user_id')->default(Admin::user()->id);
+        $form->divider('NOPD Basic Info');
+        $form->text('name', __('NOPD NName'))->placeholder('Name')->rules("required");
+        $form->text('registration_number', __('Registration number'))->placeholder('RegNo.')->rules("required");;
+        $form->date('date_of_registration', __('Date of registration'));
+        $form->textarea('mission', __('Mission'))->placeholder('Org. Mission')->rules("required");
+        $form->textarea('vision', __('Vision'))->placeholder('Org. Vision')->rules("required");
+        $form->textarea('core_values', __('Core values'))->placeholder('Org. Core Values')->rules("required");
+        $form->quill('brief_profile', __('Brief profile'))->placeholder('Org. Brief profile')->rules("required");
+        $form->hidden('user_id')->default(Admin::user()->id);
 
-            $form->divider();
+        $form->divider('NOPD Membership');
+        $form->radio('membership_type', __('Membership type'))->options(['organisation-based' => 'Organisation-based', 'individual-based' => 'Individual-based', 'both' => 'Both'])->rules("required");
 
-            $form->html('
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
+        $form->divider('Contact');
+        $form->text('physical_address', __('Physical address'))->placeholder('physical address')->rules("required");
+        $form->text('website', __('Website'))->placeholder('http://www.example.com');
+
+        $form->hasMany('contact_persons', 'Contact Persons', function (Form\NestedForm $form) {
+            $form->text('name', __('Name'))->rules("required");
+            $form->text('position', __('Position'))->rules("required");
+            $form->email('email', __('Email'))->rules("required");
+            $form->text('phone1', __('Phone Tel'))->rules("required");
+            $form->text('phone2', __('Other Tel'));
         });
 
-        // $form->tab('Leadership', function ($form) {
-        //     $form->hasMany('leaderships', function (Form\NestedForm $form) {
-        //         $form->table('members', 'Members', function ($form) {
-        //             $form->text('name', __('Name'));
-        //             $form->text('position', __('Position'));
-        //         });
-        //         $form->date('term_of_office_start', __('Term of office start'));
-        //         $form->date('term_of_office_end', __('Term of office end'));
-        //     });
-        // });
+        $form->divider('Attachments');
+        $form->file('logo', __('Logo'))->removable()->rules('mimes:png,jpg,jpeg')
+            ->help("Upload image logo in png, jpg, jpeg format (max: 2MB)");
+        $form->file('certificate_of_registration', __('Certificate of registration'))->removable()->rules('mimes:pdf')
+            ->help("Upload certificate of registration in pdf format (max: 2MB)");
+        $form->file('constitution', __('Constitution'))->removable()->rules('mimes:pdf')
+            ->help("Upload certificate of registration in pdf format (max: 2MB)");
 
-        $form->tab('Membership', function ($form) {
-            $form->radio('membership_type', __('Membership type'))->options(['organisation-based' => 'Organisation-based', 'individual-based' => 'Individual-based', 'both' => 'Both'])->rules("required");
-            $form->divider();
+        $form->multipleFile('attachments', __('Other Attachments'))->removable()->rules('mimes:pdf,png,jpg,jpeg')
+            ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg), constitution, etc (max: 2MB)");
 
-            $form->html('
-            <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
-        });
+        $form->divider('Districts of Operation');
+        $form->multipleSelect('districtsOfOperation', __('Select Districts'))->options(District::all()->pluck('name', 'id'));
 
-        $form->tab('Contact', function ($form) {
-            $form->text('physical_address', __('Physical address'))->placeholder('physical address')->rules("required");
-            $form->text('website', __('Website'))->placeholder('http://www.example.com');
-
-            $form->hasMany('contact_persons', 'Contact Persons', function (Form\NestedForm $form) {
-                $form->text('name', __('Name'))->rules("required");
-                $form->text('position', __('Position'))->rules("required");
-                $form->email('email', __('Email'))->rules("required");
-                $form->text('phone1', __('Phone Tel'))->rules("required");
-                $form->text('phone2', __('Other Tel'));
-            });
-            $form->divider();
-
+        $form->divider('Administrator');
+        if (Admin::user()->isRole('basic')) {
             $form->html('
             <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
+            <button type="submit" class="btn btn-primary float-right">Submit</button>
             ');
-        });
-
-        $form->tab('Attachments', function ($form) {
-            $form->file('logo', __('Logo'))->removable()->rules('mimes:png,jpg,jpeg')
-                ->help("Upload image logo in png, jpg, jpeg format (max: 2MB)");
-            $form->file('certificate_of_registration', __('Certificate of registration'))->removable()->rules('mimes:pdf')
-                ->help("Upload certificate of registration in pdf format (max: 2MB)");
-            $form->file('constitution', __('Constitution'))->removable()->rules('mimes:pdf')
-                ->help("Upload certificate of registration in pdf format (max: 2MB)");
-
-            $form->multipleFile('attachments', __('Other Attachments'))->removable()->rules('mimes:pdf,png,jpg,jpeg')
-                ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg), constitution, etc (max: 2MB)");
-            $form->divider();
-
-            $form->html('
-            <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-            <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-            ');
-        });
-
-        $form->tab('Districts of Operation', function ($form) {
-            $form->multipleSelect('districtsOfOperation', __('Select Districts'))->options(District::all()->pluck('name', 'id'));
-            $form->divider();
-
-            if (Admin::user()->isRole('basic')) {
-                $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <button type="submit" class="btn btn-primary float-right">Submit</button>
-                ');
-            } else {
-                $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <a type="button" class="btn btn-primary btn-next float-right" data-toggle="tab" aria-expanded="true">Next</a>
-                ');
-            }
-        });
-
-        if (!Admin::user()->isRole('basic')) {
-            $form->tab('Administrator', function ($form) {
-                $form->email('admin_email', ('Administrator'))->rules("required")
-                    ->help("This will be emailed with the password to log into the system");
-
-                if ($form->isEditing()) {
-                    $form->divider('Change Password');
-                    $form->password('password', __('Old Password'))
-                        ->help('Previous password');
-                    $form->password('new_password', __('New Password'));
-                    $form->password('confirm_new_password', __('Confirm Password'))->rules('same:new_password');
-                }
-                $form->divider();
-
-                $form->html('
-                <a type="button" class="btn btn-info btn-prev float-left" data-toggle="tab" aria-expanded="true">Previous</a>
-                <button type="submit" class="btn btn-primary float-right">Submit</button>
-                ');
-            });
         } else {
-            $form->hidden('admin_email')->default(Admin::user()->email);
-            $form->hidden('relationship_type')->default('opd');
-            $form->hidden('parent_organisation_id')->default(0);
+            if (!Admin::user()->isRole('basic')) {
+                $form->tab('Administrator', function ($form) {
+                    $form->email('admin_email', ('Administrator'))->rules("required")
+                        ->help("This will be emailed with the password to log into the system");
+
+                    if ($form->isEditing()) {
+                        $form->divider('Change Password');
+                        $form->password('password', __('Old Password'))
+                            ->help('Previous password');
+                        $form->password('new_password', __('New Password'));
+                        $form->password('confirm_new_password', __('Confirm Password'))->rules('same:new_password');
+                    }
+                });
+            } else {
+                $form->hidden('admin_email')->default(Admin::user()->email);
+                $form->hidden('relationship_type')->default('opd');
+                $form->hidden('parent_organisation_id')->default(0);
+            }
         }
+
 
         $form->submitted(function (Form $form) {
             if ($form->isEditing()) {

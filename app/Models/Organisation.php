@@ -203,17 +203,17 @@ class Organisation extends Model
         if ($model->relationship_type == 'du') {
             $exist = User::where('email', $model->admin_email)->first();
             $created_new_admin = false;
-            $udpate_admin = false;
+            $update_admin = false;
             if ($exist != null) {
                 $org = Organisation::find($exist->organisation_id);
                 if ($org == null) {
-                    $udpate_admin = true;
+                    $update_admin = true;
                 }
             } else {
                 $created_new_admin = true;
             }
 
-            if ($udpate_admin) {
+            if ($update_admin) {
                 $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
                 $new_password = substr(str_shuffle($alpha_list), 0, 8);
                 $hashed_password = Hash::make($new_password);
@@ -267,7 +267,7 @@ class Organisation extends Model
         $model = $this;
         $exist = User::where('email', $model->admin_email)->first();
         $created_new_admin = false;
-        $udpate_admin = false;
+        $update_admin = false;
         $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
         $new_password = substr(str_shuffle($alpha_list), 0, 8);
         $hashed_password = Hash::make($new_password);
@@ -275,13 +275,13 @@ class Organisation extends Model
         if ($exist != null) {
             $org = Organisation::find($exist->organisation_id);
             if ($org == null) {
-                $udpate_admin = true;
+                $update_admin = true;
             }
         } else {
             $created_new_admin = true;
         }
 
-        if ($udpate_admin) {
+        if ($update_admin) {
             $exist->password = $hashed_password;
             $exist->username = $model->admin_email;
             $exist->email = $model->admin_email;
