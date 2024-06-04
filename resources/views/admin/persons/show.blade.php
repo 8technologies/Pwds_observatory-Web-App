@@ -10,7 +10,8 @@
                     BACK
                     TO ALL LIST</a>
             @endisset
-            <a href="{{ admin_url('people/' . $pwd->id . '/edit') }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>
+            <a href="{{ admin_url('people/' . $pwd->id . '/edit') }}" class="btn btn-warning btn-sm"><i
+                    class="fa fa-edit"></i>
                 EDIT</a>
             <a href="#" onclick="window.print();return false;" class="btn btn-primary btn-sm"><i
                     class="fa fa-print"></i> PRINT</a>
@@ -20,10 +21,10 @@
     <div class="row">
         <div class="col-3 col-md-2">
             <div class="border border-1 rounded bg-">
-                @if($pwd->photo == null)
+                @if ($pwd->photo == null)
                     <img class="img-fluid" src="{{ asset('assets/img/user-1.png') }}" width="250" height="500">
                 @else
-                <img class="img-fluid" src="{{ asset('storage/' . $pwd->photo) }}" width="250" height="500">
+                    <img class="img-fluid" src="{{ asset('storage/' . $pwd->photo) }}" width="250" height="500">
                 @endif
             </div>
         </div>
@@ -113,7 +114,7 @@
     <hr class="m-0 pt-0">
 
     <ul>
-        @foreach($pwd->disabilities as $disability)
+        @foreach ($pwd->disabilities as $disability)
             <li>{{ $disability->name }}</li>
         @endforeach
     </ul>
@@ -138,47 +139,46 @@
 
     </table>
 
-    @if($pwd->is_employed == 1)
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Current Employment</b></h3>
-    <hr class="m-0 pt-0">
-    <table class="table table-bordered table-striped table-hover">
-        <tr class="text-bold">
-            <td>Name</td>
-            <td>Position</td>
-            <td>Duration</td>
-        </tr>
-        <tr>
-            <td>{{  $pwd->employer }}</td>
-            <td>{{ $pwd->position }}</td>
-            <td>{{ $pwd->year_of_employment }}</td>
-        </tr>
+    @if ($pwd->is_employed == 1)
+        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
+        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Current Employment</b></h3>
+        <hr class="m-0 pt-0">
+        <table class="table table-bordered table-striped table-hover">
+            <tr class="text-bold">
+                <td>Name</td>
+                <td>Position</td>
+                <td>Duration</td>
+            </tr>
+            <tr>
+                <td>{{ $pwd->employer }}</td>
+                <td>{{ $pwd->position }}</td>
+                <td>{{ $pwd->year_of_employment }}</td>
+            </tr>
 
-    </table>
-
+        </table>
     @endif
 
-    @if($pwd->is_formerly_employed)
+    @if ($pwd->is_formerly_employed)
 
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Previous Employment</b></h3>
-    <hr class="m-0 pt-0 mb-3">
-    <table class="table table-bordered table-striped table-hover">
-        <tr class="text-bold">
-            <td>Name</td>
-            <td>Position</td>
-            <td>Duration</td>
-        </tr>
-
-        @foreach ($pwd->employment_history as $record)
-            <tr>
-                <td>{{ $record->employer }}</td>
-                <td>{{ $record->position }}</td>
-                <td>{{ $record->year_of_employment }}</td>
+        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
+        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Previous Employment</b></h3>
+        <hr class="m-0 pt-0 mb-3">
+        <table class="table table-bordered table-striped table-hover">
+            <tr class="text-bold">
+                <td>Name</td>
+                <td>Position</td>
+                <td>Duration</td>
             </tr>
-        @endforeach
 
-    </table>
+            @foreach ($pwd->employment_history as $record)
+                <tr>
+                    <td>{{ $record->employer }}</td>
+                    <td>{{ $record->position }}</td>
+                    <td>{{ $record->year_of_employment }}</td>
+                </tr>
+            @endforeach
+
+        </table>
 
     @endif
 

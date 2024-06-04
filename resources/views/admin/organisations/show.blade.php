@@ -5,15 +5,18 @@
             </h2>
         </div>
         <div class="mt-3 mt-md-0 float-left">
-            @if($organisation->membership_type == 'member') 
-                <a class="btn btn-sm btn-primary mx-3" href="{{url('admin/opds/create') }}">Add OPD</a>
-                <a class="btn btn-sm btn-info mx-3" href="{{url('admin/district-unions/create') }}">Add District Union</a>
-            @elseif($organisation->membership_type == 'both') 
-                <a class="btn btn-sm btn-info mx-3" href="{{url('admin/people/create') }}">Add Person With Disability</a>
-                <a class="btn btn-sm btn-primary mx-3" href="{{url('admin/opds/create') }}">Add OPD</a>
-                <a class="btn btn-sm btn-info mx-3" href="{{url('admin/district-unions/create') }}">Add District Union</a>
+            @if ($organisation->membership_type == 'member')
+                <a class="btn btn-sm btn-primary mx-3" href="{{ url('admin/opds/create') }}">Add OPD</a>
+                <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/district-unions/create') }}">Add District
+                    Union</a>
+            @elseif($organisation->membership_type == 'both')
+                <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/people/create') }}">Add Person With Disability</a>
+                <a class="btn btn-sm btn-primary mx-3" href="{{ url('admin/opds/create') }}">Add OPD</a>
+                <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/district-unions/create') }}">Add District
+                    Union</a>
             @else
-                <a class="btn btn-sm btn-info mx-3" href="{{url('admin/people/create') }}">Add Person With Disability</a>
+                <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/people/create') }}">Add Person With
+                    Disability</a>
             @endif
         </div>
         <div class="mt-3 mt-md-0">
@@ -22,7 +25,8 @@
                     BACK
                     TO ALL LIST</a>
             @endisset
-            <a href="{{ admin_url(request()->segment(2) .'/'. $organisation->id . '/edit') }}" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>
+            <a href="{{ admin_url(request()->segment(2) . '/' . $organisation->id . '/edit') }}"
+                class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>
                 EDIT</a>
             <a href="#" onclick="window.print();return false;" class="btn btn-primary btn-sm"><i
                     class="fa fa-print"></i> PRINT</a>
@@ -32,7 +36,12 @@
     <div class="row">
         <div class="col-3 col-md-2">
             <div class="border border-1 rounded bg-">
-                <img class="img-fluid" src="{{ asset('storage/' . $organisation->logo) }}" width="250" height="400">
+                @if ($organisation->logo == null)
+                    <img class="img-fluid" src="{{ asset('assets/img/user-1.png') }}" width="250" height="500">
+                @else
+                    <img class="img-fluid" src="{{ asset('storage/' . $organisation->logo) }}" width="250"
+                        height="400">
+                @endif
             </div>
         </div>
         <div class="col-9 col-md-5">
@@ -41,7 +50,7 @@
 
             @include('components.detail-item', [
                 't' => 'name',
-                's' => $organisation->name
+                's' => $organisation->name,
             ])
 
             @include('components.detail-item', [
@@ -50,10 +59,10 @@
             ])
             @include('components.detail-item', [
                 't' => 'date of registration',
-                's' => $organisation->date_of_registration
+                's' => $organisation->date_of_registration,
             ])
 
-            
+
             @include('components.detail-item', [
                 't' => 'Type of Organisation',
                 's' => $organisation->relationship_type == 'opd' ? 'OPD' : 'District Union',
@@ -91,7 +100,7 @@
                 <td>{{ $person->name }}</td>
                 <td>{{ $person->position }}</td>
                 <td>{{ $person->email }}</td>
-                <td>{{ $person->phone1. "  ".$person->phone2 }}</td>
+                <td>{{ $person->phone1 . '  ' . $person->phone2 }}</td>
             </tr>
         @endforeach
 

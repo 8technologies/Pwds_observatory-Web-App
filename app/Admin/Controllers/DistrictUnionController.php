@@ -42,7 +42,6 @@ class DistrictUnionController extends AdminController
         $grid->disableBatchActions();
         $grid->quickSearch('name')->placeholder('Search by Name');
 
-
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
             //Filters for region, membership type and date of registration
@@ -80,10 +79,15 @@ class DistrictUnionController extends AdminController
                 return date('d-m-Y', strtotime($created_at));
             })->sortable();
         //reset admin password
-        $grid->column('Reset Password')->display(function () {
-            $url = url('du-admin-password-reset?du_id=' . $this->id);
-            return "<a target='_blank' href='" . $url . "' class='btn btn-xs btn-primary'>Reset Password</a>";
-        });
+
+
+        if (auth('admin')->user()->isRole('nudipu')) {
+            $grid->column('Reset Password')->display(function () {
+                $url = url('du-admin-password-reset?du_id=' . $this->id);
+                return "<a target='_blank' href='" . $url . "' class='btn btn-xs btn-primary'>Reset Password</a>";
+            });
+        }
+
 
         // $grid->column('contact_persons', __('Contact persons'));
 
