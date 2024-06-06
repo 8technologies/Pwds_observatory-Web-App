@@ -68,17 +68,34 @@ class Dashboard
 
     public static function getMembershipChart()
     {
-        $membershipTypes = Organisation::distinct('membership_type')->pluck('membership_type')->toArray();
+        $membership_types = [
+            'individual-based' => 'Individual Based',
+            'both' => 'Both',
+            'organisation-based' => 'Organisation Based'
+        ];
+        $distinctMembershipTypes = Organisation::distinct('membership_type')
+            ->whereNotNull('membership_type')
+            ->pluck('membership_type')
+            ->toArray();
+
+        // Map the database membership types to their display names
+        $formattedMembershipTypes = array_map(function ($type) use ($membership_types) {
+            return $membership_types[$type] ?? 'Unknown';
+        }, $distinctMembershipTypes);
+
         $membershipDataDU = Organisation::where('relationship_type', 'du')
-            ->select('membership_type', DB::Raw('count(*) as count'))
+            ->whereNotNull('membership_type')
+            ->select('membership_type', DB::raw('count(*) as count'))
             ->groupBy('membership_type')
             ->get();
+
 
         $membershipDataOPD = Organisation::where('relationship_type', 'opd')
             ->select('membership_type', DB::Raw('count(*) as count'))
             ->groupBy('membership_type')
             ->get();
-        return view('dashboard.membership', compact('membershipTypes', 'membershipDataDU', 'membershipDataOPD'));
+
+        return view('dashboard.membership', compact('formattedMembershipTypes', 'membershipDataDU', 'membershipDataOPD'));
     }
 
     //Function for returning count of people with disability in a district grouped by sex

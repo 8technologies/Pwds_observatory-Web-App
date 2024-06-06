@@ -28,7 +28,7 @@
     // Get the canvas element from the DOM
     var ctx = document.getElementById('memberChart').getContext('2d');
     var initialMemberData = {
-        labels: {!! json_encode($membershipTypes) !!},
+        labels: {!! json_encode($formattedMembershipTypes) !!},
         datasets: [{
             label: 'District Unions',
             data: {!! json_encode($membershipDataDU->pluck('count')) !!},
@@ -64,7 +64,7 @@
         var newData;
         if (selectedType === 'membership_nopd') {
             newData = {
-                labels: {!! json_encode($membershipTypes) !!},
+                labels: {!! json_encode($formattedMembershipTypes) !!},
                 datasets: [{
                     label: 'Number of NOPDs per Membership Type',
                     data: {!! json_encode($membershipDataOPD->pluck('count')) !!},
@@ -75,7 +75,7 @@
             };
         } else if (selectedType === 'membership_du') {
             newData = {
-                labels: {!! json_encode($membershipTypes) !!},
+                labels: {!! json_encode($formattedMembershipTypes) !!},
                 datasets: [{
                     label: 'Number of District Unions per Membership Type',
                     data: {!! json_encode($membershipDataDU->pluck('count')) !!},

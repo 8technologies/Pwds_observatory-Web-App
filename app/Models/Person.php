@@ -129,7 +129,7 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
-            $user = Admin::user();
+            $user = auth()->user();
             $organisation = Organisation::find($user->organisation_id);
             if ($organisation->relationship_type == 'opd') {
                 $person->opd_id = $organisation->id;
@@ -153,7 +153,7 @@ class Person extends Model
                 $person->employment_status = 'unemployed';
             }
 
-            $user = Admin::user();
+            $user = auth()->user();
             $organisation = Organisation::find($user->organisation_id);
             if (!$organisation) {
                 die('Wait for admin approval');
