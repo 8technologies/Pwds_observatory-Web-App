@@ -63,8 +63,8 @@ class PersonController extends AdminController
 
         $grid->quickSearch('name')->placeholder('Search by name');
 
-        $user = Admin::user();
-        $organisation = Organisation::where('user_id', $user->id)->first();
+        $user = Admin::user(); 
+        $organisation = Organisation::find(Admin::user()->organisation_id);
         if ($user->inRoles(['nudipu', 'administrator'])) {
             $grid->model()->orderBy('created_at', 'desc');
         } elseif ($user->isRole('district-union')) {
@@ -294,9 +294,7 @@ class PersonController extends AdminController
             ->help("NIN, Passport Number, Driving Permit Number");
         $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
 
-        // $u = Admin::user();
-        // $organisation = Organisation::where('user_id', $u->id)->where('relationship_type', '=', 'du')->first();
-        // $form->hidden('district_id', __('District Of Residence'))->default($organisation->district_id);
+
 
         $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
         $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
@@ -425,7 +423,7 @@ class PersonController extends AdminController
 
                 if (Admin::user()->isRole('opd')) {
                     $current_user = auth("admin")->user();
-                    $organisation = Organisation::where('user_id', $current_user->id)->first();
+                    $organisation = Organisation::find($current_user->organisation_id);
                     $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
                 }
                 $form->divider();
@@ -473,7 +471,7 @@ class PersonController extends AdminController
 
                     $form->is_approved = 1; //Approve if registered by an organisation
                     $current_user = auth("admin")->user();
-                    $organisation = Organisation::where('user_id', $current_user->id)->first();
+                    $organisation = Organisation::find($current_user->organisation_id);
                     error_log("Organisation: " . $organisation->name);
 
                     if ($organisation == null) {

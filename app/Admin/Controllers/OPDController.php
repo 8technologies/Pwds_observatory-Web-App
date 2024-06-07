@@ -256,7 +256,7 @@ class OPDController extends AdminController
                 $form->relationship_type = 'opd';
                 $form->admin_email = $admin_email;
 
-                $organisation = Organisation::where('user_id', Admin::user()->id)->first();
+                $organisation = Organisation::find(Admin::user()->organisation_id);
                 $form->parent_organisation_id = $organisation ? $organisation->id : null;
 
                 assignRole($admin, 'opd', true); // re-assign role to opd
