@@ -17,8 +17,8 @@
         .filter(label => label !== null)
         .sort((a, b) => {
             // Handle the '65+' age group separately
-            if (a === '65+') return 1;
-            if (b === '65+') return -1;
+            if (a === '65+') return -1;
+            if (b === '65+') return 1;
             var startAgeA = parseInt(a.split(' - ')[0], 10);
             var startAgeB = parseInt(b.split(' - ')[0], 10);
             return startAgeB - startAgeA;

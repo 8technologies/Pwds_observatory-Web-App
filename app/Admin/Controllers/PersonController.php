@@ -63,7 +63,7 @@ class PersonController extends AdminController
 
         $grid->quickSearch('name')->placeholder('Search by name');
 
-        $user = Admin::user(); 
+        $user = Admin::user();
         $organisation = Organisation::find(Admin::user()->organisation_id);
         if ($user->inRoles(['nudipu', 'administrator'])) {
             $grid->model()->orderBy('created_at', 'desc');
