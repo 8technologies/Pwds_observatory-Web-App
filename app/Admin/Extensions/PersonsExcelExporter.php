@@ -16,7 +16,7 @@ class PersonsExcelExporter extends ExcelExporter implements WithMapping
         'other_names' => 'Other Names',
         'id_number' => 'ID Number',
         'sex' => 'Gender',
-        'dob' => 'Date ',
+        'dob' => 'Date Of Birth',
         'district_id' => 'District of Residence',
         'profiler' => 'Profiler',
     ];

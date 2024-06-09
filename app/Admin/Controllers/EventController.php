@@ -27,7 +27,7 @@ class EventController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Event());
-        Utils::checkEventRegustration(); 
+        Utils::checkEventRegustration();
 
         $grid->disableFilter();
         $grid->disableBatchActions();
@@ -38,21 +38,21 @@ class EventController extends AdminController
             function ($x) {
                 return Utils::my_date($x);
             }
-        )->sortable(); 
-        $grid->column('title', __('Event Title'))->sortable();  
+        )->sortable();
+        $grid->column('title', __('Event Title'))->sortable();
 
-        $grid->column('theme', __('Event Theme')); 
+        $grid->column('theme', __('Event Theme'));
         $grid->column('details', __('Details'))->hide();
- 
-        $grid->column('venue_name', __('Venue'));  
+
+        $grid->column('venue_name', __('Venue'));
         $grid->column('event_date', __('Event date'))->display(
             function ($x) {
                 return Utils::my_date($x);
             }
-        )->sortable();  
+        )->sortable();
         $grid->column('address', __('Address'));
         $grid->column('gps_latitude', __('Gps latitude'));
-        $grid->column('gps_longitude', __('Gps longitude')); 
+        $grid->column('gps_longitude', __('Gps longitude'));
         return $grid;
     }
 
@@ -108,9 +108,9 @@ class EventController extends AdminController
         $form->image('venue_photo', __('Venue photo'))->rules('required');
         $form->image('venue_map_photo', __('Venue map photo'))->rules('required');
 
-        $form->text('gps_latitude', __('Venue Gps latitude'))->rules('required');
-        $form->text('gps_longitude', __('Venue Gps longitude'))->rules('required');
-        $form->file('video', __('Intro Video'))->rules('required');
+        $form->text('gps_latitude', __('Venue Gps latitude'));
+        $form->text('gps_longitude', __('Venue Gps longitude'));
+        $form->file('video', __('Intro Video'));
 
         $form->divider('Event main speakers');
 
@@ -119,7 +119,6 @@ class EventController extends AdminController
             $form->text('designation', __('Speaker\'s Designation'))->rules('required');
             $form->image('photo', __('Speaker\'s photo'));
             $form->quill('details', __('Speaker\'s Profile'))->rules('required');
-
         });
 
 
