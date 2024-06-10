@@ -407,7 +407,7 @@
 
             <!-- Parallax gfx -->
             <div class="col-md-6 ">
-                <canvas id="months"></canvas>
+                <canvas id="peopleCountChart"></canvas>
             </div>
 
         </div>
@@ -509,32 +509,18 @@
                 }
             },
         });
-
-        @php
-
-        @endphp
-
-
-        new Chart(document.getElementById('months'), {
+    </script>
+    <script>
+        const peopleCountCtx = document.getElementById('peopleCountChart').getContext('2d');
+        var months = {!! json_encode($months) !!}; // Array of month names
+        var counts = {!! json_encode($monthlyCounts) !!}; // Array of corresponding counts 
+        new Chart(peopleCountCtx, {
             type: 'bar',
             data: {
-                labels: [
-                    'January',
-                    'February',
-                    'March',
-                    'April',
-                    'May',
-                    'June',
-                    'July',
-                    'August',
-                    'September',
-                    'October',
-                    'November',
-                    'December',
-                ],
+                labels: months, // Using the 'months' variable directly
                 datasets: [{
-                    label: 'Registered per month',
-                    data: [309, 53, 108, 461, 520, 127, 132, 55, 181, 301, 121, 654],
+                    label: 'People Count',
+                    data: counts, // Using the 'counts' variable directly
                     backgroundColor: [
                         '#23A2E9',
                         '#F43DE3',
@@ -548,21 +534,36 @@
                         '#D0B1FD',
                         '#8EFCDF',
                     ],
-                    hoverOffset: 0
-                }],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
             },
             options: {
-                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        type: 'logarithmic',
+                        ticks: {
+                            callback: function(value, index, values) {
+                                if (value === 10 || value === 100 || value ===
+                                    1000 || value === 10000) {
+                                    return value.toString();
+                                }
+                            }
+                        }
+                    }
+                },
                 plugins: {
-                    legend: {
-                        position: 'top',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Registered Persons With Disabilities - in past 12 Months'
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        color: 'black',
+                        formatter: function(value, context) {
+                            return value; // Display the value as the label
+                        }
                     }
                 }
-            },
+            }
         });
     </script>
 @endsection

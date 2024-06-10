@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\Person;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 
@@ -92,10 +93,33 @@ class MainController extends BaseController
       ->groupBy('disabilities.name')
       ->get();
 
+    $counts = DB::table('people')
+      ->select(DB::raw('COUNT(*) as count, DATE_FORMAT(created_at, "%Y-%m") as month'))
+      ->where('created_at', '>=', Carbon::now()->subMonths(11)->startOfMonth())
+      ->groupBy('month')
+      ->orderBy('month', 'asc')
+      ->get();
+
+    // Generate array of the last 12 months
+    $months = [];
+    $currentMonth = Carbon::now()->startOfMonth();
+    for ($i = 0; $i < 12; $i++) {
+      $months[] = $currentMonth->copy()->subMonths(11 - $i)->format('Y-m');
+    }
+
+    // Map counts to the months array
+    $monthlyCounts = array_fill(0, 12, 0);
+    foreach ($counts as $count) {
+      $index = array_search($count->month, $months);
+      if ($index !== false) {
+        $monthlyCounts[$index] = $count->count;
+      }
+    }
+
 
     //END OF HIX CODE
 
-    return view('index', compact('female_percentage', 'male_percentage', 'total', 'districts_count', 'persons_by_disability'));
+    return view('index', compact('female_percentage', 'male_percentage', 'total', 'districts_count', 'persons_by_disability', 'months', 'monthlyCounts'));
   }
   public function about_us()
   {
