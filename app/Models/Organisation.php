@@ -150,20 +150,24 @@ class Organisation extends Model
 
         static::creating(function ($model) {
             $model = self::do_validate($model);
+            $model = self::do_validate_nopd($model);
             return true;
         });
 
         static::updating(function ($model) {
             $model = self::do_validate($model);
+            $model = self::do_validate_nopd($model);
             return true;
         });
 
         static::created(function ($model) {
             self::do_finalization($model);
+            self::do_finalization_nopd($model);
         });
 
         static::updated(function ($model) {
             self::do_finalization($model);
+            self::do_finalization_nopd($model);
         });
     }
 
@@ -350,96 +354,184 @@ class Organisation extends Model
         }
     }
 
-    public static function do_validate_nopd($model)
-    {
-        // $district = District::find($model->district_id);
-        // if (!$district) {
-        //     throw new Error('District not found.');
-        // }
+    // public static function do_validate_nopd($model)
+    // {
+    //     // $district = District::find($model->district_id);
+    //     // if (!$district) {
+    //     //     throw new Error('District not found.');
+    //     // }
 
 
-        // $model->region_id = $district->region_id;
-        //Validating the opd
-        if ($model->relationship_type == 'opd') {
-            if (!filter_var($model->admin_email, FILTER_VALIDATE_EMAIL)) {
-                throw new Error('Invalid email address. => ' . $model->admin_email . " <= ");
-            }
+    //     // $model->region_id = $district->region_id;
+    //     //Validating the opd
+    //     if ($model->relationship_type == 'opd') {
+    //         if (!filter_var($model->admin_email, FILTER_VALIDATE_EMAIL)) {
+    //             throw new Error('Invalid email address. => ' . $model->admin_email . " <= ");
+    //         }
 
-            $model->opd_id = $model->opd_id;
-            $opd_with_same_id = self::where('opd_id', $model->opd)
-                ->where('relationship_type', 'opd')
-                ->first();
-            if ($opd_with_same_id != null) {
-                if ($opd_with_same_id->id != $model->id) {
-                    throw new Error('NOPD already exists for a different organisation. id #' . $opd_with_same_id->id);
-                }
-            }
-        }
+    //         $model->opd_id = $model->opd_id;
+    //         $opd_with_same_id = self::where('opd_id', $model->opd)
+    //             ->where('relationship_type', 'opd')
+    //             ->first();
+    //         if ($opd_with_same_id != null) {
+    //             if ($opd_with_same_id->id != $model->id) {
+    //                 throw new Error('NOPD already exists for a different organisation. id #' . $opd_with_same_id->id);
+    //             }
+    //         }
+    //     }
 
-        return $model;
-    }
+    //     return $model;
+    // }
 
-    public static function do_finalization_nopd($model)
-    {
+    // public static function do_finalization_nopd($model)
+    // {
 
-        if ($model->relationship_type == 'opd') {
-            $exist = User::where('email', $model->admin_email)->first();
-            $created_new_admin = false;
-            $update_admin = false;
-            if ($exist != null) {
-                $org = Organisation::find($exist->organisation_id);
-                if ($org == null) {
-                    $update_admin = true;
-                }
-            } else {
-                $created_new_admin = true;
-            }
+    //     if ($model->relationship_type == 'opd') {
+    //         $exist = User::where('email', $model->admin_email)->first();
+    //         $created_new_admin = false;
+    //         $update_admin = false;
+    //         if ($exist != null) {
+    //             $org = Organisation::find($exist->organisation_id);
+    //             if ($org == null) {
+    //                 $update_admin = true;
+    //             }
+    //         } else {
+    //             $created_new_admin = true;
+    //         }
 
-            if ($update_admin) {
-                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
-                $new_password = substr(str_shuffle($alpha_list), 0, 8);
-                $hashed_password = Hash::make($new_password);
-                $exist->password = $hashed_password;
-                $exist->username = $model->admin_email;
-                $exist->email = $model->admin_email;
-                $exist->password = $new_password;
-                $exist->approved = 1;
-                // $DIS = District::find($model->district_id);
-                // $exist->first_name = $DIS->name . ' DU';
-                $exist->last_name = 'Admin';
-                $exist->organisation_id = $model->id;
-                $exist->save();
-                $exist->assignRole('opd');
-                try {
-                    $model->reset_admin_pass();
-                } catch (\Exception $e) {
-                    Log::error('Failed to send email: ' . $e->getMessage());
-                }
-            }
+    //         if ($update_admin) {
+    //             $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+    //             $new_password = substr(str_shuffle($alpha_list), 0, 8);
+    //             $hashed_password = Hash::make($new_password);
+    //             $exist->password = $hashed_password;
+    //             $exist->username = $model->admin_email;
+    //             $exist->email = $model->admin_email;
+    //             $exist->password = $new_password;
+    //             $exist->approved = 1;
+    //             // $DIS = District::find($model->district_id);
+    //             // $exist->first_name = $DIS->name . ' DU';
+    //             $exist->last_name = 'Admin';
+    //             $exist->organisation_id = $model->id;
+    //             $exist->save();
+    //             $exist->assignRole('opd');
+    //             try {
+    //                 $model->reset_admin_pass();
+    //             } catch (\Exception $e) {
+    //                 Log::error('Failed to send email: ' . $e->getMessage());
+    //             }
+    //         }
 
 
-            if ($created_new_admin) {
-                $exist = new User();
-                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
-                $new_password = substr(str_shuffle($alpha_list), 0, 8);
-                $hashed_password = Hash::make($new_password);
-                $exist->password = $hashed_password;
-                $exist->username = $model->admin_email;
-                $exist->email = $model->admin_email;
-                $exist->password = $new_password;
-                $exist->approved = 1;
-                // $DIS = District::find($model->district_id);
-                // $exist->first_name = $DIS->name . ' DU';
-                $exist->last_name = 'Admin';
-                $exist->organisation_id = $model->id;
-                $exist->save();
-                $exist->assignRole('opd');
-                try {
-                    $model->reset_admin_pass();
-                } catch (\Exception $e) {
-                    Log::error('Failed to send email: ' . $e->getMessage());
-                }
-            }
-        }
-    }
+    //         if ($created_new_admin) {
+    //             $exist = new User();
+    //             $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+    //             $new_password = substr(str_shuffle($alpha_list), 0, 8);
+    //             $hashed_password = Hash::make($new_password);
+    //             $exist->password = $hashed_password;
+    //             $exist->username = $model->admin_email;
+    //             $exist->email = $model->admin_email;
+    //             $exist->password = $new_password;
+    //             $exist->approved = 1;
+    //             // $DIS = District::find($model->district_id);
+    //             // $exist->first_name = $DIS->name . ' DU';
+    //             $exist->last_name = 'Admin';
+    //             $exist->organisation_id = $model->id;
+    //             $exist->save();
+    //             $exist->assignRole('opd');
+    //             try {
+    //                 $model->reset_admin_pass();
+    //             } catch (\Exception $e) {
+    //                 Log::error('Failed to send email: ' . $e->getMessage());
+    //             }
+    //         }
+    //     }
+    // }
+
+    // public function reset_nopd_admin_pass()
+    // {
+    //     $model = $this;
+    //     $exist = User::where('email', $model->admin_email)->first();
+    //     $created_new_admin = false;
+    //     $update_admin = false;
+    //     $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+    //     $new_password = substr(str_shuffle($alpha_list), 0, 8);
+    //     $hashed_password = Hash::make($new_password);
+
+    //     if ($exist != null) {
+    //         $org = Organisation::find($exist->organisation_id);
+    //         if ($org == null) {
+    //             $update_admin = true;
+    //         }
+    //     } else {
+    //         $created_new_admin = true;
+    //     }
+
+    //     if ($update_admin) {
+    //         $exist->password = $hashed_password;
+    //         $exist->username = $model->admin_email;
+    //         $exist->email = $model->admin_email;
+    //         $exist->approved = 1;
+    //         // // $DIS = District::find($model->district_id);
+    //         $exist->first_name = $model->name;
+    //         $exist->last_name = 'Admin';
+    //         $exist->organisation_id = $model->id;
+    //         $exist->name = $exist->first_name . ' ' . $exist->last_name;
+    //         $exist->save();
+    //     }
+
+
+    //     if ($created_new_admin) {
+    //         $exist = new User();
+    //         $exist->username = $model->admin_email;
+    //         $exist->email = $model->admin_email;
+    //         $exist->password = $hashed_password;
+    //         $exist->approved = 1;
+    //         // $DIS = District::find($model->district_id);
+    //         $exist->first_name = $model->name;
+    //         $exist->last_name = 'Admin';
+    //         $exist->name = $exist->first_name . ' ' . $exist->last_name;
+    //         $exist->organisation_id = $model->id;
+    //         $exist->save();
+    //         $exist->assignRole('opd');
+    //     }
+
+    //     $nopd_admin = User::where('email', $model->admin_email)->first();
+    //     //msg to admin to login using $new_password
+    //     $url = url('login');
+    //     $url = $url . "?my_email=" . $model->admin_email;
+    //     $url = $url . "&my_pass=" . $new_password;
+
+    //     if ($nopd_admin != null) {
+    //         $exist->password = $hashed_password;
+    //         $exist->save();
+
+    //         $body = <<<EOF
+    //         Dear Sir/Madam,
+    //         <br>
+    //         <br>
+    //         Your password has been reset. You can now login to the Persons with Disability Observatory using the following credentials:
+    //         <br>
+    //         <br><b>EMAIL:</b> {$model->admin_email}
+    //         <br><b>PASSWORD:</b> {$new_password}
+    //         <br>
+    //         <br>
+    //         <b>OR click the link below to login:</b>
+    //         <br>
+    //         <br><b>LINK:</b> {$url}
+    //         <br>
+    //         <br>
+    //         Regards,
+    //         <br>
+    //         8Tech Team.
+    //     EOF;
+
+    //         $data = [
+    //             'email' => $model->admin_email,
+    //             'name' => $nopd_admin->name,
+    //             'subject' => 'Password Reset - ' . env('APP_NAME') . date('Y-m-d H:i:s'),
+    //             'body' => $body
+    //         ];
+    //         Utils::mail_send($data);
+    //     }
+    // }
 }
