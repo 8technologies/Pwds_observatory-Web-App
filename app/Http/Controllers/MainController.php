@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Disability;
 use App\Models\District;
 use App\Models\Event;
+use App\Models\Job;
 use App\Models\NewsPost;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -228,6 +229,24 @@ class MainController extends BaseController
     return view('jobs/index', [
       'jobs' => $jobs
     ]);
+  }
+
+  public function job_search(Request $request)
+  {
+    $titleSearch = $request->input('title_search');
+    $locationSearch = $request->input('location_search');
+
+    $jobs = Job::query()
+      ->when($titleSearch, function ($query, $titleSearch) {
+        return $query->where('title', 'like', "%{$titleSearch}%"); // Assuming you have a 'profession' field
+      })
+      ->when($locationSearch, function ($query, $locationSearch) {
+        return $query->where('location', 'like', "%{$locationSearch}%");
+      })
+      ->where('status', 'Active')
+      ->paginate(8); // Ensure the results are paginated
+
+    return view('jobs.search_job', compact('jobs', 'titleSearch', 'locationSearch'));
   }
 
   /**

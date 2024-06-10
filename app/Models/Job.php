@@ -27,55 +27,43 @@ class Job extends Model
     {
         parent::boot();
 
+        static::creating(function ($model) {
+            $model = self::calculateDeadlineDays($model);
+            $model = self::checkIfExpired($model);
+            return $model;
+        });
+
         // Define the updating event listener
         static::updating(function ($job) {
             $auth_user = Admin::user();
             if ($job->user_id !== $auth_user->id) {
                 throw new \Exception("You are not authorized to update this job.");
             }
+            $model = self::calculateDeadlineDays($job);
+            $model = self::checkIfExpired($job);
+            return $model;
         });
     }
-    //
-    // public static function boot()
-    // {
-    //     parent::boot();
-    //     self::deleting(function ($m) {
-    //     });
-    //     self::created(function ($m) {
-    //     });
-    //     self::creating(function ($m) {
 
-    //         $m->district_id = 1;
+    protected static function calculateDeadlineDays($model)
+    {
+        $deadline = new \DateTime($model->deadline);
+        $today = new \DateTime();
+        $interval = $today->diff($deadline);
+        $model->days_remaining = $interval->format('%r%a'); // %r to include a minus sign if negative
+        return $model;
+    }
 
-    //         if ($m->subcounty_id != null) {
-    //             $sub = Location::find($m->subcounty_id);
-    //             if ($sub != null) {
-    //                 $m->district_id = $sub->parent;
-    //             }
-    //         }
-    //         return $m;
-    //     });
-    //     self::updating(function ($m) {
-
-    //         $m->district_id = 1;
-    //         if ($m->subcounty_id != null) {
-    //             $sub = Location::find($m->subcounty_id);
-    //             if ($sub != null) {
-    //                 $m->district_id = $sub->parent;
-    //             }
-    //         }
-
-    //         return $m;
-    //     });
-    // }
-
-    // public function getSubcountyTextAttribute()
-    // {
-    //     $d = Location::find($this->subcounty_id);
-    //     if ($d == null) {
-    //         return 'Not group.';
-    //     }
-    //     return $d->name_text;
-    // }
-    // protected $appends = ['subcounty_text'];
+    // Function to check if the job post is expired
+    protected static function checkIfExpired($model)
+    {
+        $deadline = new \DateTime($model->deadline);
+        $today = new \DateTime();
+        if ($today > $deadline) {
+            $model->status = 'Expired';
+        } else {
+            $model->status = 'Active';
+        }
+        return $model;
+    }
 }

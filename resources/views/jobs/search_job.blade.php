@@ -66,7 +66,6 @@ if (!isset($header_style)) {
                 return $job->status === 'Active';
             });
         @endphp
-
         @if ($activeJobs->isEmpty())
             <p>No jobs available.</p>
         @else

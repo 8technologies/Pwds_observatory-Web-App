@@ -45,6 +45,11 @@ class JobController extends AdminController
         $grid->column('required_experience', __('Required experience'));
         $grid->column('hiring_firm', __('Hiring firm'));
         $grid->column('deadline', __('Deadline'));
+        $grid->column('days_remaining', 'Days Remaining');
+        $grid->column('status', __('Status'))->label([
+            'Active' => 'success',
+            'Expired' => 'danger',
+        ]);;
 
         return $grid;
     }

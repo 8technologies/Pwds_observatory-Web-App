@@ -92,6 +92,7 @@ Route::get('innovations', [MainController::class, 'innovations']);
 Route::get('innovations/{id}', [MainController::class, 'innovation']);
 Route::get('jobs', [MainController::class, 'jobs']);
 Route::get('jobs/{id}', [MainController::class, 'job']);
+Route::get('job_search', [MainController::class, 'job_search'])->name('job_search');
 Route::get('events', [MainController::class, 'events']);
 Route::get('events/{id}', [MainController::class, 'event']);
 Route::get('resources', [MainController::class, 'resources']);
