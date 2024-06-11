@@ -15,12 +15,11 @@ class PersonController extends Controller
     public function index()
     {
         try {
-            $people = collect(); // Initializing an empty collection
+            $people = ModelsPerson::where([])
+                ->orderBy('id', 'desc')
+                ->limit(300)
+                ->get();
 
-            // Retrieve data in chunks
-            ModelsPerson::chunk(100, function ($chunk) use ($people) {
-                $people->push($chunk);
-            });
 
             return Api_Utils::success($people, "People successfully returned", 200);
         } catch (\Exception $e) {
