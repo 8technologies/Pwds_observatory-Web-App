@@ -18,9 +18,11 @@ class PersonController extends Controller
             $people = collect(); // Initializing an empty collection
 
             // Retrieve data in chunks
-            ModelsPerson::chunk(100, function ($chunk) use ($people) {
-                $people->push($chunk);
-            });
+            ModelsPerson::where([])
+                ->orderBy('id', 'desc')
+                ->limit(300)
+                ->get();
+
 
             return Api_Utils::success($people, "People successfully returned", 200);
         } catch (\Exception $e) {
