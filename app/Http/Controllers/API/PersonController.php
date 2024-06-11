@@ -15,10 +15,7 @@ class PersonController extends Controller
     public function index()
     {
         try {
-            $people = collect(); // Initializing an empty collection
-
-            // Retrieve data in chunks
-            ModelsPerson::where([])
+            $people = ModelsPerson::where([])
                 ->orderBy('id', 'desc')
                 ->limit(300)
                 ->get();
