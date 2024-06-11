@@ -429,9 +429,14 @@ class PersonController extends AdminController
                 $form->divider();
                 //Add submit button
                 $form->html('
-                <button type="submit" class="btn btn-primary float-right">Submit</button>');
+                        <button type="submit" class="btn btn-primary float-right">Submit</button>');
             });
         }
+
+        // $form->divider();
+        // //Add submit button
+        // $form->html('
+        //         <button type="submit" class="btn btn-primary float-right">Submit</button>');
         // $form->hidden('district_id');
         // $form->hidden('opd_id');
         // $form->hidden('is_approved');

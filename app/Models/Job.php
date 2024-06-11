@@ -5,10 +5,16 @@ namespace App\Models;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Job extends Model
 {
     use HasFactory;
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     protected $fillable = [
         'user_id',
@@ -36,6 +42,7 @@ class Job extends Model
         // Define the updating event listener
         static::updating(function ($job) {
             $auth_user = Admin::user();
+
             if ($job->user_id !== $auth_user->id) {
                 throw new \Exception("You are not authorized to update this job.");
             }

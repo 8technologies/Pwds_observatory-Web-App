@@ -30,8 +30,6 @@ class JobController extends AdminController
 
 
         $grid->disableBatchActions();
-
-
         $grid->column('created_at', __('Published at'))->display(function ($x) {
             return Utils::my_date($x);
         })->sortable();
@@ -72,7 +70,7 @@ class JobController extends AdminController
         $show->field('location', __('Location'));
         $show->field('description', __('Description'))->as(function ($description) {
             return strip_tags($description);
-        });;
+        });
         $show->field('type', __('Type'));
         $show->field('minimum_academic_qualification', __('Minimum academic qualification'));
         $show->field('required_experience', __('Required experience'));
@@ -125,7 +123,24 @@ class JobController extends AdminController
 
         $form->saving(function (Form $form) {
             $form->user_id = auth('admin')->user()->id;
-        });
+            $auth_user = Admin::user(); // Get the currently authenticated admin user
+
+            // Find the job being updated
+            $job = Job::find($form->model()->id);
+
+            if ($job->user_id !== $auth_user->id) {
+                throw new \Exception("You are not authorized to update this job.");
+            }
+        });;   // $form->updating(function (Form $form) {
+        //     $auth_user = Admin::user(); // Get the currently authenticated admin user
+
+        //     // Find the job being updated
+        //     $job = Job::find($form->model()->id);
+
+        //     if ($job->user_id !== $auth_user->id) {
+        //         throw new \Exception("You are not authorized to update this job.");
+        //     }
+        // })
 
         return $form;
     }

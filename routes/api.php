@@ -38,8 +38,8 @@ Route::resource('innovations', InnovationApiController::class);
 Route::resource('events', EventApiController::class);
 Route::resource('news-posts', NewsPostApiController::class);
 Route::resource('products', ProductServiceAPIController::class);
-Route::resource('disabilities', DisabilitiesController::class);
-Route::resource('districts', DistrictAPIController::class);
+Route::apiResource('disabilities', DisabilitiesController::class);
+Route::apiResource('districts', DistrictAPIController::class);
 
 // Route::POST("people", [ApiResurceController::class, "person_create"]);
 // Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);
