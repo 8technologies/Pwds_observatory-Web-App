@@ -44,7 +44,14 @@ class PersonController extends AdminController
         $grid = new Grid(new Person());
 
         //TODO: fix filters, and also display users from the opd, and district unions
-
+        $user = Admin::user();
+        if ($user->inRoles(['basic', 'pwd'])) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+            $grid->disableCreateButton();
+        }
 
         $grid->filter(function ($filter) {
             // Remove the default id filter

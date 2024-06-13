@@ -27,6 +27,16 @@ class EventController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Event());
+
+        $user = Admin::user();
+        if ($user->inRoles(['basic', 'pwd'])) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+            $grid->disableCreateButton();
+        }
+
         Utils::checkEventRegustration();
 
         $grid->disableFilter();

@@ -6,6 +6,7 @@ use App\Models\NewsPost;
 use App\Models\PostCategory;
 use App\Models\Utils;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -28,6 +29,15 @@ class NewsPostController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new NewsPost());
+
+        $user = Admin::user();
+        if ($user->inRoles(['basic', 'pwd'])) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+            $grid->disableCreateButton();
+        }
 
         Utils::checkEventRegustration();
 

@@ -28,6 +28,24 @@ class JobController extends AdminController
     {
         $grid = new Grid(new Job());
 
+        $user = Admin::user();
+        if ($user->inRoles(['basic', 'pwd'])) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+            $grid->disableCreateButton();
+        }
+
+        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+            $job = $actions->row;
+
+            // Disable edit and delete buttons for jobs not posted by the current user
+            if ($user->inRoles(['nudipu', 'opd', 'du']) && $job->user_id != $user->id) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            }
+        });
 
         $grid->disableBatchActions();
         $grid->column('created_at', __('Published at'))->display(function ($x) {

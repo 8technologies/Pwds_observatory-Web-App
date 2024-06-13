@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\Innovation;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -25,6 +26,14 @@ class InnovationController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Innovation());
+        $user = Admin::user();
+        if ($user->inRoles(['basic', 'pwd'])) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+            $grid->disableCreateButton();
+        }
         $grid->model()->latest();
         $grid->disableBatchActions();
         $grid->quickSearch('title')->placeholder('Search by name');

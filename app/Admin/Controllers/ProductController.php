@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Models\Product;
 use App\Models\ServiceProvider;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -28,6 +29,15 @@ class ProductController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Product());
+
+        $user = Admin::user();
+        if ($user->inRoles(['basic', 'pwd'])) {
+            $grid->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+            $grid->disableCreateButton();
+        }
 
         //display products by ID in descending order
         $grid->model()->orderBy('id', 'desc');

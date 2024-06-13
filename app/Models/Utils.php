@@ -98,9 +98,6 @@ administrator_id
                 continue;
             }
 
-
-
-
             $p = new Person();
             $p->name = $name;
             $p->group_id = $local_id;
