@@ -24,8 +24,8 @@ class DisabilityController extends AdminController
      */
     protected function grid()
     {
-        $add_disability = Disability::create(['name' => 'New Disability']);
-        dd($add_disability);
+        // $add_disability = Disability::create(['name' => 'Speech Impairment']);
+        // dd($add_disability);
         $grid = new Grid(new Disability());
 
         $grid->disableBatchActions();
