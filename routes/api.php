@@ -29,11 +29,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('me', function (Request $request) {
     $query = auth('api')->user();
-    if($query == null){
+    if ($query == null) {
         return response()->json(["message" => "Unauthenticated 2."], 401);
-    } 
+    }
     return response()->json($query);
-})->middleware('auth:sanctum'); 
+})->middleware('auth:sanctum');
 Route::POST("users/register", [ApiAuthController::class, "register"]);
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::resource('people', PersonController::class);
