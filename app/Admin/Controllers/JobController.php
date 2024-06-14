@@ -37,15 +37,15 @@ class JobController extends AdminController
             $grid->disableCreateButton();
         }
 
-        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
-            $job = $actions->row;
+        // $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+        //     $job = $actions->row;
+        //     if (Admin::user()->inRoles(['administrator', 'nudipu', 'opd', 'du']) && $job->user_id != $user->id) {
+        //         $actions->disableEdit();
+        //         $actions->disableDelete();
+        //     }
+        // });
 
-            // Disable edit and delete buttons for jobs not posted by the current user
-            if ($user->inRoles(['nudipu', 'opd', 'du']) && $job->user_id != $user->id) {
-                $actions->disableEdit();
-                $actions->disableDelete();
-            }
-        });
+
 
         $grid->disableBatchActions();
         $grid->column('created_at', __('Published at'))->display(function ($x) {
@@ -146,9 +146,9 @@ class JobController extends AdminController
             // Find the job being updated
             $job = Job::find($form->model()->id);
 
-            if ($job->user_id !== $auth_user->id) {
-                throw new \Exception("You are not authorized to update this job.");
-            }
+            // if ($job->user_id !== $auth_user->id) {
+            //     throw new \Exception("You are not authorized to update this job.");
+            // }
         });;   // $form->updating(function (Form $form) {
         //     $auth_user = Admin::user(); // Get the currently authenticated admin user
 
