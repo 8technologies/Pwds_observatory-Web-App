@@ -37,16 +37,16 @@ class JobController extends AdminController
             $grid->disableCreateButton();
         }
 
-        // $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
-        //     $job = $actions->row;
-        //     if (Admin::user()->inRoles(['administrator', 'nudipu', 'opd', 'du']) && $job->user_id != $user->id) {
-        //         $actions->disableEdit();
-        //         $actions->disableDelete();
-        //     }
-        // });
+        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+            $job = $actions->row;
+            if ($job->user_id !== $user->id) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            }
+        });
 
 
-
+        $grid->model()->orderBy('created_at', 'desc');
         $grid->disableBatchActions();
         $grid->column('created_at', __('Published at'))->display(function ($x) {
             return Utils::my_date($x);
