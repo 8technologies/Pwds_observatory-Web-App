@@ -661,7 +661,6 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
     );
 
     public static $classMap = array (
-        'App\\Admin\\Controllers\\AssociationController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AssociationController.php',
         'App\\Admin\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AuthController.php',
         'App\\Admin\\Controllers\\CounsellingCentreController' => __DIR__ . '/../..' . '/app/Admin/Controllers/CounsellingCentreController.php',
         'App\\Admin\\Controllers\\CourseCategoryController' => __DIR__ . '/../..' . '/app/Admin/Controllers/CourseCategoryController.php',
@@ -681,6 +680,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Admin\\Controllers\\InstitutionController' => __DIR__ . '/../..' . '/app/Admin/Controllers/InstitutionController.php',
         'App\\Admin\\Controllers\\JobApplicationController' => __DIR__ . '/../..' . '/app/Admin/Controllers/JobApplicationController.php',
         'App\\Admin\\Controllers\\JobController' => __DIR__ . '/../..' . '/app/Admin/Controllers/JobController.php',
+        'App\\Admin\\Controllers\\LocationController' => __DIR__ . '/../..' . '/app/Admin/Controllers/LocationController.php',
         'App\\Admin\\Controllers\\MembersController' => __DIR__ . '/../..' . '/app/Admin/Controllers/MembersController.php',
         'App\\Admin\\Controllers\\NewsPostController' => __DIR__ . '/../..' . '/app/Admin/Controllers/NewsPostController.php',
         'App\\Admin\\Controllers\\OPDController' => __DIR__ . '/../..' . '/app/Admin/Controllers/OPDController.php',
@@ -738,6 +738,8 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Console\\Commands\\UpdatePersonDistricts' => __DIR__ . '/../..' . '/app/Console/Commands/UpdatePersonDistricts.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
+        'App\\Http\\Controllers\\API\\DisabilitiesController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/DisabilitiesController.php',
+        'App\\Http\\Controllers\\API\\DistrictAPIController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/DistrictAPIController.php',
         'App\\Http\\Controllers\\API\\District_UnionAPIController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/District_UnionAPIController.php',
         'App\\Http\\Controllers\\API\\EventApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/EventApiController.php',
         'App\\Http\\Controllers\\API\\InnovationApiController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/InnovationApiController.php',
@@ -757,6 +759,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
         'App\\Http\\Middleware\\Du_Dashboard' => __DIR__ . '/../..' . '/app/Http/Middleware/Du_Dashboard.php',
         'App\\Http\\Middleware\\EncryptCookies' => __DIR__ . '/../..' . '/app/Http/Middleware/EncryptCookies.php',
+        'App\\Http\\Middleware\\JwtMiddleware' => __DIR__ . '/../..' . '/app/Http/Middleware/JwtMiddleware.php',
         'App\\Http\\Middleware\\PreventRequestsDuringMaintenance' => __DIR__ . '/../..' . '/app/Http/Middleware/PreventRequestsDuringMaintenance.php',
         'App\\Http\\Middleware\\RedirectIfAuthenticated' => __DIR__ . '/../..' . '/app/Http/Middleware/RedirectIfAuthenticated.php',
         'App\\Http\\Middleware\\TrimStrings' => __DIR__ . '/../..' . '/app/Http/Middleware/TrimStrings.php',

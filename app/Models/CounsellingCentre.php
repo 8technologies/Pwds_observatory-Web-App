@@ -52,4 +52,14 @@ class CounsellingCentre extends Model
         return $d->name_text;
     }
     protected $appends = ['subcounty_text'];
+
+    public function districts()
+    {
+        return $this->belongsToMany(District::class)->withTimestamps();
+    }
+
+    public function disabilities()
+    {
+        return $this->belongsToMany(Disability::class)->withTimestamps();
+    }
 }

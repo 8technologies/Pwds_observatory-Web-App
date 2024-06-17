@@ -179,17 +179,8 @@ class MainController extends BaseController
 
   public function counseling_centres()
   {
-    $counselingCentres = CounsellingCentre::all();
 
-    foreach ($counselingCentres as $centre) {
-      $district = District::find($centre->district_id);
-      $centre->district_name = $district ? $district->name : 'Unknown District';
-    }
-
-    foreach ($counselingCentres as $centre) {
-      $disability = Disability::find($centre->disability_id);
-      $centre->disability_name = $disability ? $disability->name : 'Unknown Disability';
-    }
+    $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->get();
 
     // Pass the data to the Blade view
     return view('counseling', ['counselingCentres' => $counselingCentres]);

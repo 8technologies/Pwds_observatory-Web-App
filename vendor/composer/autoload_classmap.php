@@ -6,7 +6,6 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\Admin\\Controllers\\AssociationController' => $baseDir . '/app/Admin/Controllers/AssociationController.php',
     'App\\Admin\\Controllers\\AuthController' => $baseDir . '/app/Admin/Controllers/AuthController.php',
     'App\\Admin\\Controllers\\CounsellingCentreController' => $baseDir . '/app/Admin/Controllers/CounsellingCentreController.php',
     'App\\Admin\\Controllers\\CourseCategoryController' => $baseDir . '/app/Admin/Controllers/CourseCategoryController.php',
@@ -26,6 +25,7 @@ return array(
     'App\\Admin\\Controllers\\InstitutionController' => $baseDir . '/app/Admin/Controllers/InstitutionController.php',
     'App\\Admin\\Controllers\\JobApplicationController' => $baseDir . '/app/Admin/Controllers/JobApplicationController.php',
     'App\\Admin\\Controllers\\JobController' => $baseDir . '/app/Admin/Controllers/JobController.php',
+    'App\\Admin\\Controllers\\LocationController' => $baseDir . '/app/Admin/Controllers/LocationController.php',
     'App\\Admin\\Controllers\\MembersController' => $baseDir . '/app/Admin/Controllers/MembersController.php',
     'App\\Admin\\Controllers\\NewsPostController' => $baseDir . '/app/Admin/Controllers/NewsPostController.php',
     'App\\Admin\\Controllers\\OPDController' => $baseDir . '/app/Admin/Controllers/OPDController.php',
@@ -83,6 +83,8 @@ return array(
     'App\\Console\\Commands\\UpdatePersonDistricts' => $baseDir . '/app/Console/Commands/UpdatePersonDistricts.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
+    'App\\Http\\Controllers\\API\\DisabilitiesController' => $baseDir . '/app/Http/Controllers/API/DisabilitiesController.php',
+    'App\\Http\\Controllers\\API\\DistrictAPIController' => $baseDir . '/app/Http/Controllers/API/DistrictAPIController.php',
     'App\\Http\\Controllers\\API\\District_UnionAPIController' => $baseDir . '/app/Http/Controllers/API/District_UnionAPIController.php',
     'App\\Http\\Controllers\\API\\EventApiController' => $baseDir . '/app/Http/Controllers/API/EventApiController.php',
     'App\\Http\\Controllers\\API\\InnovationApiController' => $baseDir . '/app/Http/Controllers/API/InnovationApiController.php',
@@ -102,6 +104,7 @@ return array(
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',
     'App\\Http\\Middleware\\Du_Dashboard' => $baseDir . '/app/Http/Middleware/Du_Dashboard.php',
     'App\\Http\\Middleware\\EncryptCookies' => $baseDir . '/app/Http/Middleware/EncryptCookies.php',
+    'App\\Http\\Middleware\\JwtMiddleware' => $baseDir . '/app/Http/Middleware/JwtMiddleware.php',
     'App\\Http\\Middleware\\PreventRequestsDuringMaintenance' => $baseDir . '/app/Http/Middleware/PreventRequestsDuringMaintenance.php',
     'App\\Http\\Middleware\\RedirectIfAuthenticated' => $baseDir . '/app/Http/Middleware/RedirectIfAuthenticated.php',
     'App\\Http\\Middleware\\TrimStrings' => $baseDir . '/app/Http/Middleware/TrimStrings.php',

@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Models\CounsellingCentre;
 use App\Models\Disability;
+use App\Models\District;
 use App\Models\Location;
 use App\Models\Utils;
 use Encore\Admin\Auth\Database\Administrator;
@@ -164,7 +165,7 @@ class CounsellingCentreController extends AdminController
 
         $form->text('name', __('Counselling Centre Name'))->rules('required');
 
-        $form->select('disability_id', __('Select Category of persons with disabilities'))
+        $form->multipleSelect('disabilities', __('Select Category of persons with disabilities'))
             ->rules('required')
             ->options(Disability::where([])->get()->pluck('name', 'id'));
 
@@ -178,7 +179,7 @@ class CounsellingCentreController extends AdminController
 
         $form->text('village', __('Counselling Centre Village'));
         $form->text('parish', __('Counselling Centre Parish'));
-        $form->text('address', __('Counselling Centre Address'));
+        $form->text('address', __('Physical Address'));
 
         $form->text('phone_number', __('Counselling Centre Phone number'))->rules('required');
         $form->text('phone_number_2', __('Alternative Phone number'));
@@ -190,6 +191,9 @@ class CounsellingCentreController extends AdminController
         $form->text('gps_longitude', __('Counselling Centre Gps longitude'));
         $form->image('photo', __('Counselling Centre logo'));
         $form->quill('about', __('About The Counselling Centre'))->rules('required');
+        $form->multipleSelect('districts', 'Districts Covered')
+            ->rules('required')
+            ->options(District::where([])->get()->pluck('name', 'id'));
 
         $form->disableReset();
         $form->disableViewCheck();

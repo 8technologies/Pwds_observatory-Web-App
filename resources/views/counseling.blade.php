@@ -32,15 +32,48 @@ if (!isset($header_style)) {
                     <div class="card mb-4">
                         <div class="card-body">
                             <h5 class="card-title">{{ $centre->name }}</h5>
-                            <p class="card-text"><strong>Disability Name:</strong> {{ $centre->disability_name }}</p>
-                            <p class="card-text"><strong>Address:</strong> {{ $centre->address }}</p>
-                            <p class="card-text"><strong>Village:</strong> {{ $centre->village }}</p>
-                            <p class="card-text"><strong>Phone Number:</strong> {{ $centre->phone_number }}</p>
-                            <p class="card-text"><strong>Email:</strong> {{ $centre->email }}</p>
-                            <p class="card-text"><strong>District Name:</strong> {{ $centre->district_name }}</p>
-                            <p class="card-text"><strong>Website:</strong> <a href="{{ $centre->website }}"
-                                    target="_blank">{{ $centre->website }}</a></p>
+                            @if ($centre->disabilities->isNotEmpty())
+                                <p class="card-text"><strong>Disability Names:</strong>
+                                    @foreach ($centre->disabilities as $disability)
+                                        {{ $disability->name }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </p>
+                            @endif
+
+                            @if ($centre->address)
+                                <p class="card-text"><strong>Address:</strong> {{ $centre->address }}</p>
+                            @endif
+
+                            @if ($centre->village)
+                                <p class="card-text"><strong>Village:</strong> {{ $centre->village }}</p>
+                            @endif
+
+                            @if ($centre->phone_number)
+                                <p class="card-text"><strong>Phone Number:</strong> {{ $centre->phone_number }}</p>
+                            @endif
+
+                            @if ($centre->email)
+                                <p class="card-text"><strong>Email:</strong> {{ $centre->email }}</p>
+                            @endif
+
+                            @if ($centre->disabilities->isNotEmpty())
+                                <p class="card-text"><strong>Districts Covered:</strong>
+                                    @foreach ($centre->districts as $district)
+                                        {{ $district->name }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </p>
+                            @endif
+
+                            @if ($centre->website)
+                                <p class="card-text"><strong>Website:</strong> <a href="{{ $centre->website }}"
+                                        target="_blank">{{ $centre->website }}</a></p>
+                            @endif
                             <p class="card-text"><small class="text-muted">Created At: {{ $centre->created_at }}</small>
+                            </p>
                             </p>
                         </div>
                     </div>

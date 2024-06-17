@@ -25,4 +25,9 @@ class Disability extends Model
     {
         return $this->belongsToMany(ServiceProvider::class)->withTimestamps();
     }
+
+    public function counselling_centres()
+    {
+        return $this->belongsToMany(CounsellingCentre::class)->withTimestamps();
+    }
 }

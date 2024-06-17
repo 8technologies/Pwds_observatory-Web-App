@@ -51,4 +51,9 @@ class District extends Model
     {
         return $this->belongsTo(Region::class, 'region_id');
     }
+
+    public function counselling_centres()
+    {
+        return $this->belongsToMany(CounsellingCentre::class)->withTimestamps();
+    }
 }
