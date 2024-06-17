@@ -8,7 +8,7 @@ if (!isset($header_style)) {
 ?>
 <style>
     .pagination {
-        font-size: 2rem;
+        font-size: 3rem;
 
     }
 
@@ -70,86 +70,74 @@ if (!isset($header_style)) {
         @if ($activeJobs->isEmpty())
             <p>No jobs available.</p>
         @else
-            @foreach ($activeJobs as $job)
-                <div class="row mb-4">
-                    <div class="col-md-12">
-                        <div class="card job-card">
-                            <div class="card-body">
-                                <h4>{{ $job->title }}</h4>
-                                <div class="row mb-4">
-                                    <div class="col-md-3">
-                                        <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p><strong>Type:</strong> <span class="fw-bold">{{ $job->type }}</span></p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong>Hiring Firm: </strong>
-                                            <span style="color: green">{{ $job->hiring_firm }}</span>
-                                        </p>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong>Status:</strong>
-                                            <span style="color: green">{{ $job->status }}</span>
-                                        </p>
-                                    </div>
-                                </div>
+            <div class="container jobs-display">
+                <div class="row">
+                    @foreach ($activeJobs as $job)
+                        <div class="col-md-4">
+                            <div class="card card-style">
+                                <div class="card-body">
+                                    <h4>{{ $job->title }}</h4>
+                                    <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
+                                    <p>
+                                        <strong>Hiring Firm: </strong>
+                                        <span style="color: green">{{ $job->hiring_firm }}</span>
+                                    </p>
+                                    <p><strong>Type:</strong> <span class="fw-bold">{{ $job->type }}</span></p>
+                                    <p><strong>Created Date:</strong> <span
+                                            class="fw-bold">{{ $job->created_at->format('Y-m-d') }}</span></p>
+                                    <p><strong>Deadline:</strong> <span class="fw-bold">{{ $job->deadline }}</span></p>
+                                    <p>
+                                        <strong>Days to Close:</strong>
+                                        <span style="color:red">{{ $job->days_remaining }} days remaining</span>
+                                    </p>
+                                    <p>
+                                        <strong>Status:</strong>
+                                        <span style="color: green">{{ $job->status }}</span>
+                                    </p>
 
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <p><strong>Created Date:</strong> <span
-                                                class="fw-bold">{{ $job->created_at->format('Y-m-d') }}</span></p>
+                                    <div id="short_{{ $job->id }}" class="text">
+                                        {!! Str::limit($job->description, 400) !!}
+                                        <span onclick="expandText('{{ $job->id }}')"
+                                            class="read-more text-primary">...........Read More</span>
                                     </div>
-                                    <div class="col-md-3">
-                                        <p><strong>Deadline:</strong> <span class="fw-bold">{{ $job->deadline }}</span></p>
+
+                                    <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
+                                        {!! $job->description !!}
+                                        <span onclick="collapseText('{{ $job->id }}')"
+                                            class="read-less text-primary">........Read Less</span>
                                     </div>
-                                    <div class="col-md-3">
-                                        <p>
-                                            <strong>Days to Close:</strong>
-                                            <span style="color:red">{{ $job->days_remaining }} days remaining</span>
-                                        </p>
-                                    </div>
+                                    <p>
+                                        <strong>Required Experience: </strong>
+                                        <span>{{ $job->required_experience }}</span>
+                                    </p>
+                                    <p>
+                                        <strong>How to apply: </strong>
+                                        <span>{{ $job->how_to_apply }}</span>
+                                    </p>
                                 </div>
-
-
-                                <div id="short_{{ $job->id }}" class="text">
-                                    {!! Str::limit($job->description, 400) !!}
-                                    <span onclick="expandText('{{ $job->id }}')"
-                                        class="read-more text-primary">.....Read More</span>
-                                </div>
-
-                                <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
-                                    {!! $job->description !!}
-                                    <span onclick="collapseText('{{ $job->id }}')"
-                                        class="read-less text-primary">.....Read Less</span>
-                                </div>
-                                <p>
-                                    <strong>Required Experience: </strong>
-                                    <span style="color: green">{{ $job->required_experience }}</span>
-                                </p>
-                                <p>
-                                    <strong>How to apply: </strong>
-                                    <span style="color: green">{{ $job->how_to_apply }}</span>
-                                </p>
                             </div>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
-                <hr>
-            @endforeach
-
-            <!-- Pagination Links -->
-            <div class="d-flex justify-content-center">
-                {{ $jobs->links() }}
             </div>
+
+            <hr>
+
+
+
+            <!-- Pagination Links
+                    <div class="d-flex justify-content-center">
+                        {{ $jobs->links() }}
+                    </div>
+                    -->
         @endif
+
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-4">
                 {{ $jobs->links('pagination::simple-bootstrap-4') }}
             </div>
         </div>
+
     </div>
     </div>
     <!-- Pagination (bullets) -->
