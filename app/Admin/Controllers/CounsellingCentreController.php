@@ -173,7 +173,6 @@ class CounsellingCentreController extends AdminController
         $form->text('fees_range', __('Fees range'));
 
         $form->select('subcounty_id', __('Counselling Centre Subcounty'))
-            ->rules('required')
             ->help('Where is this Counselling Centre located?')
             ->options(Location::get_sub_counties_array());
 
