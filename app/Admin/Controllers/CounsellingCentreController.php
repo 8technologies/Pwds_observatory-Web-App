@@ -49,15 +49,15 @@ class CounsellingCentreController extends AdminController
                 return Utils::my_date($x);
             }
         )->sortable();
-        $grid->column('name', __('Name'))->sortable(); 
+        $grid->column('name', __('Name'))->sortable();
 
-        
-  
+
+
         $grid->column('skills', __('Skills'));
-        $grid->column('fees_range', __('Fees range')); 
-        
+        $grid->column('fees_range', __('Fees range'));
 
-        
+
+
         $grid->column('district_id', __('District'))
             ->display(
                 function ($x) {
@@ -78,14 +78,14 @@ class CounsellingCentreController extends AdminController
                     }
                     return $dis->name;
                 }
-            )->sortable(); 
+            )->sortable();
 
         $grid->column('address', __('Address'));
         $grid->column('parish', __('Parish'));
         $grid->column('village', __('Village'));
         $grid->column('phone_number', __('Phone number'));
-        $grid->column('email', __('Email')); 
-        $grid->column('website', __('Website')); 
+        $grid->column('email', __('Email'));
+        $grid->column('website', __('Website'));
 
         return $grid;
     }
@@ -168,7 +168,7 @@ class CounsellingCentreController extends AdminController
             ->rules('required')
             ->options(Disability::where([])->get()->pluck('name', 'id'));
 
-        $form->tags('skills', __('Select counselling services offered'));
+        $form->textarea('skills', __('Select counselling services offered'));
         $form->text('fees_range', __('Fees range'));
 
         $form->select('subcounty_id', __('Counselling Centre Subcounty'))
@@ -176,8 +176,8 @@ class CounsellingCentreController extends AdminController
             ->help('Where is this Counselling Centre located?')
             ->options(Location::get_sub_counties_array());
 
-        $form->text('village', __('Counselling Centre Village'))->rules('required');
-        $form->text('parish', __('Counselling Centre Parish'))->rules('required');
+        $form->text('village', __('Counselling Centre Village'));
+        $form->text('parish', __('Counselling Centre Parish'));
         $form->text('address', __('Counselling Centre Address'));
 
         $form->text('phone_number', __('Counselling Centre Phone number'))->rules('required');

@@ -76,31 +76,63 @@ if (!isset($header_style)) {
                         <div class="card job-card">
                             <div class="card-body">
                                 <h4>{{ $job->title }}</h4>
-                                <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
-                                <p><strong>Type:</strong> <span class="fw-bold">{{ $job->type }}</span></p>
-                                <p><strong>Created Date:</strong> <span
-                                        class="fw-bold">{{ $job->created_at->format('Y-m-d') }}</span></p>
-                                <p><strong>Deadline:</strong> <span class="fw-bold">{{ $job->deadline }}</span></p>
-                                <p>
-                                    <strong>Days to Close:</strong>
-                                    <span style="color:red">{{ $job->days_remaining }} days remaining</span>
-                                </p>
-                                <p>
-                                    <strong>Status:</strong>
-                                    <span style="color: green">{{ $job->status }}</span>
-                                </p>
+                                <div class="row mb-4">
+                                    <div class="col-md-3">
+                                        <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p><strong>Type:</strong> <span class="fw-bold">{{ $job->type }}</span></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <strong>Hiring Firm: </strong>
+                                            <span style="color: green">{{ $job->hiring_firm }}</span>
+                                        </p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <strong>Status:</strong>
+                                            <span style="color: green">{{ $job->status }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <p><strong>Created Date:</strong> <span
+                                                class="fw-bold">{{ $job->created_at->format('Y-m-d') }}</span></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p><strong>Deadline:</strong> <span class="fw-bold">{{ $job->deadline }}</span></p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <p>
+                                            <strong>Days to Close:</strong>
+                                            <span style="color:red">{{ $job->days_remaining }} days remaining</span>
+                                        </p>
+                                    </div>
+                                </div>
+
 
                                 <div id="short_{{ $job->id }}" class="text">
                                     {!! Str::limit($job->description, 400) !!}
                                     <span onclick="expandText('{{ $job->id }}')"
-                                        class="read-more text-primary">...........Read More</span>
+                                        class="read-more text-primary">.....Read More</span>
                                 </div>
 
                                 <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
                                     {!! $job->description !!}
                                     <span onclick="collapseText('{{ $job->id }}')"
-                                        class="read-less text-primary">........Read Less</span>
+                                        class="read-less text-primary">.....Read Less</span>
                                 </div>
+                                <p>
+                                    <strong>Required Experience: </strong>
+                                    <span style="color: green">{{ $job->required_experience }}</span>
+                                </p>
+                                <p>
+                                    <strong>How to apply: </strong>
+                                    <span style="color: green">{{ $job->how_to_apply }}</span>
+                                </p>
                             </div>
                         </div>
                     </div>

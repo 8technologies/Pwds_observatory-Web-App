@@ -169,6 +169,7 @@ class MainController extends BaseController
       }
     }
 
+
     return view('news-post', [
       'p' => $p,
       'post' => $p,
