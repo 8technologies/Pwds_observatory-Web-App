@@ -52,7 +52,7 @@ class OPDController extends AdminController
             // $grid->disableActions();
         }
 
-        if ($user->isRole('district-union')) {
+        /*         if ($user->isRole('district-union')) {
             //get the district union manager by the current user
             $district_union = Organisation::where('admin_email', $user->email)->first();
 
@@ -60,8 +60,8 @@ class OPDController extends AdminController
         } elseif ($user->isRole('opd')) {
             $grid->model()->where('admin_email', $user->email)->orderBy('updated_at', 'desc');
         } elseif ($user->inRoles(['nudipu', 'administrator'])) {
-            $grid->model()->where('relationship_type', 'opd')->orderBy('updated_at', 'desc');
-        }
+        } */
+        $grid->model()->where('relationship_type', 'opd')->orderBy('updated_at', 'desc');
 
 
         $grid->exporter(new OPDExcelExporter());
@@ -75,7 +75,7 @@ class OPDController extends AdminController
         $grid->column('Reset Password')->display(function () {
             $url = url('du-admin-password-reset?du_id=' . $this->id);
             return "<a target='_blank' href='" . $url . "' class='btn btn-xs btn-primary'>Reset Password</a>";
-        }); 
+        });
 
         return $grid;
     }
