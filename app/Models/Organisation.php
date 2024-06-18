@@ -174,6 +174,9 @@ class Organisation extends Model
 
     public static function do_validate($model)
     {
+        if ($model->relationship_type != 'du') {
+            return $model;
+        }
         $district = District::find($model->district_id);
         if (!$district) {
             throw new Error('District not found.');
@@ -256,6 +259,62 @@ class Organisation extends Model
                 $exist->organisation_id = $model->id;
                 $exist->save();
                 $exist->assignRole('district-union');
+                try {
+                    $model->reset_admin_pass();
+                } catch (\Exception $e) {
+                    Log::error('Failed to send email: ' . $e->getMessage());
+                }
+            }
+        } else if ($model->relationship_type == 'opd') {
+            $exist = User::where('email', $model->admin_email)->first();
+            $created_new_admin = false;
+            $update_admin = false;
+            if ($exist != null) {
+                $org = Organisation::find($exist->organisation_id);
+                if ($org == null) {
+                    $update_admin = true;
+                }
+            } else {
+                $created_new_admin = true;
+            }
+
+            if ($update_admin) {
+                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+                $new_password = substr(str_shuffle($alpha_list), 0, 8);
+                $hashed_password = Hash::make($new_password);
+                $exist->password = $hashed_password;
+                $exist->username = $model->admin_email;
+                $exist->email = $model->admin_email;
+                $exist->password = $new_password;
+                $exist->approved = 1;
+                $exist->first_name =  'OPD';
+                $exist->last_name = 'Admin';
+                $exist->organisation_id = $model->id;
+                $exist->save();
+                $exist->assignRole('opd');
+                try {
+                    $model->reset_admin_pass();
+                } catch (\Exception $e) {
+                    Log::error('Failed to send email: ' . $e->getMessage());
+                }
+            }
+
+
+            if ($created_new_admin) {
+                $exist = new User();
+                $alpha_list = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz1234567890';
+                $new_password = substr(str_shuffle($alpha_list), 0, 8);
+                $hashed_password = Hash::make($new_password);
+                $exist->password = $hashed_password;
+                $exist->username = $model->admin_email;
+                $exist->email = $model->admin_email;
+                $exist->password = $new_password;
+                $exist->approved = 1;
+                $exist->first_name = 'OPD';
+                $exist->last_name = 'Admin';
+                $exist->organisation_id = $model->id;
+                $exist->save();
+                $exist->assignRole('opd');
                 try {
                     $model->reset_admin_pass();
                 } catch (\Exception $e) {

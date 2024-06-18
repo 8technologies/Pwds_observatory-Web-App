@@ -239,11 +239,7 @@ class DistrictUnionController extends AdminController
 
         $form->ignore(['password', 'new_password', 'confirm_new_password', 'change_password']);
 
-        $form->saving(function (Form $form) {
-            if ($form->password && $form->model()->password != $form->password) {
-                $form->password = Hash::make($form->password);
-            }
-        });
+    
 
         return $form;
     }
