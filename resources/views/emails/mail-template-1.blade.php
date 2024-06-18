@@ -73,7 +73,8 @@ if (!isset($body)) {
                 href="https://app.ict4personswithdisabilities.org/">Observatory</a> •
             <a class="text-dark small " style="color: #424649" href="https://app.ict4personswithdisabilities.org/">Our
                 Services</a> •
-            <a class="text-dark small " style="color: #424649" href="https://app.ict4personswithdisabilities.org/about-us">About
+            <a class="text-dark small " style="color: #424649"
+                href="https://app.ict4personswithdisabilities.org/about-us">About
                 Us</a> •
         </div>
         <!-- Content -->
@@ -83,12 +84,25 @@ if (!isset($body)) {
         font-size: 16px;
         ">
             {!! $body !!}</div>
-        <a href="https://8technologies.net">
-            <div class="header small">
-                <h4>Eight Tech Consults</h4>
-                <p class="small">PEOPLE • INNOVATION • TECHNOLOGY • SERVICES</p>
+        <div class="row">
+            <div class="col-md-6">
+                <a href="https://nudipu.org/">
+                    <div class="header small">
+                        <h4>National Union of Disabled Persons of Uganda (NUDIPU)</h4>
+                        {{-- <p class="small">DISABILITY • INNOVATION • TECHNOLOGY • SERVICES</p> --}}
+                    </div>
+                </a>
             </div>
-        </a>
+            <div class="col-md-6">
+                <a href="https://8technologies.net">
+                    <div class="header small" style="background: rgb(135, 243, 135)">
+                        <h4 style="color:#056098">Eight Tech Consults</h4>
+                        {{-- <p class="small">PEOPLE • INNOVATION • TECHNOLOGY • SERVICES</p> --}}
+                    </div>
+                </a>
+            </div>
+        </div>
+
     </div>
 </body>
 

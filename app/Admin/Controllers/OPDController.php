@@ -159,7 +159,7 @@ class OPDController extends AdminController
         });
 
         $form->divider('NOPD Basic Info');
-        $form->text('name', __('NOPD NName'))->placeholder('Name')->rules("required");
+        $form->text('name', __('NOPD Name'))->placeholder('Name')->rules("required");
         $form->text('registration_number', __('Registration number'))->placeholder('RegNo.')->rules("required");;
         $form->date('date_of_registration', __('Date of registration'));
         $form->textarea('mission', __('Mission'))->placeholder('Org. Mission')->rules("required");

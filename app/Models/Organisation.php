@@ -384,10 +384,10 @@ class Organisation extends Model
             $exist->save();
 
             $body = <<<EOF
-            Dear Sir/Madam,
+            Hello,
             <br>
             <br>
-            Your password has been reset. You can now login to the Persons with Disability Observatory using the following credentials:
+            You have been made the Administrator for <strong>{$model->name}</strong>. You can now login to the National Digital Observatory using the following credentials to profile your members:
             <br>
             <br><b>EMAIL:</b> {$model->admin_email}
             <br><b>PASSWORD:</b> {$new_password}
@@ -399,8 +399,7 @@ class Organisation extends Model
             <br>
             <br>
             Regards,
-            <br>
-            8Tech Team.
+            
         EOF;
 
             $data = [
