@@ -33,11 +33,14 @@ ini_set('session.cookie_lifetime', 86400);
 ini_set('session.cookie_secure', 1);
 ini_set('session.cookie_httponly', 1);
 ini_set('session.use_only_cookies', 1);
+
 use App\Models\Utils;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Auth;
 use App\Admin\Extensions\Nav\Shortcut;
 use App\Admin\Extensions\Nav\Dropdown;
+use App\Models\Organisation;
+
 //inclide css blade view
 Utils::system_boot();
 
@@ -79,9 +82,23 @@ Utils::system_boot();
 //     ], 'fa-question')->title('HELP'));
 // });
 
-
-
-
+/* $org = new Organisation();
+$org->name = 'Test D.U';
+$org->district_id = 41;
+$org->registration_number = 'Test D.U';
+$org->date_of_registration = 'Test D.U';
+$org->mission = 'Test D.U';
+$org->membership_type = 'organisation-based';
+$org->physical_address = 'organisation-based';
+$org->core_values = 'organisation-based';
+$org->brief_profile = 'organisation-based';
+$org->vision = 'organisation-based';
+$org->relationship_type = 'du';
+$org->parent_organisation_id = '0';
+$org->admin_email = 'mubs0x@gmal.com'; 
+$org->save();
+die("doen");
+ */
 Encore\Admin\Form::forget(['map', 'editor']);
 Admin::css(url('/assets/css/bootstrap.css'));
 Admin::css('/assets/css/styles.css');
