@@ -6,7 +6,7 @@ use App\Models\District;
 use Encore\Admin\Grid\Exporters\ExcelExporter;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
-class PersonsExcelExporter extends ExcelExporter implements WithMapping
+class PersonsExcelExporter extends ExcelExporter implements WithMapping, FromCollection
 {
     protected $fileName = 'Persons.xlsx';
 
