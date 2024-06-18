@@ -3,7 +3,9 @@
 namespace App\Admin\Extensions;
 
 use App\Models\District;
+use App\Models\Person;
 use Encore\Admin\Grid\Exporters\ExcelExporter;
+use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithMapping;
 
 class PersonsExcelExporter extends ExcelExporter implements WithMapping, FromCollection
@@ -19,6 +21,7 @@ class PersonsExcelExporter extends ExcelExporter implements WithMapping, FromCol
         'dob' => 'Date Of Birth',
         'district_id' => 'District of Residence',
         'profiler' => 'Profiler',
+        'disabilities' => 'Disability Category', // Added column for disabilities
     ];
 
     protected $districtMapping;
@@ -29,6 +32,12 @@ class PersonsExcelExporter extends ExcelExporter implements WithMapping, FromCol
         $this->districtMapping = District::pluck('name', 'id')->toArray();
     }
 
+    public function collection()
+    {
+        // Fetch persons with their disabilities
+        return Person::WhereHas('disabilities')->with('disabilities')->get();
+    }
+
     public function map($person): array
     {
         return [
@@ -37,16 +46,22 @@ class PersonsExcelExporter extends ExcelExporter implements WithMapping, FromCol
             $person->other_names,
             $person->id_number,
             $person->sex,
-            // $this->getDisabilityNames($person),
             $person->dob,
             $this->getDistrictName($person->district_id),
             $person->profiler,
+            $this->getDisabilityNames($person), // Include the disability names
         ];
     }
 
     protected function getDistrictName($districtId)
     {
         return $this->districtMapping[$districtId] ?? 'Unknown';
+    }
+
+    protected function getDisabilityNames($person)
+    {
+        // Get the disability names as a comma-separated string
+        return $person->disabilities->pluck('name')->implode(', ');
     }
 }
 
