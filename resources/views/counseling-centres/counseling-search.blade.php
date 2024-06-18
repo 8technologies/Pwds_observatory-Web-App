@@ -26,7 +26,7 @@ if (!isset($header_style)) {
 
     <div class="container">
         <h1 class="mt-5 mb-4 text-center">Counselling Centres</h1>
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-md-12 text-center">
                 <form action="{{ route('counseling_search') }}" method="GET"
                     class="form-inline d-flex justify-content-center">
@@ -35,14 +35,24 @@ if (!isset($header_style)) {
                             aria-label="Search" value="{{ request('name_search') }}">
                     </div>
                     <div class="form-group mx-2">
-                        <input class="form-control" type="search" name="disability_search"
-                            placeholder="Search by Disability Category" aria-label="Search"
-                            value="{{ request('disability_search') }}">
+                        <select class="form-control" name="disability_search">
+                            <option value="">Select Disability Category</option>
+                            @foreach ($disabilities as $disability)
+                                <option value="{{ $disability->name }}"
+                                    {{ request('disability_search') == $disability->name ? 'selected' : '' }}>
+                                    {{ $disability->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group mx-2">
-                        <input class="form-control" type="search" name="district_search"
-                            placeholder="Search by Location/District" aria-label="Search"
-                            value="{{ request('district_search') }}">
+                        <select class="form-control" name="district_search">
+                            <option value="">Select District</option>
+                            @foreach ($districts as $district)
+                                <option value="{{ $district->name }}"
+                                    {{ request('district_search') == $district->name ? 'selected' : '' }}>
+                                    {{ $district->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <button class="btn btn-outline-success mx-2" type="submit">Search</button>
                 </form>

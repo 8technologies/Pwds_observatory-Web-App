@@ -182,8 +182,11 @@ class MainController extends BaseController
 
     $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->paginate(8);
 
+    $districts = District::all();
+    $disabilities = Disability::all();
+
     // Pass the data to the Blade view
-    return view('counseling-centres.counseling', ['counselingCentres' => $counselingCentres]);
+    return view('counseling-centres.counseling', ['counselingCentres' => $counselingCentres, 'districts' => $districts, 'disabilities' => $disabilities]);
   }
 
   /**
@@ -288,7 +291,10 @@ class MainController extends BaseController
       ->with(['disabilities', 'districts'])
       ->paginate(8);
 
-    return view('counseling-centres.counseling-search', compact('counseling_centres', 'nameSearch', 'districtSearch', 'disabilitySearch'));
+    $districts = District::all();
+    $disabilities = Disability::all();
+
+    return view('counseling-centres.counseling-search', compact('counseling_centres', 'nameSearch', 'districtSearch', 'disabilitySearch', 'districts', 'disabilities'));
   }
 
 

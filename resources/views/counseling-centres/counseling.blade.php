@@ -6,6 +6,23 @@ if (!isset($header_style)) {
     $header_style = 11;
 }
 ?>
+<style>
+    .pagination {
+        font-size: 3rem;
+
+    }
+
+    .pagination a:hover {
+        background-color: rgb(55, 162, 224);
+        color: white;
+    }
+
+    /* Example CSS */
+    .pagination .page-item.active .page-link {
+        background-color: rgb(55, 162, 224);
+        color: white;
+    }
+</style>
 @extends('layouts.layout-main')
 @section('main-content')
     <!-- Breadcrumb -->
@@ -35,14 +52,24 @@ if (!isset($header_style)) {
                             aria-label="Search" value="{{ request('name_search') }}">
                     </div>
                     <div class="form-group mx-2">
-                        <input class="form-control" type="search" name="disability_search"
-                            placeholder="Search by Disability Category" aria-label="Search"
-                            value="{{ request('disability_search') }}">
+                        <select class="form-control" name="disability_search">
+                            <option value="">Select Disability Category</option>
+                            @foreach ($disabilities as $disability)
+                                <option value="{{ $disability->name }}"
+                                    {{ request('disability_search') == $disability->name ? 'selected' : '' }}>
+                                    {{ $disability->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group mx-2">
-                        <input class="form-control" type="search" name="district_search"
-                            placeholder="Search by Location/District" aria-label="Search"
-                            value="{{ request('district_search') }}">
+                        <select class="form-control" name="district_search">
+                            <option value="">Select District</option>
+                            @foreach ($districts as $district)
+                                <option value="{{ $district->name }}"
+                                    {{ request('district_search') == $district->name ? 'selected' : '' }}>
+                                    {{ $district->name }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <button class="btn btn-outline-success mx-2" type="submit">Search</button>
                 </form>
@@ -109,6 +136,12 @@ if (!isset($header_style)) {
             </div>
             {{ $counselingCentres->links() }}
         @endif
+
+        <div class="row">
+            <div class="col-md-4">
+                {{ $counselingCentres->links('pagination::simple-bootstrap-4') }}
+            </div>
+        </div>
     </div>
 
     <!-- Pagination (bullets) -->
