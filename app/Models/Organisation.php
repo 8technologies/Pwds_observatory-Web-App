@@ -387,7 +387,7 @@ class Organisation extends Model
             Hello,
             <br>
             <br>
-            You have been made the Administrator for <strong>{$model->name}</strong>. You can now login to the National Digital Observatory using the following credentials to profile your members:
+            You have been made the Administrator for <strong>{$model->name}</strong>. You can now login to the National Digital Observatory using the following credentials to profile members in your organisation:
             <br>
             <br><b>EMAIL:</b> {$model->admin_email}
             <br><b>PASSWORD:</b> {$new_password}

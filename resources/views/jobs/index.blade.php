@@ -94,11 +94,16 @@ if (!isset($header_style)) {
                                         <strong>Status:</strong>
                                         <span style="color: green">{{ $job->status }}</span>
                                     </p>
-
+                                    @php
+                                        $description = strip_tags($job->description);
+                                        $shortDescription = Str::limit($description, 400);
+                                    @endphp
                                     <div id="short_{{ $job->id }}" class="text">
-                                        {!! Str::limit($job->description, 400) !!}
-                                        <span onclick="expandText('{{ $job->id }}')"
-                                            class="read-more text-primary">...........Read More</span>
+                                        {!! $shortDescription !!}
+                                        @if (str_word_count($description) > 200)
+                                            <span onclick="expandText('{{ $job->id }}')"
+                                                class="read-more text-primary">...........Read More</span>
+                                        @endif
                                     </div>
 
                                     <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
@@ -122,7 +127,7 @@ if (!isset($header_style)) {
             </div>
 
             <hr>
-            {{ $jobs->links() }}
+            {{-- {{ $jobs->links() }} --}}
         @endif
 
         <div class="row">

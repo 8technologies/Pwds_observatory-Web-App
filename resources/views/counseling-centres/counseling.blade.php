@@ -134,7 +134,7 @@ if (!isset($header_style)) {
                     </div>
                 @endforeach
             </div>
-            {{ $counselingCentres->links() }}
+            {{-- {{ $counselingCentres->links() }} --}}
         @endif
 
         <div class="row">
