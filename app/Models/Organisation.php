@@ -150,24 +150,24 @@ class Organisation extends Model
 
         static::creating(function ($model) {
             $model = self::do_validate($model);
-            $model = self::do_validate_nopd($model);
+            //$model = self::do_validate_nopd($model);
             return true;
         });
 
         static::updating(function ($model) {
             $model = self::do_validate($model);
-            $model = self::do_validate_nopd($model);
+            //$model = self::do_validate_nopd($model);
             return true;
         });
 
         static::created(function ($model) {
             self::do_finalization($model);
-            self::do_finalization_nopd($model);
+            //self::do_finalization_nopd($model);
         });
 
         static::updated(function ($model) {
             self::do_finalization($model);
-            self::do_finalization_nopd($model);
+            //self::do_finalization_nopd($model);
         });
     }
 
