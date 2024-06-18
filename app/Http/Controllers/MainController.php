@@ -180,10 +180,10 @@ class MainController extends BaseController
   public function counseling_centres()
   {
 
-    $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->get();
+    $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->paginate(8);
 
     // Pass the data to the Blade view
-    return view('counseling', ['counselingCentres' => $counselingCentres]);
+    return view('counseling-centres.counseling', ['counselingCentres' => $counselingCentres]);
   }
 
   /**
@@ -264,6 +264,33 @@ class MainController extends BaseController
 
     return view('jobs.search_job', compact('jobs', 'titleSearch', 'locationSearch'));
   }
+
+  public function guidance_counseling_search(Request $request)
+  {
+    $nameSearch = $request->input('name_search');
+    $districtSearch = $request->input('district_search');
+    $disabilitySearch = $request->input('disability_search');
+
+    $counseling_centres = CounsellingCentre::query()
+      ->when($nameSearch, function ($query, $nameSearch) {
+        return $query->where('name', 'like', "%{$nameSearch}%");
+      })
+      ->when($districtSearch, function ($query, $districtSearch) {
+        return $query->whereHas('districts', function ($q) use ($districtSearch) {
+          $q->where('name', 'like', "%{$districtSearch}%");
+        });
+      })
+      ->when($disabilitySearch, function ($query, $disabilitySearch) {
+        return $query->whereHas('disabilities', function ($q) use ($disabilitySearch) {
+          $q->where('name', 'like', "%{$disabilitySearch}%");
+        });
+      })
+      ->with(['disabilities', 'districts'])
+      ->paginate(8);
+
+    return view('counseling-centres.counseling-search', compact('counseling_centres', 'nameSearch', 'districtSearch', 'disabilitySearch'));
+  }
+
 
   /**
    * Fetch a job

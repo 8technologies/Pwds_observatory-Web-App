@@ -27,7 +27,30 @@ if (!isset($header_style)) {
     <div class="container">
         <h1 class="mt-5 mb-4 text-center">Counselling Centres</h1>
         <div class="row">
-            @foreach ($counselingCentres as $centre)
+            <div class="col-md-12 text-center">
+                <form action="{{ route('counseling_search') }}" method="GET"
+                    class="form-inline d-flex justify-content-center">
+                    <div class="form-group mx-2">
+                        <input class="form-control" type="search" name="name_search" placeholder="Search by Centre Name"
+                            aria-label="Search" value="{{ request('name_search') }}">
+                    </div>
+                    <div class="form-group mx-2">
+                        <input class="form-control" type="search" name="disability_search"
+                            placeholder="Search by Disability Category" aria-label="Search"
+                            value="{{ request('disability_search') }}">
+                    </div>
+                    <div class="form-group mx-2">
+                        <input class="form-control" type="search" name="district_search"
+                            placeholder="Search by Location/District" aria-label="Search"
+                            value="{{ request('district_search') }}">
+                    </div>
+                    <button class="btn btn-outline-success mx-2" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            @foreach ($counseling_centres as $centre)
                 <div class="col-md-6">
                     <div class="card mb-4">
                         <div class="card-body">

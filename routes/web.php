@@ -81,6 +81,7 @@ Route::get('/constitution', function () {
     return view('constitution');
 });
 Route::get('/counseling-and-guidance', [MainController::class, 'counseling_centres']);
+Route::get('counseling_search', [MainController::class, 'guidance_counseling_search'])->name('counseling_search');
 Route::get('/register', [AccountController::class, 'register'])->name('register');
 
 

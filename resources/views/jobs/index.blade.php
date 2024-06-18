@@ -60,7 +60,7 @@ if (!isset($header_style)) {
                 </form>
             </div>
         </div>
-
+        {{-- Filtering Jobs that have not expired yet --}}
         @php
             $activeJobs = $jobs->filter(function ($job) {
                 return $job->status === 'Active';
@@ -122,14 +122,7 @@ if (!isset($header_style)) {
             </div>
 
             <hr>
-
-
-
-            <!-- Pagination Links
-                    <div class="d-flex justify-content-center">
-                        {{ $jobs->links() }}
-                    </div>
-                    -->
+            {{ $jobs->links() }}
         @endif
 
         <div class="row">
