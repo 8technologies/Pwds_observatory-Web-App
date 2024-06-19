@@ -29,11 +29,15 @@ if (!isset($header_style)) {
         <h1 class="text-center mb-4">Innovations</h1>
         <div class="row">
             @foreach ($innovations as $innovation)
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        {{-- <img src="{{ $innovation->photo }}" class="card-img-top" alt="{{ $innovation->title }}"> --}}
+                <div class="col-md-4 mb-4">
+                    <div class="card card-style">
+                        <div
+                            style="background-image: url({{ url('storage/' . $innovation->photo) }}); height:290px; background-position:top-center; background-size:cover; background-repeat:no-repeat;">
+
+                        </div>
+                        <!--<img src="{{ $innovation->photo }}" class="card-img-top" alt="{{ $innovation->title }}"> -->
                         <div class="card-body">
-                            <h5 class="card-title">{{ $innovation->title }}</h5>
+                            <h4 class="card-title">{{ $innovation->title }}</h4>
                             <p class="card-text"><strong>Type:</strong> {{ $innovation->innovation_type }}</p>
                             {{-- <p class="card-text"><strong>Status:</strong> {{ $innovation->innovation_status }}</p> --}}
                             <p class="card-text"><strong>Innovators:</strong>
@@ -41,7 +45,7 @@ if (!isset($header_style)) {
                                     {{ $innovator['name'] }},
                                 @endforeach
                             </p>
-                            {{-- <p class="card-text"><strong>Created At:</strong> {{ $innovation->created_at }}</p> --}}
+                            {{-- <p class="card-text"><strong>Created At:</strong> {{ $innovation->created_at }}</p><hr> --}}
                             <p class="card-text">{!! strip_tags($innovation->description) !!}</p>
                         </div>
                     </div>

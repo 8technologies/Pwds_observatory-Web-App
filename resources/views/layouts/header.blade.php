@@ -15,9 +15,8 @@ if (!isset($header_style)) {
 @endif
 
 
-
-
 <div class="container px-3">
+
     <a href="{{ url('/') }}" class="navbar-brand pe-3">
         <img src="assets/img/logo-1.png" width="200" alt="NUDIPU">
     </a>
@@ -35,7 +34,7 @@ if (!isset($header_style)) {
 
 
                 <li class="nav-item dropdown">
-                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">About</a>
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">About Program</a>
                     <ul class="dropdown-menu">
                         <li>
                             <a href="{{ url('about-us') }}" class="dropdown-item">Program Overview</a>
@@ -78,7 +77,7 @@ if (!isset($header_style)) {
             </ul>
             </li>
             <li class="nav-item">
-                <a href="{{ url('news') }}" class="nav-link">News</a>
+                <a href="{{ url('news') }}" class="nav-link">News & Events</a>
             </li>
 
             </ul>
