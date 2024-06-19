@@ -35,13 +35,13 @@ if (!isset($header_style)) {
                         <div class="card-body">
                             <h5 class="card-title">{{ $innovation->title }}</h5>
                             <p class="card-text"><strong>Type:</strong> {{ $innovation->innovation_type }}</p>
-                            <p class="card-text"><strong>Status:</strong> {{ $innovation->innovation_status }}</p>
+                            {{-- <p class="card-text"><strong>Status:</strong> {{ $innovation->innovation_status }}</p> --}}
                             <p class="card-text"><strong>Innovators:</strong>
                                 @foreach ($innovation->innovators as $innovator)
                                     {{ $innovator['name'] }},
                                 @endforeach
                             </p>
-                            <p class="card-text"><strong>Created At:</strong> {{ $innovation->created_at }}</p>
+                            {{-- <p class="card-text"><strong>Created At:</strong> {{ $innovation->created_at }}</p> --}}
                             <p class="card-text">{!! strip_tags($innovation->description) !!}</p>
                         </div>
                     </div>

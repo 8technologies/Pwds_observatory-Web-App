@@ -66,13 +66,13 @@ if (!isset($header_style)) {
                         {{-- No details yet for this link --}}
                         {{-- <li><a href="#" class="dropdown-item">Persons with disabilites - national profiling</a> --}}
                 </li>
-                <li><a href="{{ url('counseling-and-guidance') }}" class="dropdown-item">Guidance and counseling
+                <li><a href="{{ url('counseling-and-guidance') }}" class="dropdown-item">Guidance and Counseling
                     </a></li>
-                <li><a href="{{ url('jobs') }}" class="dropdown-item">Jobs and opportunities </a>
+                <li><a href="{{ url('jobs') }}" class="dropdown-item">Jobs and Opportunities </a>
                 </li>
                 {{-- No details yet for this link --}}
                 {{-- <li><a href="#" class="dropdown-item">Training and capacity building </a></li> --}}
-                <li><a href="innovations" class="dropdown-item">Research and innovation </a></li>
+                <li><a href="innovations" class="dropdown-item">Research and Innovation </a></li>
                 {{-- No details yet for this link --}}
                 {{-- <li><a href="#" class="dropdown-item">Testimonials</a></li> --}}
             </ul>

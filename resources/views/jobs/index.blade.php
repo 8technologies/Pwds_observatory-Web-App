@@ -90,10 +90,10 @@ if (!isset($header_style)) {
                                         <strong>Days to Close:</strong>
                                         <span style="color:red">{{ $job->days_remaining }} days remaining</span>
                                     </p>
-                                    <p>
+                                    {{-- <p>
                                         <strong>Status:</strong>
                                         <span style="color: green">{{ $job->status }}</span>
-                                    </p>
+                                    </p> --}}
                                     @php
                                         $description = strip_tags($job->description);
                                         $shortDescription = Str::limit($description, 400);
