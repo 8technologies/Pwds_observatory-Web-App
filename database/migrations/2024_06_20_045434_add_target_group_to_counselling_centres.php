@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddWebsiteToOrganisationsTable extends Migration
+class AddTargetGroupToCounsellingCentres extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddWebsiteToOrganisationsTable extends Migration
      */
     public function up()
     {
-        Schema::table('organisations', function (Blueprint $table) {
+        Schema::table('counselling_centres', function (Blueprint $table) {
             //
-            $table->string('website')->nullable();
+            $table->string('target_group')->nullable()->after('disability_id');
         });
     }
 
@@ -26,7 +26,7 @@ class AddWebsiteToOrganisationsTable extends Migration
      */
     public function down()
     {
-        Schema::table('organisations', function (Blueprint $table) {
+        Schema::table('counselling_centres', function (Blueprint $table) {
             //
         });
     }

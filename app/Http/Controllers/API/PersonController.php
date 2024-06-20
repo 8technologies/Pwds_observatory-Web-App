@@ -3,27 +3,26 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Requests\PeopleStoreRequest;
-use App\Models\Api_Utils;
 use App\Models\Person as ModelsPerson;
 use App\Http\Controllers\Controller;
+use App\Models\Api_Utils;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Imports\ModelManager;
 
 class PersonController extends Controller
 {
     //function for returning all people
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $people = ModelsPerson::where([])
-                ->orderBy('id', 'desc')
-                ->limit(300)
-                ->get();
+            $people = ModelsPerson::paginate($request->per_page);
 
-
+            if ($people->isEmpty()) {
+                throw new \Exception("No data retrieved from the database.");
+            }
             return Api_Utils::success($people, "People successfully returned", 200);
         } catch (\Exception $e) {
-            return Api_Utils::error($e->getMessage(), 400);
+            return Api_Utils::error($e->getMessage(), 500); // Changed to 500 to indicate server error
         }
     }
 

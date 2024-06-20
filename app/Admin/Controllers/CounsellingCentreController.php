@@ -168,7 +168,7 @@ class CounsellingCentreController extends AdminController
         $form->multipleSelect('disabilities', __('Select Category of persons with disabilities'))
             ->rules('required')
             ->options(Disability::where([])->get()->pluck('name', 'id'));
-
+        $form->text('target_group', __('Target Group'));
         $form->textarea('skills', __('Select counselling services offered'));
         $form->text('fees_range', __('Fees range'));
 
@@ -193,6 +193,7 @@ class CounsellingCentreController extends AdminController
         $form->multipleSelect('districts', 'Districts Covered')
             ->rules('required')
             ->options(District::where([])->get()->pluck('name', 'id'));
+        $form->text('affiliated_organisations', __('Affiliated Organisations'));
 
         $form->disableReset();
         $form->disableViewCheck();

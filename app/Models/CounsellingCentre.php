@@ -9,6 +9,26 @@ class CounsellingCentre extends Model
 {
     use HasFactory;
 
+
+    protected $fillable = [
+        'administrator_id',
+        'name',
+        'about',
+        'address',
+        'parish',
+        'village',
+        'phone_number',
+        'email',
+        'subcouty_id',
+        'website',
+        'photo',
+        'gps_latitude',
+        'gps_longitude',
+        'status',
+        'fees_range'
+    ];
+
+
     public static function boot()
     {
         parent::boot();

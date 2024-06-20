@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\AssociationAPIController;
+use App\Http\Controllers\API\CounsellingAPIController;
 use App\Http\Controllers\API\DisabilitiesController;
 use App\Http\Controllers\API\District_UnionAPIController;
 use App\Http\Controllers\API\DistrictAPIController;
@@ -27,13 +29,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('me', function (Request $request) {
-    $query = auth('api')->user();
-    if ($query == null) {
-        return response()->json(["message" => "Unauthenticated 2."], 401);
-    }
-    return response()->json($query);
-})->middleware('auth:sanctum');
 Route::POST("users/register", [ApiAuthController::class, "register"]);
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::resource('people', PersonController::class);
@@ -44,6 +39,8 @@ Route::resource('jobs', JobApiController::class);
 Route::resource('innovations', InnovationApiController::class);
 Route::resource('events', EventApiController::class);
 Route::resource('news-posts', NewsPostApiController::class);
+Route::resource('counselling-centres', CounsellingAPIController::class);
+Route::resource('associations', AssociationAPIController::class);
 Route::resource('products', ProductServiceAPIController::class);
 Route::apiResource('disabilities', DisabilitiesController::class);
 Route::apiResource('districts', DistrictAPIController::class);

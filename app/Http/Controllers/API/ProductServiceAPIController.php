@@ -21,7 +21,7 @@ class ProductServiceAPIController extends Controller
         try {
             $products = Product::all();
             if ($products) {
-                return Api_Utils::success([$products, 'Products found successfully', 200]);
+                return Api_Utils::success($products, 'Products found successfully', 200);
             } else {
                 return Api_Utils::error([
                     'Products not found', 404
