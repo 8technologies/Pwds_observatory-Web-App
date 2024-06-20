@@ -46,11 +46,10 @@ class OPDController extends AdminController
 
         $user = auth("admin")->user();
 
-        if ($user->inRoles(['district-union', 'opd', 'service_provider'])) {
+        if ($user->inRoles(['district-union', 'opd', 'organisation'])) {
 
             $grid->disableCreateButton();
             $grid->disableActions();
-            // $grid->disableActions();
         }
 
         /*         if ($user->isRole('district-union')) {
@@ -66,15 +65,15 @@ class OPDController extends AdminController
 
 
         $grid->exporter(new OPDExcelExporter());
-        $grid->column('name', __('Name'))->sortable();
-        $grid->column('registration_number', __('Registration number'))->sortable();
-        $grid->column('date_of_registration', __('Date of registration'))->sortable()->hide();
+        $grid->column('name', __('Name'));
+        $grid->column('registration_number', __('Registration number'));
+        $grid->column('date_of_registration', __('Date of registration'));
 
         $grid->column('membership_type', __('Membership type'));
         $grid->column('physical_address', __('Physical address'));
         // $grid->column('contact_persons', __('Contact persons'));
 
-        if (auth('admin')->user()->isRole('nudipu')) {
+        if (auth('admin')->user()->isRole('nudipu') || auth('admin')->user()->isRole('administrator')) {
             $grid->column('Reset Password')->display(function () {
                 $url = url('du-admin-password-reset?du_id=' . $this->id);
                 return "<a target='_blank' href='" . $url . "' class='btn btn-xs btn-primary'>Reset Password</a>";

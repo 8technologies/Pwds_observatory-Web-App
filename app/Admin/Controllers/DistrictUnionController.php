@@ -55,13 +55,11 @@ class DistrictUnionController extends AdminController
 
         $user = auth("admin")->user();
 
-        if ($user->inRoles(['district-union', 'opd', 'service_provider'])) {
+        if ($user->inRoles(['district-union', 'opd', 'organisation'])) {
 
             $grid->disableCreateButton();
             $grid->disableActions();
-            // $grid->disableActions();
         }
-
 
 
         $grid->model()->where('relationship_type', 'du')->orderBy('created_at', 'desc');
@@ -86,12 +84,14 @@ class DistrictUnionController extends AdminController
         //reset admin password
 
 
-        if (auth('admin')->user()->isRole('nudipu')) {
+        if (auth('admin')->user()->isRole('nudipu') || auth('admin')->user()->isRole('administrator')) {
             $grid->column('Reset Password')->display(function () {
                 $url = url('du-admin-password-reset?du_id=' . $this->id);
                 return "<a target='_blank' href='" . $url . "' class='btn btn-xs btn-primary'>Reset Password</a>";
             });
         }
+
+
 
 
         // $grid->column('contact_persons', __('Contact persons'));
