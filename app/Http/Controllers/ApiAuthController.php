@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Encore\Admin\Auth\Database\Administrator;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -104,6 +105,12 @@ class ApiAuthController extends Controller
         $u->remember_token = $token;
 
         return $this->success($u, 'Logged in successfully.');
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return response()->json(['message' => 'Successfully logged out']);
     }
 
     public function register(Request $r)

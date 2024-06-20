@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::POST("users/register", [ApiAuthController::class, "register"]);
 Route::POST("users/login", [ApiAuthController::class, "login"]);
+Route::POST('logout', [ApiAuthController::class, "logout"]);
 Route::resource('people', PersonController::class);
 Route::resource('district-unions', District_UnionAPIController::class);
 Route::resource('opds', OPD::class);

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Api_Utils;
 use App\Models\Utils;
 use Closure;
 use JWTAuth;
@@ -51,7 +52,7 @@ class JwtMiddleware extends BaseMiddleware
             $headers = getallheaders(); //get header
 
             header('Content-Type: application/json');
-            
+
             $Authorization = "";
             if (isset($headers['Authorization']) && $headers['Authorization'] != "") {
                 $Authorization = $headers['Authorization'];
@@ -64,7 +65,7 @@ class JwtMiddleware extends BaseMiddleware
             } else if (isset($headers['Tok']) && $headers['Tok'] != "") {
                 $Authorization = $headers['Tok'];
             }
- 
+
 
             $request->headers->set('Authorization', $Authorization); // set header in request
             $request->headers->set('authorization', $Authorization); // set header in request
@@ -76,7 +77,7 @@ class JwtMiddleware extends BaseMiddleware
             } else if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
                 return response()->json(['status' => 'Token is Expired']);
             } else {
-                return Utils::error($e->getMessage());
+                return Api_Utils::error($e->getMessage());
             }
         }
         return $next($request);

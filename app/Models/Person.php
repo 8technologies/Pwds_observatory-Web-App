@@ -153,13 +153,13 @@ class Person extends Model
                 $person->employment_status = 'unemployed';
             }
 
-            $user = auth()->user();
-            $organisation = Organisation::find($user->organisation_id);
-            if (!$organisation) {
-                die('Wait for admin approval');
-            } else {
-                $person->is_approved = 1;
-            }
+            // $user = auth()->user();
+            // $organisation = Organisation::find($user->organisation_id);
+            // if (!$organisation) {
+            //     die('Wait for admin approval');
+            // } else {
+            //     $person->is_approved = 1;
+            // }
         });
 
         static::updating(function ($person) {
@@ -173,13 +173,13 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
-            $user = Admin::user();
-            $organisation = Organisation::find($user->organisation_id);
-            if (!$organisation) {
-                die('Wait for admin approval');
-            } else {
-                $person->is_approved = 1;
-            }
+            // $user = Admin::user();
+            // $organisation = Organisation::find($user->organisation_id);
+            // if (!$organisation) {
+            //     die('Wait for admin approval');
+            // } else {
+            //     $person->is_approved = 1;
+            // }
         });
     }
 
