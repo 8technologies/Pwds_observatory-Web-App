@@ -116,7 +116,9 @@ class CounsellingCentreController extends AdminController
         // $show->field('administrator_id', __('Administrator id'));
         // $show->field('disability_id', __('Disability id'));
         $show->field('name', __('Name'));
-        $show->field('about', __('About'));
+        $show->field('about', __('About'))->as(function ($about) {
+            return strip_tags($about);
+        });;
         $show->field('address', __('Address'));
         $show->field('parish', __('Parish'));
         $show->field('village', __('Village'));
@@ -132,6 +134,8 @@ class CounsellingCentreController extends AdminController
         $show->field('status', __('Status'));
         $show->field('skills', __('Skills'));
         $show->field('fees_range', __('Fees range'));
+        $show->field('affiliated_organisations', __('Affiliated Organisations'));
+        $show->field('target_group', __('Target Group'));
         // $show->field('deleted_at', __('Deleted at'));
 
         return $show;
