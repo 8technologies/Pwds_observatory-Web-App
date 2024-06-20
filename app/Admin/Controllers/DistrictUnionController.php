@@ -53,10 +53,15 @@ class DistrictUnionController extends AdminController
         });
 
 
-        if (!auth('admin')->user()->isRole('nudipu')) {
+        $user = auth("admin")->user();
+
+        if ($user->inRoles(['district-union', 'opd', 'service_provider'])) {
+
             $grid->disableCreateButton();
             $grid->disableActions();
+            // $grid->disableActions();
         }
+
 
 
         $grid->model()->where('relationship_type', 'du')->orderBy('created_at', 'desc');
@@ -239,7 +244,7 @@ class DistrictUnionController extends AdminController
 
         $form->ignore(['password', 'new_password', 'confirm_new_password', 'change_password']);
 
-    
+
 
         return $form;
     }

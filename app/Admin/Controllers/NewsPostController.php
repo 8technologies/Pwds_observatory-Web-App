@@ -39,6 +39,15 @@ class NewsPostController extends AdminController
             $grid->disableCreateButton();
         }
 
+        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+            $news_posts = $actions->row;
+            if ($news_posts->user_id !== $user->id) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            }
+        });
+
+
         Utils::checkEventRegustration();
 
         $grid->disableFilter();

@@ -39,6 +39,14 @@ class ProductController extends AdminController
             $grid->disableCreateButton();
         }
 
+        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+            $products = $actions->row;
+            if ($products->user_id !== $user->id) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            }
+        });
+
         //display products by ID in descending order
         $grid->model()->orderBy('id', 'desc');
         $grid->disableRowSelector();
@@ -122,6 +130,7 @@ class ProductController extends AdminController
     {
         $form = new Form(new Product());
 
+        $form->hidden('user_id');
         $form->select('service_provider_id', __('Service Provider'))->options(ServiceProvider::orderBy('name', 'asc')->pluck('name', 'id'));
         $form->text('name', __('Name'))->rules("required");
         $form->radio('type', __('Type'))->options(['product' => 'Product', 'service' => 'Service'])
@@ -132,7 +141,7 @@ class ProductController extends AdminController
         $form->image('photo', __('Photo'))->rules("required")->uniqueName();
         $form->radio('offer_type', __('Offer type'))->options(['free' => 'Free', 'hire' => 'Hire', 'sale' => 'Sale'])
             ->when('hire', function ($form) {
-                $form->text('hire_description', __('Describe the rates'))->rules('required');
+                $form->text('hire_descriptions', __('Describe the rates'))->rules('required');
             })
             ->when('sale', function ($form) {
                 $form->text('price', __('Price'))->rules('required|numeric|min:0');
@@ -145,8 +154,10 @@ class ProductController extends AdminController
             $admin = auth('admin')->user();
             //quill editor, eliminate html tags and keep only text
             $form->details = strip_tags($form->details);
+            $form->user_id = $admin->id;
             // $form->service_provider_id = auth('admin')->user()->service_provider->id;
         });
+
 
 
 

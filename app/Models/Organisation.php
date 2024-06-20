@@ -405,7 +405,7 @@ class Organisation extends Model
             $data = [
                 'email' => $model->admin_email,
                 'name' => $du_admin->name,
-                'subject' => 'Password Reset - ' . env('APP_NAME') . date('Y-m-d H:i:s'),
+                'subject' => 'Administrator Role - ' . env('APP_NAME') . date('Y-m-d H:i:s'),
                 'body' => $body
             ];
             Utils::mail_send($data);
