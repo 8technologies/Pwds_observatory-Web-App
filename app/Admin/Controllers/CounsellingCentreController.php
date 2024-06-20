@@ -32,6 +32,15 @@ class CounsellingCentreController extends AdminController
     {
         $grid = new Grid(new CounsellingCentre());
 
+        $user = auth('admin')->user();
+
+        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+            $counselling_centres = $actions->row;
+            if ($counselling_centres->administrator_id !== $user->id) {
+                $actions->disableEdit();
+                $actions->disableDelete();
+            }
+        });
 
 
         $grid->filter(function ($f) {
@@ -55,7 +64,7 @@ class CounsellingCentreController extends AdminController
 
 
         $grid->column('skills', __('Skills'));
-        $grid->column('fees_range', __('Fees range'));
+        $grid->column('fees_range', __('Fees range'))->hide();
 
 
 
@@ -79,14 +88,14 @@ class CounsellingCentreController extends AdminController
                     }
                     return $dis->name;
                 }
-            )->sortable();
+            )->sortable()->hide();
 
         $grid->column('address', __('Address'));
-        $grid->column('parish', __('Parish'));
-        $grid->column('village', __('Village'));
+        $grid->column('parish', __('Parish'))->hide();
+        $grid->column('village', __('Village'))->hide();
         $grid->column('phone_number', __('Phone number'));
         $grid->column('email', __('Email'));
-        $grid->column('website', __('Website'));
+        $grid->column('website', __('Website'))->hide();
 
         return $grid;
     }
@@ -101,11 +110,11 @@ class CounsellingCentreController extends AdminController
     {
         $show = new Show(CounsellingCentre::findOrFail($id));
 
-        $show->field('id', __('Id'));
+        // $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
-        $show->field('administrator_id', __('Administrator id'));
-        $show->field('disability_id', __('Disability id'));
+        // $show->field('administrator_id', __('Administrator id'));
+        // $show->field('disability_id', __('Disability id'));
         $show->field('name', __('Name'));
         $show->field('about', __('About'));
         $show->field('address', __('Address'));
@@ -113,8 +122,8 @@ class CounsellingCentreController extends AdminController
         $show->field('village', __('Village'));
         $show->field('phone_number', __('Phone number'));
         $show->field('email', __('Email'));
-        $show->field('district_id', __('District id'));
-        $show->field('subcounty_id', __('Subcounty id'));
+        // $show->field('district_id', __('District id'));
+        // $show->field('subcounty_id', __('Subcounty id'));
         $show->field('website', __('Website'));
         $show->field('phone_number_2', __('Phone number 2'));
         $show->field('photo', __('Photo'));
@@ -123,7 +132,7 @@ class CounsellingCentreController extends AdminController
         $show->field('status', __('Status'));
         $show->field('skills', __('Skills'));
         $show->field('fees_range', __('Fees range'));
-        $show->field('deleted_at', __('Deleted at'));
+        // $show->field('deleted_at', __('Deleted at'));
 
         return $show;
     }
