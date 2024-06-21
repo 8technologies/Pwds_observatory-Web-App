@@ -63,31 +63,19 @@ class ApiAuthController extends Controller
         }
 
         $username = trim($r->username);
-
-        $u = User::where('phone_number', $username)
-            ->first();
-        if ($u == null) {
-            $u = User::where('username', $username)
+        $phone_number = Utils::prepare_phone_number($r->username);
+        if (Utils::phone_number_is_valid($phone_number)) {
+            $u = Administrator::where('phone_number', $phone_number)
                 ->first();
         }
-        if ($u == null) {
-            $u = User::where('email', $username)
-                ->first();
-        }
-        if ($u == null) {
-            $phone_number = Utils::prepare_phone_number($r->username);
-            if (Utils::phone_number_is_valid($phone_number)) {
-                $phone_number = $r->phone_number;
 
-                $u = User::where('phone_number', $phone_number)
+        if($u == null){
+            $emial = $r->username;
+            //vaify email
+            if (filter_var($emial, FILTER_VALIDATE_EMAIL)) {
+                $u = Administrator::where('email', $emial)
                     ->first();
-                if ($u == null) {
-                    $u = User::where('username', $phone_number)
-                        ->first();
-                }
-                $u = User::where('email', $phone_number)
-                    ->first();
-            }
+            } 
         }
 
         if ($u == null) {
