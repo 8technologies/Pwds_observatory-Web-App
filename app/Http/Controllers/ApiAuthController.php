@@ -8,6 +8,7 @@ use App\Models\Utils;
 use App\Traits\ApiResponser;
 use Carbon\Carbon;
 use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Facades\Admin;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -115,6 +116,7 @@ class ApiAuthController extends Controller
 
     public function register(Request $r)
     {
+
         if ($r->phone_number == null) {
             return $this->error('Phone number is required.');
         }
@@ -150,24 +152,29 @@ class ApiAuthController extends Controller
         $user->last_name = $r->last_name;
         $user->name = $r->first_name . " " . $user->last_name;
         $user->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
-        if (!$user->save()) {
-            return $this->error('Failed to create account. Please try again.');
-        }
+
+
+        try{
+            $user->save();
+        }catch(Exception $e){
+            return $this->error('Failed to create account. because ' . $e->getMessage());
+        } 
+       
 
         $new_user = Administrator::find($user->id);
         if ($new_user == null) {
             return $this->error('Account created successfully but failed to log you in.');
         }
+        $new_user = Administrator::find($new_user->id);  
+
         Config::set('jwt.ttl', 60 * 24 * 30 * 365);
-
-
         $token = auth('api')->attempt([
             'username' => $phone_number,
             'password' => trim($r->password),
         ]);
 
         $new_user->token = $token;
-        $u->remember_token = $token;
+        $new_user->remember_token = $token;
         return $this->success($new_user, 'Account created successfully.');
     }
 }
