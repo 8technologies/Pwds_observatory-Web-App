@@ -62,31 +62,36 @@ class ApiAuthController extends Controller
             return $this->error('Password is required.');
         }
 
-        $r->username = trim($r->username);
+        $username = trim($r->username);
 
-        $u = User::where('phone_number', $r->username)
-            ->orWhere('username', $r->username)
-            ->orWhere('email', $r->username)
+        $u = User::where('phone_number', $username)
             ->first();
-
-
-
         if ($u == null) {
-
+            $u = User::where('username', $username)
+                ->first();
+        }
+        if ($u == null) {
+            $u = User::where('email', $username)
+                ->first();
+        }
+        if ($u == null) {
             $phone_number = Utils::prepare_phone_number($r->username);
-
             if (Utils::phone_number_is_valid($phone_number)) {
                 $phone_number = $r->phone_number;
 
                 $u = User::where('phone_number', $phone_number)
-                    ->orWhere('username', $phone_number)
-                    ->orWhere('email', $phone_number)
+                    ->first();
+                if ($u == null) {
+                    $u = User::where('username', $phone_number)
+                        ->first();
+                }
+                $u = User::where('email', $phone_number)
                     ->first();
             }
         }
 
         if ($u == null) {
-            return $this->error('User account not found.');
+            return $this->error('Account not found.');
         }
 
 
@@ -99,7 +104,7 @@ class ApiAuthController extends Controller
 
 
         if ($token == null) {
-            return $this->error('Wrong credentials.');
+            return $this->error('Wrong password.');
         }
 
         $u->token = $token;
@@ -154,18 +159,18 @@ class ApiAuthController extends Controller
         $user->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
 
 
-        try{
+        try {
             $user->save();
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return $this->error('Failed to create account. because ' . $e->getMessage());
-        } 
-       
+        }
+
 
         $new_user = Administrator::find($user->id);
         if ($new_user == null) {
             return $this->error('Account created successfully but failed to log you in.');
         }
-        $new_user = Administrator::find($new_user->id);  
+        $new_user = Administrator::find($new_user->id);
 
         Config::set('jwt.ttl', 60 * 24 * 30 * 365);
         $token = auth('api')->attempt([
