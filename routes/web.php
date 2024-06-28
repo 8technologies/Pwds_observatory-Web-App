@@ -11,6 +11,8 @@ use App\Admin\Controllers\GuestController;
 use App\Admin\Controllers\OPDDashboardController;
 use App\Admin\Controllers\PersonController;
 use App\Admin\Controllers\PwdDashboardController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Middleware\Du_Dashboard;
 use App\Mail\CreatedDistrictUnionMail;
 use App\Models\Organisation;
@@ -108,6 +110,8 @@ Route::get('/guest', [GuestController::class, 'index']);
 
 Route::get('/login', [AccountController::class, 'login'])->name('login')
     ->middleware(RedirectIfAuthenticated::class);
+Route::post('/account-activation', [AccountController::class, 'activateAccount'])->name('account-activation');
+Route::get('activate', [AccountController::class, 'activate'])->name('activate');
 
 Route::post('/register', [AccountController::class, 'register_post'])
     ->middleware(RedirectIfAuthenticated::class);
@@ -138,6 +142,13 @@ Route::get('/account-details', [AccountController::class, 'account_details'])
 
 Route::post('/account-details', [AccountController::class, 'account_details_post'])
     ->middleware(Authenticate::class);
+
+//forgot password
+Route::get('forgot-password', [ForgotPasswordController::class, 'showForgotRequestForm'])->name('password.request');
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
 
 Route::get('/logout', [AccountController::class, 'logout']);
 Route::get('/gen', function () {

@@ -178,13 +178,14 @@ class OPDController extends AdminController
         $form->text('physical_address', __('Physical address'))->placeholder('physical address')->rules("required");
         $form->text('website', __('Website'))->placeholder('http://www.example.com');
 
+        $form->divider('Contact Persons');
         $form->hasMany('contact_persons', 'Contact Persons', function (Form\NestedForm $form) {
             $form->text('name', __('Name'))->rules("required");
             $form->text('position', __('Position'))->rules("required");
             $form->email('email', __('Email'))->rules("required");
             $form->text('phone1', __('Phone Tel'))->rules("required");
             $form->text('phone2', __('Other Tel'));
-        });
+        })->help('Press or Click the button to add next of kin');
 
         $form->divider('Attachments');
         $form->file('logo', __('Logo'))->removable()->rules('mimes:png,jpg,jpeg')
@@ -198,25 +199,25 @@ class OPDController extends AdminController
             ->help("Upload files such as certificate (pdf), logo (png, jpg, jpeg), constitution, etc (max: 2MB)");
 
         $form->divider('Districts of Operation');
-        $form->multipleSelect('districtsOfOperation', __('Select Districts'))->options(District::all()->pluck('name', 'id'));
+        $form->multipleSelect('districtsOfOperation', __('Select Districts'))->options(District::all()->pluck('name', 'id'))->rules('required');
 
         $form->divider('Administrator');
         $form->text('admin_email');
         $form->hidden('parent_organisation_id')->default(0);
         $form->hidden('relationship_type')->default('opd');
 
-        if ($form->isEditing()) {
-            $form->radio('change_password', 'Change Password')->options(["No" => 'No', "Yes" => 'Yes'])
-                ->when('Yes', function (Form $form) {
-                    $form->password('password', __('New Password'));
-                });
-        } else {
-            $form->password('password', __('Password'))->rules("required|min:6");
-        }
+        // if ($form->isEditing()) {
+        //     $form->radio('change_password', 'Change Password')->options(["No" => 'No', "Yes" => 'Yes'])
+        //         ->when('Yes', function (Form $form) {
+        //             $form->password('password', __('New Password'));
+        //         });
+        // } else {
+        //     $form->password('password', __('Password'))->rules("required|min:6");
+        // }
 
 
 
-        $form->ignore(['password', 'new_password', 'confirm_new_password', 'change_password']);
+        // $form->ignore(['password', 'new_password', 'confirm_new_password', 'change_password']);
 
 
         return $form;

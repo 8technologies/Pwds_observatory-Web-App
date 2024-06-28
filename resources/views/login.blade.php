@@ -55,7 +55,12 @@ if (isset($_GET['my_email']) && isset($_GET['my_pass'])) {
                                     <label for="terms" class="form-check-label fs-base">Remember me</label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign in</button>
+                            <div class="mb-4">
+                                <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign in</button>
+                            </div>
+                            <div class="mb-4">
+                                <a href="{{ route('password.request') }}" class="btn btn-link">Forgot Password?</a>
+                            </div>
                         </form>
 
                     </div>

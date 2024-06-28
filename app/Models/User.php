@@ -15,11 +15,16 @@ use App\Models\AdminRole;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Form\Field\BelongsTo;
 use Illuminate\Support\Facades\DB as FacadesDB;
+use Illuminate\Auth\Authenticatable as AuthenticableTrait;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Administrator implements JWTSubject
+class User extends Administrator implements JWTSubject, AuthenticatableContract, CanResetPasswordContract
 {
     use HasFactory;
     use Notifiable;
+    use AuthenticableTrait, CanResetPassword;
 
 
     //boot
@@ -31,6 +36,10 @@ class User extends Administrator implements JWTSubject
             Utils::check_default_organisation();
         });
     }
+
+    protected $fillable = [
+        'email', 'password', 'token'
+    ];
 
     protected $guarded = [];
 
@@ -99,5 +108,33 @@ class User extends Administrator implements JWTSubject
 
 
         return count($usersToUpdate);
+    }
+
+    public function sendActivationEmail($activation_token)
+    {
+        $activation_url = url('activate') . "?email=" . $this->email . "&token=" . $activation_token;
+
+        $body = <<<EOF
+            Hello,
+            <br><br>
+            Welcome to <strong>Inclusive ICT Observatory</strong>! To complete your registration and activate your account, please verify your email address by clicking the link below:
+            <br><br>
+            <b>EMAIL:</b> {$this->email}
+            <br><br>
+            <b>ACTIVATION LINK:</b> <a href="{$activation_url}">Activate Your Account</a>
+            <br><br>
+            If you did not create an account, please ignore this email.
+            <br><br>
+            Regards,
+            <br>
+            EOF;
+
+        $data = [
+            'email' => $this->email,
+            'name' => $this->name,
+            'subject' => 'Account activation - ' . env('APP_NAME') . date('Y-m-d H:i:s'),
+            'body' => $body
+        ];
+        Utils::mail_send($data);
     }
 }

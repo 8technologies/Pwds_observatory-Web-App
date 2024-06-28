@@ -25,7 +25,7 @@ class PwdDashboardController extends Controller
         return view('approval');
     }
 
-
+    //Method for displaying content in the PWD dashboard
     public function index(Content $content)
     {
         $user = Admin::user();

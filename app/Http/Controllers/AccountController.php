@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AccountController extends BaseController
 {
@@ -38,6 +40,50 @@ class AccountController extends BaseController
             }
         }
         return view('login');
+    }
+
+    public function activateAccount(Request $request)
+    {
+        $existingUser = User::where('email', $request->email)->first();
+
+        if ($existingUser) {
+            // Return an error view or message if the email is already in use
+            return 'The email address is already in use.';
+        }
+        //Else creat new account.
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->username = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        $activation_token = Str::random(60);  // Generate a random token
+        $user->activation_token = $activation_token; // Assuming you have this column in your users table
+        $user->save();
+
+        $user->sendActivationEmail($activation_token);
+
+        return view('emails.approval_notification');
+    }
+
+    public function activate(Request $request)
+    {
+        $email = $request->query('email');
+        $token = $request->query('token');
+
+        $user = User::where('email', $email)->where('activation_token', $token)->first();
+
+        if ($user) {
+            $user->activation_token = null; // Clear the activation token
+            // $user->email_verified_at = now();
+            $user->approved = 1; // Mark email as verified
+            $user->save();
+
+            return view('activation-success'); // Or redirect to a login page with a success message
+        } else {
+            return view('activation-failed'); // Or redirect to an error page
+        }
     }
 
 

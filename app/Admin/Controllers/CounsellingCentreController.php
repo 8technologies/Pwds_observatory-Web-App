@@ -108,7 +108,12 @@ class CounsellingCentreController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(CounsellingCentre::findOrFail($id));
+        $counselingCentres = CounsellingCentre::findOrFail($id);
+        $show = new Show($counselingCentres);
+
+        return view('admin.counselling-centres.show',  [
+            'counselingCentres' => $counselingCentres
+        ]);
 
         // $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));

@@ -74,7 +74,12 @@ class EventController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Event::findOrFail($id));
+        $event = Event::findOrFail($id);
+        $show = new Show($event);
+
+        return view('admin.events.show', [
+            'event' => $event
+        ]);
 
         $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));

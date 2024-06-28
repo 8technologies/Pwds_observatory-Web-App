@@ -78,7 +78,7 @@ class InnovationController extends AdminController
     {
         $show = new Show(Innovation::findOrFail($id));
 
-        $show->field('id', __('Id'));
+        // $show->field('id', __('Id'))->hide();
         $show->field('title', __('Title'));
         $show->field('innovation_type', __('Innovation type'));
         $show->field('photo', __('Photo'));
@@ -88,9 +88,11 @@ class InnovationController extends AdminController
         //     });
         // })->unescape();
         $show->field('innovation_status', __('Innovation status'));
-        $show->field('description', __('Description'));
-        $show->field('created_at', __('Created at'));
-        $show->field('updated_at', __('Updated at'));
+        $show->field('description', __('Description'))->as(function ($description) {
+            return strip_tags($description);
+        });;
+        // $show->field('created_at', __('Created at'));
+        // $show->field('updated_at', __('Updated at'));
 
         return $show;
     }

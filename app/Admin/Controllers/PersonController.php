@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\PEOPLE\ImportPeople;
 use App\Models\Disability;
 use App\Models\Organisation;
 use App\Models\Person;
@@ -170,7 +171,7 @@ class PersonController extends AdminController
                         return '-';
                     }
                 }
-            );
+            )->style('max-width:200px;word-break:break-all;');
 
         $grid->column('is_approved', __('Approval'))->display(function ($x) {
             if ($x == 1) {
@@ -310,7 +311,7 @@ class PersonController extends AdminController
             ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
         )->rules('required');
         $form->text('ethnicity', __('Ethnicity'))->help('Your Tribe');
-        $form->text('religion', __('Religion'));
+        $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic', 'Born Again Christian' => 'Born Again Christian', 'Other Christian Faith' => 'Other Christan Faith', 'Islam' => 'Islam']);
 
         $form->divider('Academics');
         $form->select('education_level', __('Education'))->options(
@@ -399,7 +400,7 @@ class PersonController extends AdminController
         }
 
 
-
+        $form->divider('Next Of Kin');
         $form->hasMany('next_of_kins', ' Add New Next of Kin', function (Form\NestedForm $form) {
             $form->text('next_of_kin_last_name', __('Surname'))->rules('required');
             $form->text('next_of_kin_other_names', __('Other Names'))->rules('required');
@@ -494,6 +495,15 @@ class PersonController extends AdminController
                     } else if ($organisation && $organisation->relationship_type == 'opd') {
                         $form->opd_id = $current_user->organisation_id;
                     }
+                }
+                try {
+                    // Manually invoke the addPerson method to check for duplicates
+                    $person = new Person($form->model()->toArray());
+                    $person->addPerson();
+                } catch (\Exception $e) {
+                    // Catch the exception and display an error message
+                    admin_toastr($e->getMessage(), 'error');
+                    return back()->withInput()->withErrors(['name' => $e->getMessage()]);
                 }
             });
             //If user registers themselves, then information must be sent to du admin for approval

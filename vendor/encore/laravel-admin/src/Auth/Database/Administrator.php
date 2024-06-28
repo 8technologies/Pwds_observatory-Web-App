@@ -8,21 +8,26 @@ use Carbon\Carbon;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
 use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
 /**
  * Class Administrator.
  *
  * @property Role[] $roles
  */
-class Administrator extends Model implements AuthenticatableContract, JWTSubject
+class Administrator extends Model implements AuthenticatableContract, CanResetPasswordContract, JWTSubject
 {
     use Authenticatable;
     use HasPermissions;
     use DefaultDatetimeFormat;
+    use Notifiable;
+    use CanResetPassword;
 
     public function getJWTIdentifier()
     {
@@ -53,7 +58,7 @@ class Administrator extends Model implements AuthenticatableContract, JWTSubject
         parent::__construct($attributes);
     }
 
- 
+
 
 
     /**

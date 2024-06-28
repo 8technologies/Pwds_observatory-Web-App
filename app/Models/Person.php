@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Facades\Admin;
+use Error;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -119,11 +120,16 @@ class Person extends Model
         parent::boot();
 
         static::creating(function ($person) {
+            //Checking for duplicates in Person
+            $person->addPerson();
+
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
             $person->sub_county = ucfirst(strtolower($person->sub_county));
             $person->village = ucfirst(strtolower($person->village));
             $person->profiler = ucfirst(strtolower($person->profiler));
+
+
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
@@ -144,6 +150,8 @@ class Person extends Model
         });
 
         static::saving(function ($person) {
+            $person->addPerson();
+
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
             $person->sub_county = ucfirst(strtolower($person->sub_county));
@@ -193,5 +201,25 @@ class Person extends Model
             $record->other_names = ucfirst(strtolower($record->other_names));
             $record->save();
         }
+    }
+
+    public function addPerson()
+    {
+        $person_name = $this->name . ' ' . $this->other_names;
+        $person_age = $this->age;
+
+        // Check for duplicates
+        $duplicate = self::where('name', $this->name)
+            ->where('other_names', $this->other_names)
+            ->where('age', $person_age)
+            ->first();
+
+        if ($duplicate) {
+            Log::info('Duplicate person found: ' . $person_name . ', Age: ' . $person_age);
+            throw new Error('Person already exists in the database');
+        }
+
+        // Allow the creation of the new person
+        return true;
     }
 }

@@ -6,12 +6,12 @@
         </div>
         <div class="mt-3 mt-md-0 float-left">
             @if ($organisation->membership_type == 'member')
-                <a class="btn btn-sm btn-primary mx-3" href="{{ url('admin/opds/create') }}">Add OPD</a>
+                <a class="btn btn-sm btn-primary mx-3" href="{{ url('admin/opds/create') }}">Add NOPD</a>
                 <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/district-unions/create') }}">Add District
                     Union</a>
             @elseif($organisation->membership_type == 'both')
                 <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/people/create') }}">Add Person With Disability</a>
-                <a class="btn btn-sm btn-primary mx-3" href="{{ url('admin/opds/create') }}">Add OPD</a>
+                <a class="btn btn-sm btn-primary mx-3" href="{{ url('admin/opds/create') }}">Add NOPD</a>
                 <a class="btn btn-sm btn-info mx-3" href="{{ url('admin/district-unions/create') }}">Add District
                     Union</a>
             @else
@@ -65,7 +65,7 @@
 
             @include('components.detail-item', [
                 't' => 'Type of Organisation',
-                's' => $organisation->relationship_type == 'opd' ? 'OPD' : 'District Union',
+                's' => $organisation->relationship_type == 'opd' ? 'NOPD' : 'District Union',
             ])
 
             @include('components.detail-item', [

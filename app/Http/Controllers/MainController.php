@@ -189,6 +189,18 @@ class MainController extends BaseController
     return view('counseling-centres.counseling', ['counselingCentres' => $counselingCentres, 'districts' => $districts, 'disabilities' => $disabilities]);
   }
 
+  public function show_counseling_centres()
+  {
+
+    $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->paginate(8);
+
+    $districts = District::all();
+    $disabilities = Disability::all();
+
+    // Pass the data to the Blade view
+    return view('counseling-centres.show', ['counselingCentres' => $counselingCentres, 'districts' => $districts, 'disabilities' => $disabilities]);
+  }
+
   /**
    * Fetch lastest resources paginated
    */

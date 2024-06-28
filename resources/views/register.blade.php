@@ -28,7 +28,7 @@
                         </p>
                         <p class="text-center text-xl-start pb-3 mb-3">Already registred an account? <a href="login">Login
                                 in here</a></p>
-                        <form class="needs-validation" method="POST" action="{{ admin_url('auth/login') }}" novalidate>
+                        <form class="needs-validation" method="POST" action="{{ url('account-activation') }}" novalidate>
                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <div class="row">
                                 <div class="col-sm-6 mb-3">
@@ -64,14 +64,6 @@
                             </div>
                             <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign up</button>
                         </form>
-
-                        <div class="w-100 align-self-end  mt-3 mt-md-5">
-                            <p class="nav d-block  text-center text-md-start pb-2 pb-lg-0 mb-0">
-                                Hand-made with ❤️ by
-                                <a class="nav-link d-inline-block p-0" href="https://twitter.com/8TechConsults"
-                                    target="_blank" rel="noopener">8Technologies 🥰</a>
-                            </p>
-                        </div>
                     </div>
 
 

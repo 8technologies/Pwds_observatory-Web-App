@@ -86,11 +86,11 @@ class ProductController extends AdminController
         $grid->column('created_at', __('Created at'))
             ->display(function ($created_at) {
                 return date('Y-m-d', strtotime($created_at));
-            });
+            })->hide();
         $grid->column('updated_at', __('Updated at'))
             ->display(function ($updated_at) {
                 return date('Y-m-d', strtotime($updated_at));
-            })->sortable();
+            })->sortable()->hide();
 
         return $grid;
     }
@@ -103,7 +103,12 @@ class ProductController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Product::findOrFail($id));
+        $product = Product::findOrFail($id);
+        $show = new Show($product);
+
+        return view('admin.products.show', [
+            'product' => $product
+        ]);
 
         // $show->field('id', __('Id'));
         // $show->field('service_provider_id', __('Service provider id'));

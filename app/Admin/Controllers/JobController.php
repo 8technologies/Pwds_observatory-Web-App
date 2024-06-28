@@ -78,7 +78,12 @@ class JobController extends AdminController
      */
     protected function detail($id)
     {
-        $show = new Show(Job::findOrFail($id));
+        $job = Job::findOrFail($id);
+        $show = new Show($job);
+
+        return view('admin.jobs.show', [
+            'job' => $job
+        ]);
 
         // $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));
