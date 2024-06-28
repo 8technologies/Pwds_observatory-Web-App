@@ -661,6 +661,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
     );
 
     public static $classMap = array (
+        'App\\Admin\\Actions\\PEOPLE\\ImportPeople' => __DIR__ . '/../..' . '/app/Admin/Actions/PEOPLE/ImportPeople.php',
         'App\\Admin\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Admin/Controllers/AuthController.php',
         'App\\Admin\\Controllers\\CounsellingCentreController' => __DIR__ . '/../..' . '/app/Admin/Controllers/CounsellingCentreController.php',
         'App\\Admin\\Controllers\\CourseCategoryController' => __DIR__ . '/../..' . '/app/Admin/Controllers/CourseCategoryController.php',
@@ -734,6 +735,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Admin\\Forms\\Steps\\Info' => __DIR__ . '/../..' . '/app/Admin/Forms/Steps/Info.php',
         'App\\Admin\\Forms\\Steps\\Password' => __DIR__ . '/../..' . '/app/Admin/Forms/Steps/Password.php',
         'App\\Admin\\Forms\\Steps\\Profile' => __DIR__ . '/../..' . '/app/Admin/Forms/Steps/Profile.php',
+        'App\\Console\\Commands\\CheckJobExpiration' => __DIR__ . '/../..' . '/app/Console/Commands/CheckJobExpiration.php',
         'App\\Console\\Commands\\UpdateOrganisationIds' => __DIR__ . '/../..' . '/app/Console/Commands/UpdateOrganisationIds.php',
         'App\\Console\\Commands\\UpdatePersonDistricts' => __DIR__ . '/../..' . '/app/Console/Commands/UpdatePersonDistricts.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
@@ -756,7 +758,9 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Http\\Controllers\\ApiAuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApiAuthController.php',
         'App\\Http\\Controllers\\ApiResurceController' => __DIR__ . '/../..' . '/app/Http/Controllers/ApiResurceController.php',
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
+        'App\\Http\\Controllers\\ForgotPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/ForgotPasswordController.php',
         'App\\Http\\Controllers\\MainController' => __DIR__ . '/../..' . '/app/Http/Controllers/MainController.php',
+        'App\\Http\\Controllers\\ResetPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/ResetPasswordController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
         'App\\Http\\Livewire\\SearchComponent' => __DIR__ . '/../..' . '/app/Http/Livewire/SearchComponent.php',
         'App\\Http\\Middleware\\Authenticate' => __DIR__ . '/../..' . '/app/Http/Middleware/Authenticate.php',
@@ -779,6 +783,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Http\\Requests\\ProductsServiceStoreRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProductsServiceStoreRequest.php',
         'App\\Http\\Requests\\ServiceProviderStoreRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ServiceProviderStoreRequest.php',
         'App\\Http\\Requests\\storeDuRequest' => __DIR__ . '/../..' . '/app/Http/Requests/storeDuRequest.php',
+        'App\\Imports\\PersonImport' => __DIR__ . '/../..' . '/app/Imports/PersonImport.php',
         'App\\Mail\\CreatedDistrictUnionMail' => __DIR__ . '/../..' . '/app/Mail/CreatedDistrictUnionMail.php',
         'App\\Mail\\CreatedOPDMail' => __DIR__ . '/../..' . '/app/Mail/CreatedOPDMail.php',
         'App\\Mail\\NextOfKin' => __DIR__ . '/../..' . '/app/Mail/NextOfKin.php',

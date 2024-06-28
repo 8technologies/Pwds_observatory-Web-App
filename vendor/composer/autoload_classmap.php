@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Admin\\Actions\\PEOPLE\\ImportPeople' => $baseDir . '/app/Admin/Actions/PEOPLE/ImportPeople.php',
     'App\\Admin\\Controllers\\AuthController' => $baseDir . '/app/Admin/Controllers/AuthController.php',
     'App\\Admin\\Controllers\\CounsellingCentreController' => $baseDir . '/app/Admin/Controllers/CounsellingCentreController.php',
     'App\\Admin\\Controllers\\CourseCategoryController' => $baseDir . '/app/Admin/Controllers/CourseCategoryController.php',
@@ -79,6 +80,7 @@ return array(
     'App\\Admin\\Forms\\Steps\\Info' => $baseDir . '/app/Admin/Forms/Steps/Info.php',
     'App\\Admin\\Forms\\Steps\\Password' => $baseDir . '/app/Admin/Forms/Steps/Password.php',
     'App\\Admin\\Forms\\Steps\\Profile' => $baseDir . '/app/Admin/Forms/Steps/Profile.php',
+    'App\\Console\\Commands\\CheckJobExpiration' => $baseDir . '/app/Console/Commands/CheckJobExpiration.php',
     'App\\Console\\Commands\\UpdateOrganisationIds' => $baseDir . '/app/Console/Commands/UpdateOrganisationIds.php',
     'App\\Console\\Commands\\UpdatePersonDistricts' => $baseDir . '/app/Console/Commands/UpdatePersonDistricts.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
@@ -101,7 +103,9 @@ return array(
     'App\\Http\\Controllers\\ApiAuthController' => $baseDir . '/app/Http/Controllers/ApiAuthController.php',
     'App\\Http\\Controllers\\ApiResurceController' => $baseDir . '/app/Http/Controllers/ApiResurceController.php',
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
+    'App\\Http\\Controllers\\ForgotPasswordController' => $baseDir . '/app/Http/Controllers/ForgotPasswordController.php',
     'App\\Http\\Controllers\\MainController' => $baseDir . '/app/Http/Controllers/MainController.php',
+    'App\\Http\\Controllers\\ResetPasswordController' => $baseDir . '/app/Http/Controllers/ResetPasswordController.php',
     'App\\Http\\Kernel' => $baseDir . '/app/Http/Kernel.php',
     'App\\Http\\Livewire\\SearchComponent' => $baseDir . '/app/Http/Livewire/SearchComponent.php',
     'App\\Http\\Middleware\\Authenticate' => $baseDir . '/app/Http/Middleware/Authenticate.php',
@@ -124,6 +128,7 @@ return array(
     'App\\Http\\Requests\\ProductsServiceStoreRequest' => $baseDir . '/app/Http/Requests/ProductsServiceStoreRequest.php',
     'App\\Http\\Requests\\ServiceProviderStoreRequest' => $baseDir . '/app/Http/Requests/ServiceProviderStoreRequest.php',
     'App\\Http\\Requests\\storeDuRequest' => $baseDir . '/app/Http/Requests/storeDuRequest.php',
+    'App\\Imports\\PersonImport' => $baseDir . '/app/Imports/PersonImport.php',
     'App\\Mail\\CreatedDistrictUnionMail' => $baseDir . '/app/Mail/CreatedDistrictUnionMail.php',
     'App\\Mail\\CreatedOPDMail' => $baseDir . '/app/Mail/CreatedOPDMail.php',
     'App\\Mail\\NextOfKin' => $baseDir . '/app/Mail/NextOfKin.php',

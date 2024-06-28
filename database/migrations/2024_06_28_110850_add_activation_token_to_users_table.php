@@ -13,7 +13,7 @@ class AddActivationTokenToUsersTable extends Migration
      */
     public function up()
     {
-        Schema::table('Users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
             $table->string('activation_token', 60)->nullable();
         });
@@ -26,7 +26,7 @@ class AddActivationTokenToUsersTable extends Migration
      */
     public function down()
     {
-        Schema::table('Users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
             $table->dropColumn('activation_token');
         });
