@@ -14,6 +14,12 @@ class PersonController extends Controller
     //function for returning all people
     public function index(Request $request)
     {
+        $user = $request->user();
+        if($user == null){
+            return Api_Utils::error('User not found', 404); 
+        }
+
+
         try {
             $people = ModelsPerson::paginate($request->per_page);
 
@@ -32,8 +38,57 @@ class PersonController extends Controller
     {
         //Creating person and storing them to the database
         //Checking for Education leve
+        $user = $request->user();
+        if($user == null){
+            return Api_Utils::error('User not found.', 404); 
+        } 
+        //validate association_id
+        if($request->input('association_id') == null){
+            return Api_Utils::error('Association ID is required', 400);
+        } 
+        //group_id
+        if($request->input('group_id') == null){
+            return Api_Utils::error('Group ID is required', 400);
+        } 
 
         try {
+            $person = new ModelsPerson();
+            $person->association_id = $request->input('association_id');
+            /* 
+            association_id	
+	
+name	
+address	
+parish	
+village	
+phone_number	
+email	
+district_id	
+subcounty_id	
+disability_id	
+phone_number_2	
+dob	
+sex	
+education_level	
+employment_status	
+has_caregiver	
+caregiver_name	
+caregiver_sex	
+caregiver_phone_number	
+caregiver_age	
+caregiver_relationship	
+photo	
+deleted_at	
+status	
+administrator_id	
+disability_description	
+subcounty_description	
+job	
+local_id	
+	
+Edit Edit
+
+            */
             $person = ModelsPerson::create($request->all());
             $person->disabilities()->attach($request->input('disabilities'));
             return Api_Utils::success($person, "Person created", 200);
