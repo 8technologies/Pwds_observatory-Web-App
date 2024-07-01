@@ -41,11 +41,6 @@ class Job extends Model
 
         // Define the updating event listener
         static::updating(function ($job) {
-            $auth_user = auth()->user();
-
-            if ($job->user_id !== $auth_user->id) {
-                throw new \Exception("You are not authorized to update this job.");
-            }
             $model = self::calculateDeadlineDays($job);
             $model = self::checkIfExpired($job);
             return $model;

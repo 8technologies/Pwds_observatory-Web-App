@@ -401,6 +401,7 @@ class PersonController extends AdminController
 
 
         $form->divider('Next Of Kin');
+        $form->html("Click the button below to add next of Kin");
         $form->hasMany('next_of_kins', ' Add New Next of Kin', function (Form\NestedForm $form) {
             $form->text('next_of_kin_last_name', __('Surname'))->rules('required');
             $form->text('next_of_kin_other_names', __('Other Names'))->rules('required');
@@ -419,6 +420,10 @@ class PersonController extends AdminController
         $form->divider('Aspirations');
         $form->quill('aspirations', __('Aspirations'));
 
+        if (!$user->inRoles(['district-union', 'opd'])) {
+            $form->html('
+        <button type="submit" class="btn btn-primary float-right">Submit</button>');
+        }
 
 
         if (Admin::user()->inRoles(['district-union', 'opd'])) {

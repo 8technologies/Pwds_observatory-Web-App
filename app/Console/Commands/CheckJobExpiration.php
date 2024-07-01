@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Job;
 use DateTime;
 use Illuminate\Console\Command;
 
