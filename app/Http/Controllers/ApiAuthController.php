@@ -64,18 +64,17 @@ class ApiAuthController extends Controller
 
         $username = trim($r->username);
         $phone_number = Utils::prepare_phone_number($r->username);
-        if (Utils::phone_number_is_valid($phone_number)) {
-            $u = Administrator::where('phone_number', $phone_number)
-                ->first();
-        }
 
-        if($u == null){
+        $u = Administrator::where('phone_number', $phone_number)
+            ->first();
+
+
+        if ($u == null) {
             $emial = $r->username;
             //vaify email
-            if (filter_var($emial, FILTER_VALIDATE_EMAIL)) {
-                $u = Administrator::where('email', $emial)
-                    ->first();
-            } 
+
+            $u = Administrator::where('email', $emial)
+                ->first();
         }
 
         if ($u == null) {
@@ -92,12 +91,12 @@ class ApiAuthController extends Controller
 
 
         if ($token == null) {
-        $u->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
+            $u->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
             $u->save();
             $token = auth('api')->attempt([
                 'id' => $u->id,
                 'password' => trim($r->password),
-            ]); 
+            ]);
         }
 
         if ($token == null) {
