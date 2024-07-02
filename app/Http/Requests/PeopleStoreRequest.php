@@ -40,7 +40,7 @@ class PeopleStoreRequest extends FormRequest
             'is_formal_education' => [
                 'required_if:education_level,Formal Education',
                 'nullable',
-                'in:Primary,Secondary -UCE,Secondary - UACE,Bachelor\'s Degree,Master\'s Degree,PHD'
+                'in:Primary,Secondary-UCE,Secondary-UACE,Bachelors, Masters, PHD'
             ],
             'informal_education' => 'required_if:education_level,Informal Education|nullable|string',
         ];
