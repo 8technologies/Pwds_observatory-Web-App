@@ -14,12 +14,6 @@ class PersonController extends Controller
     //function for returning all people
     public function index(Request $request)
     {
-        $user = $request->user();
-        if($user == null){
-            return Api_Utils::error('User not found', 404); 
-        }
-
-
         try {
             $people = ModelsPerson::paginate($request->per_page);
 
@@ -39,17 +33,17 @@ class PersonController extends Controller
         //Creating person and storing them to the database
         //Checking for Education leve
         $user = $request->user();
-        if($user == null){
-            return Api_Utils::error('User not found.', 404); 
-        } 
+        if ($user == null) {
+            return Api_Utils::error('User not found.', 404);
+        }
         //validate association_id
-        if($request->input('association_id') == null){
+        if ($request->input('association_id') == null) {
             return Api_Utils::error('Association ID is required', 400);
-        } 
+        }
         //group_id
-        if($request->input('group_id') == null){
+        if ($request->input('group_id') == null) {
             return Api_Utils::error('Group ID is required', 400);
-        } 
+        }
 
         try {
             $person = new ModelsPerson();
