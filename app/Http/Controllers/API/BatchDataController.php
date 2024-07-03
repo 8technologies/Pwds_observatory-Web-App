@@ -40,6 +40,7 @@ class BatchDataController extends Controller
     {
         $validatedData = $request->all();
 
+        $createdPeople = [];
         foreach ($validatedData as $personData) {
             try {
                 $person = Person::create($personData);
