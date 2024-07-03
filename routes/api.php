@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AssociationAPIController;
+use App\Http\Controllers\API\BatchDataController;
 use App\Http\Controllers\API\CounsellingAPIController;
 use App\Http\Controllers\API\DisabilitiesController;
 use App\Http\Controllers\API\District_UnionAPIController;
@@ -45,6 +46,7 @@ Route::resource('associations', AssociationAPIController::class);
 Route::resource('products', ProductServiceAPIController::class);
 Route::apiResource('disabilities', DisabilitiesController::class);
 Route::apiResource('districts', DistrictAPIController::class);
+Route::apiResource('people-batch-collection', BatchDataController::class);
 
 // Route::POST("people", [ApiResurceController::class, "person_create"]);
 // Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);
