@@ -86,6 +86,7 @@ return array(
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\API\\AssociationAPIController' => $baseDir . '/app/Http/Controllers/API/AssociationAPIController.php',
+    'App\\Http\\Controllers\\API\\BatchDataController' => $baseDir . '/app/Http/Controllers/API/BatchDataController.php',
     'App\\Http\\Controllers\\API\\CounsellingAPIController' => $baseDir . '/app/Http/Controllers/API/CounsellingAPIController.php',
     'App\\Http\\Controllers\\API\\DisabilitiesController' => $baseDir . '/app/Http/Controllers/API/DisabilitiesController.php',
     'App\\Http\\Controllers\\API\\DistrictAPIController' => $baseDir . '/app/Http/Controllers/API/DistrictAPIController.php',

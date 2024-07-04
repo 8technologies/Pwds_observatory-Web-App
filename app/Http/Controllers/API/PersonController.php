@@ -16,12 +16,16 @@ class PersonController extends Controller
     public function index(Request $request)
     {
         $u = $request->user();
-        if($u == null){
+        if ($u == null) {
             return Api_Utils::error("User not found", 404);
         }
         $u = Administrator::find($u->id);
         try {
-            $people = ModelsPerson::paginate($request->per_page);
+            
+            $conds['organisation_id'] = $u->organisation_id;
+
+            //$people = ModelsPerson::paginate($request->per_page);
+            $people = ModelsPerson::where($conds)->paginate($request->per_page);
 
             if ($people->isEmpty()) {
                 throw new \Exception("No data retrieved from the database.");

@@ -741,6 +741,7 @@ class ComposerStaticInitda89eef54c810448a827ed04bb3da82f
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\API\\AssociationAPIController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/AssociationAPIController.php',
+        'App\\Http\\Controllers\\API\\BatchDataController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/BatchDataController.php',
         'App\\Http\\Controllers\\API\\CounsellingAPIController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/CounsellingAPIController.php',
         'App\\Http\\Controllers\\API\\DisabilitiesController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/DisabilitiesController.php',
         'App\\Http\\Controllers\\API\\DistrictAPIController' => __DIR__ . '/../..' . '/app/Http/Controllers/API/DistrictAPIController.php',
