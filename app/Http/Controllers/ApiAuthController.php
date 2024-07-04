@@ -102,12 +102,13 @@ class ApiAuthController extends Controller
 
 
         if ($token == null) {
-            $u->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
+            return $this->error('Wrong password.');
+            /* $u->password = password_hash(trim($r->password), PASSWORD_DEFAULT);
             $u->save();
             $token = auth('api')->attempt([
                 'id' => $u->id,
                 'password' => trim($r->password),
-            ]);
+            ]); */
         }
 
         if ($token == null) {
