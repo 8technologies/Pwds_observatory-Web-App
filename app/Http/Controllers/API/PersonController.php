@@ -6,6 +6,7 @@ use App\Http\Requests\PeopleStoreRequest;
 use App\Models\Person as ModelsPerson;
 use App\Http\Controllers\Controller;
 use App\Models\Api_Utils;
+use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Imports\ModelManager;
 
@@ -14,6 +15,12 @@ class PersonController extends Controller
     //function for returning all people
     public function index(Request $request)
     {
+        $u = $request->user();
+        if($u == null){
+            return Api_Utils::error("User not found", 404);
+        }
+        $u = Administrator::find($u->id);
+        return Api_Utils::success($u, "User found", 200);
         try {
             $people = ModelsPerson::paginate($request->per_page);
 
