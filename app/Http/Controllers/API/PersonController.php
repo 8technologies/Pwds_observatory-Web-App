@@ -20,7 +20,6 @@ class PersonController extends Controller
             return Api_Utils::error("User not found", 404);
         }
         $u = Administrator::find($u->id);
-        return Api_Utils::success($u, "User found", 200);
         try {
             $people = ModelsPerson::paginate($request->per_page);
 
