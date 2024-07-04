@@ -6,6 +6,7 @@ use App\Http\Requests\PeopleStoreRequest;
 use App\Models\Person as ModelsPerson;
 use App\Http\Controllers\Controller;
 use App\Models\Api_Utils;
+use App\Models\Organisation;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Imports\ModelManager;
@@ -15,21 +16,35 @@ class PersonController extends Controller
     //function for returning all people
     public function index(Request $request)
     {
-        $u = $request->user();
-        if ($u == null) {
+        $user = $request->user(); // Assuming the authenticated user is retrieved from the request
+        if ($user == null) {
             return Api_Utils::error("User not found", 404);
         }
-        $u = Administrator::find($u->id);
-        try {
-            
-            $conds['organisation_id'] = $u->organisation_id;
 
-            //$people = ModelsPerson::paginate($request->per_page);
-            $people = ModelsPerson::where($conds)->paginate($request->per_page);
+        try {
+            $organisation = Organisation::find($user->organisation_id);
+            if (!$organisation) {
+                return Api_Utils::error("Organisation not found", 404);
+            }
+
+            $query = ModelsPerson::query();
+
+            if ($user->inRoles(['nudipu', 'administrator'])) {
+                $query->orderBy('created_at', 'desc');
+            } elseif ($user->isRole('district-union')) {
+                $query->where('district_id', $organisation->district_id)->orderBy('created_at', 'desc');
+            } elseif ($user->isRole('opd')) {
+                $query->where('opd_id', $organisation->id)->orderBy('created_at', 'desc');
+            } else {
+                return Api_Utils::error("User role is not authorized", 403);
+            }
+
+            $people = $query->paginate($request->per_page);
 
             if ($people->isEmpty()) {
-                throw new \Exception("No data retrieved from the database.");
+                return Api_Utils::error("No data retrieved from the database.", 404);
             }
+
             return Api_Utils::success($people, "People successfully returned", 200);
         } catch (\Exception $e) {
             return Api_Utils::error($e->getMessage(), 500); // Changed to 500 to indicate server error
