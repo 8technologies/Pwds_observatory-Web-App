@@ -61,12 +61,15 @@ class ApiAuthController extends Controller
         if ($r->password == null) {
             return $this->error('Password is required.');
         }
-
-        $username = trim($r->username);
-        $phone_number = Utils::prepare_phone_number($r->username);
-
+        $phone_number = $r->username;
         $u = Administrator::where('phone_number', $phone_number)
             ->first();
+        if ($u == null) {
+            $phone_number = Utils::prepare_phone_number($r->username);
+            $u = Administrator::where('phone_number', $phone_number)
+                ->first();
+        }
+
 
 
         if ($u == null) {
@@ -78,7 +81,15 @@ class ApiAuthController extends Controller
         }
 
         if ($u == null) {
-            return $this->error('Account not found.');
+            $emial = $r->username;
+            //vaify email
+
+            $u = Administrator::where('username', $emial)
+                ->first();
+        }
+
+        if ($u == null) {
+            return $this->error("Account with this username ($phone_number) does not exist.");
         }
 
 
