@@ -177,6 +177,7 @@ class Person extends Model
             $person->sub_county = ucfirst(strtolower($person->sub_county));
             $person->village = ucfirst(strtolower($person->village));
             $person->profiler = ucfirst(strtolower($person->profiler));
+            $person->is_approved = 1;
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
