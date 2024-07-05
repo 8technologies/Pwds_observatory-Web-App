@@ -54,7 +54,7 @@
     <hr class="m-0 pt-0">
 
     <ul>
-        <p>{{ $product->details }}</p>
+        <p>{{ strip_tags($product->details) }}</p>
     </ul>
 
     {{-- <h3 class="text-uppercase h4 p-0 m-0"><b>Offer Type</b></h3>

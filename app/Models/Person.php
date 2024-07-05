@@ -139,18 +139,16 @@ class Person extends Model
             $organisation = Organisation::find($user->organisation_id);
             if ($organisation->relationship_type == 'opd') {
                 $person->opd_id = $organisation->id;
-                $person->is_approved = 1;
             }
             if ($organisation->relationship_type == 'du') {
                 $person->district_id = $organisation->district_id;
-                $person->is_approved = 1;
             }
 
             $person->district_of_residence = $person->district_id;
         });
 
         static::saving(function ($person) {
-            $person->addPerson();
+            // $person->addPerson();
 
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
@@ -216,7 +214,7 @@ class Person extends Model
 
         if ($duplicate) {
             Log::info('Duplicate person found: ' . $person_name . ', Age: ' . $person_age);
-            throw new Error('Person already exists in the database');
+            die('Person already exists in the database');
         }
 
         // Allow the creation of the new person
