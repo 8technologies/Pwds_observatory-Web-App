@@ -36,6 +36,7 @@ class PeopleStoreRequest extends FormRequest
             'district_of_origin' => 'required',
             'village' => 'required',
             'sub_county' => 'required',
+            "profiler" => 'required',
             'education_level' => 'required|in:Formal Education,Informal Education,No Education',
             'is_formal_education' => [
                 'required_if:education_level,Formal Education',

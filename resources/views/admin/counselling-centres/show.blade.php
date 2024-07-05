@@ -10,9 +10,15 @@
                     BACK
                     TO ALL LIST</a>
             @endisset
-            <a href="{{ admin_url('counselling-centres/' . $counselingCentres->id . '/edit') }}"
-                class="btn btn-warning btn-sm"><i class="fa fa-edit"></i>
-                EDIT</a>
+
+            @php
+                $user = auth()->user();
+            @endphp
+            @if ($user && $user->id === $counselingCentres->administrator_id)
+                <a href="{{ admin_url('products/' . $counselingCentres->id . '/edit') }}" class="btn btn-warning btn-sm">
+                    <i class="fa fa-edit"></i> EDIT
+                </a>
+            @endif
             <a href="#" onclick="window.print();return false;" class="btn btn-primary btn-sm"><i
                     class="fa fa-print"></i> PRINT</a>
         </div>

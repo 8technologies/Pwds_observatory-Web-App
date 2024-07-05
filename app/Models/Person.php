@@ -58,7 +58,8 @@ class Person extends Model
         'education_level',
         'sub_county',
         'village',
-        'employment_status'
+        'employment_status',
+        'profiler'
     ];
 
     protected $casts = [

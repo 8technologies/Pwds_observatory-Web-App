@@ -118,45 +118,81 @@
             <li>{{ $disability->name }}</li>
         @endforeach
     </ul>
-
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>ACADEMIC QUALIFACTION</b></h3>
-    <hr class="m-0 pt-0 mb-3">
-    <table class="table table-bordered table-striped table-hover">
-        <tr class="text-bold">
-            <td>Institution</td>
-            <td>Qualification</td>
-            <td>Year Of Completion</td>
-        </tr>
-
-        @foreach ($pwd->academic_qualifications as $record)
-            <tr>
-                <td>{{ $record->institution }}</td>
-                <td>{{ $record->qualification }}</td>
-                <td>{{ $record->year_of_completion }}</td>
+    @if ($pwd->academic_qualifications)
+        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
+        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>ACADEMIC QUALIFACTION</b></h3>
+        <hr class="m-0 pt-0 mb-3">
+        <table class="table table-bordered table-striped table-hover">
+            <tr class="text-bold">
+                <td>Institution</td>
+                <td>Qualification</td>
+                <td>Year Of Completion</td>
             </tr>
-        @endforeach
 
-    </table>
+            @foreach ($pwd->academic_qualifications as $record)
+                <tr>
+                    <td>{{ $record->institution }}</td>
+                    <td>{{ $record->qualification }}</td>
+                    <td>{{ $record->year_of_completion }}</td>
+                </tr>
+            @endforeach
+
+        </table>
+    @endif
+
+    @if ($pwd->education_level == 'formal Education')
+        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
+        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Education</b></h3>
+        <hr class="m-0 pt-0">
+        <table class="table table-bordered table-striped table-hover">
+            <tr class="text-bold">
+                <td>Level of Education</td>
+                <td>Field of Study</td>
+                <td>Class</td>
+            </tr>
+            <tr>
+                <td>{{ $pwd->is_formal_education }}</td>
+                <td>{{ $pwd->field_of_study }}</td>
+                <td>{{ $pwd->indicate_class }}</td>
+            </tr>
+
+        </table>
+    @endif
+
+    @if ($pwd->education_level == 'informal Education')
+        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
+        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Education</b></h3>
+        <hr class="m-0 pt-0">
+        <table class="table table-bordered table-striped table-hover">
+            <p>Technical knowledge: {{ $pwd->informal_education }}</p>
+
+        </table>
+    @endif
 
     @if ($pwd->is_employed == 1)
         <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
         <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Current Employment</b></h3>
         <hr class="m-0 pt-0">
-        <table class="table table-bordered table-striped table-hover">
-            <tr class="text-bold">
-                <td>Name</td>
-                <td>Position</td>
-                <td>Duration</td>
-            </tr>
-            <tr>
-                <td>{{ $pwd->employer }}</td>
-                <td>{{ $pwd->position }}</td>
-                <td>{{ $pwd->year_of_employment }}</td>
-            </tr>
 
-        </table>
+        @if ($pwd->employment_status == 'fomal employment')
+            <table class="table table-bordered table-striped table-hover">
+                <tr class="text-bold">
+                    <td>Name</td>
+                    <td>Position</td>
+                </tr>
+                <tr>
+                    <td>{{ $pwd->employer }}</td>
+                    <td>{{ $pwd->position }}</td>
+                </tr>
+
+            </table>
+        @endif
+
+        @if ($pwd->employment_status == 'self employment')
+            <p>Occupation: {{ $pwd->occupation }}</p>
+        @endif
     @endif
+
 
     @if ($pwd->is_formerly_employed)
 
