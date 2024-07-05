@@ -121,7 +121,6 @@ class Person extends Model
 
         static::creating(function ($person) {
             //Checking for duplicates in Person
-            $person->addPerson();
 
             $person->name = ucfirst(strtolower($person->name));
             $person->other_names = ucfirst(strtolower($person->other_names));
