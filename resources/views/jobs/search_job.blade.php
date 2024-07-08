@@ -84,10 +84,10 @@ if (!isset($header_style)) {
                                     <strong>Days to Close:</strong>
                                     <span style="color:red">{{ $job->days_remaining }} days remaining</span>
                                 </p> --}}
-                                <p>
+                                {{-- <p>
                                     <strong>Status:</strong>
                                     <span style="color: green">{{ $job->status }}</span>
-                                </p>
+                                </p> --}}
 
                                 <div id="short_{{ $job->id }}" class="text">
                                     {!! Str::limit($job->description, 400) !!}
@@ -100,6 +100,14 @@ if (!isset($header_style)) {
                                     <span onclick="collapseText('{{ $job->id }}')"
                                         class="read-less text-primary">........Read Less</span>
                                 </div>
+                                <p>
+                                    <strong>Required Experience: </strong>
+                                    <span>{{ $job->required_experience }}</span>
+                                </p>
+                                <p>
+                                    <strong>How to apply: </strong>
+                                    <span>{{ $job->how_to_apply }}</span>
+                                </p>
                             </div>
                         </div>
                     </div>
