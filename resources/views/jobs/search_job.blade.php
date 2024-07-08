@@ -80,10 +80,10 @@ if (!isset($header_style)) {
                                 <p><strong>Created Date:</strong> <span
                                         class="fw-bold">{{ $job->created_at->format('Y-m-d') }}</span></p>
                                 <p><strong>Deadline:</strong> <span class="fw-bold">{{ $job->deadline }}</span></p>
-                                <p>
+                                {{-- <p>
                                     <strong>Days to Close:</strong>
                                     <span style="color:red">{{ $job->days_remaining }} days remaining</span>
-                                </p>
+                                </p> --}}
                                 <p>
                                     <strong>Status:</strong>
                                     <span style="color: green">{{ $job->status }}</span>
