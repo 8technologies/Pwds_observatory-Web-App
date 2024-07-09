@@ -23,6 +23,13 @@ if (!isset($header_style)) {
         color: white;
     }
 
+    .card-body-fixed {
+        width: 100%;
+        height: 500px;
+        overflow: auto;
+        padding: 10px;
+    }
+
     .card-title {
         color: #ffffff;
         font-size: 18px;
@@ -69,7 +76,7 @@ if (!isset($header_style)) {
                 @foreach ($activeJobs as $job)
                     <div class="col-md-4">
                         <div class="card card-style">
-                            <div class="card-body">
+                            <div class="card-body-fixed">
                                 <h4 class="card-title">{{ $job->title }}</h4>
                                 <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
                                 <p>
@@ -107,7 +114,7 @@ if (!isset($header_style)) {
                                 </p>
                                 <p>
                                     <strong>How to apply: </strong>
-                                    <span>{{ $job->how_to_apply }}</span>
+                                    <span> {{ strip_tags($job->how_to_apply) }} </span>
                                 </p>
                             </div>
                         </div>
