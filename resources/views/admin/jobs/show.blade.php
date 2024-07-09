@@ -22,6 +22,15 @@ if (!isset($header_style)) {
         background-color: rgb(55, 162, 224);
         color: white;
     }
+
+    .card-title {
+        color: #ffffff;
+        font-size: 18px;
+        background-color: rgb(72, 171, 228);
+        margin: 0px;
+        padding: 10px;
+        border-radius: 5px;
+    }
 </style>
 
 <!-- Post title + Meta  -->
@@ -61,7 +70,7 @@ if (!isset($header_style)) {
                     <div class="col-md-4">
                         <div class="card card-style">
                             <div class="card-body">
-                                <h4 style="font-size: 24px;">{{ $job->title }}</h4>
+                                <h4 class="card-title">{{ $job->title }}</h4>
                                 <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
                                 <p>
                                     <strong>Hiring Firm: </strong>

@@ -27,6 +27,15 @@ if (!isset($header_style)) {
         /* color: rgb(72, 171, 228); */
         font-size: 18px;
     }
+
+    .card-title {
+        color: #ffffff;
+        font-size: 18px;
+        background-color: rgb(72, 171, 228);
+        margin: 0px;
+        padding: 10px;
+        border-radius: 5px;
+    }
 </style>
 
 
@@ -40,7 +49,8 @@ if (!isset($header_style)) {
                 <div class="col-md-6">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <h5 class="card-title" style="font-size: 24px;">{{ $provider->name }}</h5>
+                            <h5 class="card-title">{{ $provider->name }}
+                            </h5>
                             @if ($provider->disability_categories->isNotEmpty())
                                 <p class="card-text"><strong class="service-item">Disability Categories:</strong>
                                     @foreach ($provider->disability_categories as $disability)

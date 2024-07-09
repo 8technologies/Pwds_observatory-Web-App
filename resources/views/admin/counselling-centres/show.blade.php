@@ -27,6 +27,15 @@ if (!isset($header_style)) {
         font-size: 18px;
 
     }
+
+    .card-title {
+        color: #ffffff;
+        font-size: 18px;
+        background-color: rgb(72, 171, 228);
+        margin: 0px;
+        padding: 10px;
+        border-radius: 5px;
+    }
 </style>
 
 
