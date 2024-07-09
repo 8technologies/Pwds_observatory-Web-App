@@ -1,177 +1,143 @@
-<div class="container bg-white p-1 p-md-5">
-    <div class="d-md-flex justify-content-between">
-        <div>
-            {{-- <h2 class="m-0 p-0 text-dark h3 text-uppercase"><b>Suspect {{ ' - ' . $pwd->uwa_suspect_number  '-' }}</b> --}}
-            </h2>
-        </div>
-        <div class="mt-3 mt-md-0">
-            @isset($_SERVER['HTTP_REFERER'])
-                <a href="{{ $_SERVER['HTTP_REFERER'] }}" class="btn btn-secondary btn-sm"><i class="fa fa-chevron-left"></i>
-                    BACK
-                    TO ALL LIST</a>
-            @endisset
-
-            @php
-                $user = auth()->user();
-            @endphp
-            @if ($user && $user->id === $counselingCentres->administrator_id)
-                <a href="{{ admin_url('products/' . $counselingCentres->id . '/edit') }}" class="btn btn-warning btn-sm">
-                    <i class="fa fa-edit"></i> EDIT
-                </a>
-            @endif
-            <a href="#" onclick="window.print();return false;" class="btn btn-primary btn-sm"><i
-                    class="fa fa-print"></i> PRINT</a>
-        </div>
-    </div>
-    <hr class="my-3 my-md-4">
-    <div class="row">
-        <div class="col-3 col-md-2">
-            <div class="border border-1 rounded bg-">
-                @if ($counselingCentres->photo == null)
-                    <img class="img-fluid" src="{{ asset('assets/img/user-1.png') }}" width="250" height="500">
-                @else
-                    <img class="img-fluid" src="{{ asset('storage/' . $counselingCentres->photo) }}" width="250"
-                        height="500">
-                @endif
-            </div>
-        </div>
-        <div class="col-9 col-md-5">
-            <h3 class="text-uppercase h4 p-0 m-0"><b>ABOUT THE CENTRE</b></h3>
-            <hr class="my-1 my-md-3">
-
-            @include('components.detail-item', [
-                't' => 'Name',
-                's' => $counselingCentres->name,
-            ])
-
-            @include('components.detail-item', ['t' => 'Address', 's' => $counselingCentres->address])
-            @include('components.detail-item', ['t' => 'About', 's' => $counselingCentres->about])
-            @include('components.detail-item', ['t' => 'Village', 's' => $counselingCentres->vilage])
-
-        </div>
-
-        <div class="col-9 col-md-4">
-            <h3 class="text-uppercase h4 p-0 m-0"><b>ADDRESS</b></h3>
-            <hr class="my-1 my-md-3">
-
-            @include('components.detail-item', [
-                't' => 'Phone Number',
-                's' => $counselingCentres->phone_number . ' ' . $counselingCentres->phone_number_2,
-            ])
-            @include('components.detail-item', [
-                't' => 'Email',
-                's' => $counselingCentres->email,
-            ])
-            @include('components.detail-item', [
-                't' => 'Website',
-                's' => $counselingCentres->website,
-            ])
-
-
-
-        </div>
-
-    </div>
-
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Districts Of Operations</b></h3>
-    <hr class="m-0 pt-0">
-
-    <ul>
-        @foreach ($counselingCentres->districts as $district)
-            <li>{{ $district->name }}</li>
-        @endforeach
-    </ul>
-
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Disabilities</b></h3>
-    <hr class="m-0 pt-0">
-    <ul>
-        @foreach ($counselingCentres->disabilities as $disability)
-            <li>{{ $disability->name }}</li>
-        @endforeach
-    </ul>
-
-    @if ($counselingCentres->affailiated_organisations)
-        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Affiliated Organisations</b></h3>
-        <hr class="m-0 pt-0">
-        <p>{{ $counselingCentres->affailiated_organisations }}</p>
-    @endif
-
-
-    @if ($counselingCentres->target_group)
-        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Target Groups</b></h3>
-        <hr class="m-0 pt-0">
-        <p>{{ $counselingCentres->target_group }}</p>
-    @endif
-
-
-    {{-- <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>ACADEMIC QUALIFACTION</b></h3>
-    <hr class="m-0 pt-0 mb-3">
-    <table class="table table-bordered table-striped table-hover">
-        <tr class="text-bold">
-            <td>Institution</td>
-            <td>Qualification</td>
-            <td>Year Of Completion</td>
-        </tr>
-
-        @foreach ($pwd->academic_qualifications as $record)
-            <tr>
-                <td>{{ $record->institution }}</td>
-                <td>{{ $record->qualification }}</td>
-                <td>{{ $record->year_of_completion }}</td>
-            </tr>
-        @endforeach
-
-    </table>
-
-    @if ($pwd->is_employed == 1)
-        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Current Employment</b></h3>
-        <hr class="m-0 pt-0">
-        <table class="table table-bordered table-striped table-hover">
-            <tr class="text-bold">
-                <td>Name</td>
-                <td>Position</td>
-                <td>Duration</td>
-            </tr>
-            <tr>
-                <td>{{ $pwd->employer }}</td>
-                <td>{{ $pwd->position }}</td>
-                <td>{{ $pwd->year_of_employment }}</td>
-            </tr>
-
-        </table>
-    @endif
-
-    @if ($pwd->is_formerly_employed)
-
-        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Previous Employment</b></h3>
-        <hr class="m-0 pt-0 mb-3">
-        <table class="table table-bordered table-striped table-hover">
-            <tr class="text-bold">
-                <td>Name</td>
-                <td>Position</td>
-                <td>Duration</td>
-            </tr>
-
-            @foreach ($pwd->employment_history as $record)
-                <tr>
-                    <td>{{ $record->employer }}</td>
-                    <td>{{ $record->position }}</td>
-                    <td>{{ $record->year_of_employment }}</td>
-                </tr>
-            @endforeach
-
-        </table>
-
-    @endif --}}
-
-
-</div>
+<?php
+use App\Models\PostCategory;
+use App\Models\NewsPost;
+use App\Models\Utils;
+if (!isset($header_style)) {
+    $header_style = 11;
+}
+?>
 <style>
-    .content-header {
-        display: none;
+    .pagination {
+        font-size: 3rem;
+
+    }
+
+    .pagination a:hover {
+        background-color: rgb(55, 162, 224);
+        color: white;
+    }
+
+    /* Example CSS */
+    .pagination .page-item.active .page-link {
+        background-color: rgb(55, 162, 224);
+        color: white;
+    }
+
+    .centre-item {
+        font-size: 18px;
+
     }
 </style>
+
+
+<div class="container">
+    <h1 class="mt-5 mb-4 text-center" style="color:rgb(72, 171, 228);">Counselling Centres</h1>
+    {{-- <div class="row mb-3">
+        <div class="col-md-12 text-center">
+            <form action="{{ route('counseling-centre-search') }}" method="GET"
+                class="form-inline d-flex justify-content-center">
+                <div class="form-group mx-2">
+                    <input class="form-control" type="search" name="name_search" placeholder="Search by Centre Name"
+                        aria-label="Search" value="{{ request('name_search') }}">
+                </div>
+                <div class="form-group mx-2">
+                    <select class="form-control" name="disability_search">
+                        <option value="">Select Disability Category</option>
+                        @foreach ($disabilities as $disability)
+                            <option value="{{ $disability->name }}"
+                                {{ request('disability_search') == $disability->name ? 'selected' : '' }}>
+                                {{ $disability->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group mx-2">
+                    <select class="form-control" name="district_search">
+                        <option value="">Select District</option>
+                        @foreach ($districts as $district)
+                            <option value="{{ $district->name }}"
+                                {{ request('district_search') == $district->name ? 'selected' : '' }}>
+                                {{ $district->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button class="btn btn-outline-success mx-2" type="submit">Search</button>
+            </form>
+        </div>
+    </div> --}}
+
+    @if ($counselingCentres->isEmpty())
+        <p class="text-center mt-5">No counselling centres found.</p>
+    @else
+        <div class="row">
+            @foreach ($counselingCentres as $centre)
+                <div class="col-md-6">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title" style="font-size: 24px;">{{ ucwords($centre->name) }}</h5>
+                            @if ($centre->about)
+                                <p class="card-text"><strong class="centre-item">About The Centre:
+                                    </strong>{{ strip_tags($centre->about) }}
+                                </p>
+                            @endif
+                            @if ($centre->disabilities->isNotEmpty())
+                                <p class="card-text"><strong class="centre-item">Disability Names:</strong>
+                                    @foreach ($centre->disabilities as $disability)
+                                        {{ $disability->name }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </p>
+                            @endif
+
+                            @if ($centre->address)
+                                <p class="card-text"><strong class="centre-item">Address:</strong>
+                                    {{ $centre->address }}</p>
+                            @endif
+
+                            @if ($centre->village)
+                                <p class="card-text"><strong class="centre-item">Village:</strong>
+                                    {{ $centre->village }}</p>
+                            @endif
+
+                            @if ($centre->phone_number)
+                                <p class="card-text"><strong class="centre-item">Phone Number:</strong>
+                                    {{ $centre->phone_number }}</p>
+                            @endif
+
+                            @if ($centre->email)
+                                <p class="card-text"><strong class="centre-item">Email:</strong> {{ $centre->email }}
+                                </p>
+                            @endif
+
+                            @if ($centre->disabilities->isNotEmpty())
+                                <p class="card-text"><strong class="centre-item">Districts Covered:</strong>
+                                    @foreach ($centre->districts as $district)
+                                        {{ $district->name }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </p>
+                            @endif
+
+                            @if ($centre->website)
+                                <p class="card-text"><strong class="centre-item">Website:</strong> <a
+                                        href="{{ $centre->website }}" target="_blank">{{ $centre->website }}</a></p>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        {{-- {{ $counselingCentres->links() }} --}}
+    @endif
+
+    <div class="row">
+        <div class="col-md-4">
+            {{ $counselingCentres->links('pagination::simple-bootstrap-4') }}
+        </div>
+    </div>
+</div>
+
+<!-- Pagination (bullets) -->
+<div class="swiper-pagination position-relative pt-2 pt-sm-3 mt-4"></div>
+</div>

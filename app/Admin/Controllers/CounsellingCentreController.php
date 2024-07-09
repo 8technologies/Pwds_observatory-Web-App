@@ -12,6 +12,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CounsellingCentreController extends AdminController
@@ -106,14 +107,19 @@ class CounsellingCentreController extends AdminController
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
+    protected function detail()
     {
-        $counselingCentres = CounsellingCentre::findOrFail($id);
+        // $counselingCentres = CounsellingCentre::findOrFail($id);
+        // $show = new Show($counselingCentres);
+        $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->paginate(8);
+
+        $districts = District::all();
+        $disabilities = Disability::all();
+
         $show = new Show($counselingCentres);
 
-        return view('admin.counselling-centres.show',  [
-            'counselingCentres' => $counselingCentres
-        ]);
+        // Pass the data to the Blade view
+        return view('admin.counselling-centres.show', ['counselingCentres' => $counselingCentres, 'districts' => $districts, 'disabilities' => $disabilities]);
 
         // $show->field('id', __('Id'));
         $show->field('created_at', __('Created at'));
@@ -145,6 +151,44 @@ class CounsellingCentreController extends AdminController
 
         return $show;
     }
+
+    /**
+     * Make a show builder.
+     *
+     * @param mixed $id
+     * @return Show
+     */
+    protected function search_centre(Request $request)
+    {
+        $nameSearch = $request->input('name_search');
+        $districtSearch = $request->input('district_search');
+        $disabilitySearch = $request->input('disability_search');
+
+        $counseling_centres = CounsellingCentre::query()
+            ->when($nameSearch, function ($query, $nameSearch) {
+                return $query->where('name', 'like', "%{$nameSearch}%");
+            })
+            ->when($districtSearch, function ($query, $districtSearch) {
+                return $query->whereHas('districts', function ($q) use ($districtSearch) {
+                    $q->where('name', 'like', "%{$districtSearch}%");
+                });
+            })
+            ->when($disabilitySearch, function ($query, $disabilitySearch) {
+                return $query->whereHas('disabilities', function ($q) use ($disabilitySearch) {
+                    $q->where('name', 'like', "%{$disabilitySearch}%");
+                });
+            })
+            ->with(['disabilities', 'districts'])
+            ->paginate(8);
+        $show = new Show($counseling_centres);
+        $districts = District::all();
+        $disabilities = Disability::all();
+
+        // Pass the data to the Blade view
+        return view('admin.counselling-centres.search-centre', compact('counseling_centres', 'nameSearch', 'districtSearch', 'disabilitySearch', 'districts', 'disabilities'));
+    }
+
+
 
     /**
      * Make a form builder.

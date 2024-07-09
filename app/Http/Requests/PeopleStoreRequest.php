@@ -28,6 +28,7 @@ class PeopleStoreRequest extends FormRequest
             'other_names' => 'required',
             'age' => 'required|int:min:0',
             'address' => 'required',
+            'sex' => 'required',
             'phone_number' => 'required|phone:UG',
             'phone_number_2' => 'nullable|phone:UG',
             'disabilities' => 'required|array',

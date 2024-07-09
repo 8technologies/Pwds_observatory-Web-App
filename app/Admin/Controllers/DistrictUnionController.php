@@ -230,19 +230,19 @@ class DistrictUnionController extends AdminController
             ->rules("required|email")
             ->help("This will be emailed with the password to log into the system");
 
-        if ($form->isEditing()) {
-            $form->radio('change_password', 'Change Password')->options(["No" => 'No', "Yes" => 'Yes'])
-                ->when('Yes', function (Form $form) {
-                    $form->password('password', __('New Password'));
-                    $form->password('confirm_new_password', __('Confirm Password'))->rules('same:new_password');
-                });
-        } else {
-            $form->password('password', __('Password'))->rules("required|min:6");
-            $form->password('confirm_new_password', __('Confirm Password'))->rules('same:password');
-        }
+        // if ($form->isEditing()) {
+        //     $form->radio('change_password', 'Change Password')->options(["No" => 'No', "Yes" => 'Yes'])
+        //         ->when('Yes', function (Form $form) {
+        //             $form->password('password', __('New Password'));
+        //             $form->password('confirm_new_password', __('Confirm Password'))->rules('same:new_password');
+        //         });
+        // } else {
+        //     $form->password('password', __('Password'))->rules("required|min:6");
+        //     $form->password('confirm_new_password', __('Confirm Password'))->rules('same:password');
+        // }
 
 
-        $form->ignore(['password', 'new_password', 'confirm_new_password', 'change_password']);
+        // $form->ignore(['password', 'new_password', 'confirm_new_password', 'change_password']);
 
 
 

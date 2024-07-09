@@ -70,7 +70,7 @@ class ServiceProviderController extends AdminController
         // $grid->column('license', __('License'));
         // $grid->column('certificate_of_registration', __('Certificate of registration'));
 
-        $grid->column('email', __('Email'));
+        $grid->column('email', __('Email'))->hide();
         $grid->column('telephone', __('Telephone'));
         $grid->column('target_group', __('Target group'));
         $grid->column('disability_categories', __('Disability category'))
@@ -126,12 +126,17 @@ class ServiceProviderController extends AdminController
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
+    protected function detail()
     {
         // $show = new Show(ServiceProvider::findOrFail($id));
-        $service_provider = ServiceProvider::findOrFail($id);
+        $service_providers = ServiceProvider::with('disability_categories', 'districts_of_operations')->paginate(8);
 
-        return view('admin.service-providers.show', compact('service_provider'));
+        $disabilities = Disability::all();
+        $districts = District::all();
+
+        $show = new Show($service_providers);
+
+        return view('admin.service-providers.show', ['service_providers' => $service_providers, 'districts' => $districts, 'disabilities' => $disabilities]);
 
         // $show->field('id', __('Id'));
         // $show->field('name', __('Name'));

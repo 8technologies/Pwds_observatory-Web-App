@@ -76,13 +76,42 @@ class JobController extends AdminController
      * @param mixed $id
      * @return Show
      */
-    protected function detail($id)
+    protected function detail()
     {
-        $job = Job::findOrFail($id);
-        $show = new Show($job);
+        $jobs = Job::all();
+        $show = new Show($jobs);
 
         return view('admin.jobs.show', [
-            'job' => $job
+            'jobs' => $jobs
+        ]);
+
+        // $show->field('id', __('Id'));
+        $show->field('created_at', __('Created at'));
+        $show->field('updated_at', __('Updated at'));
+        // $show->field('user_id', __('User id'));
+        $show->field('title', __('Title'));
+        $show->field('location', __('Location'));
+        $show->field('description', __('Description'))->as(function ($description) {
+            return strip_tags($description);
+        });
+        $show->field('type', __('Type'));
+        $show->field('minimum_academic_qualification', __('Minimum academic qualification'));
+        $show->field('required_experience', __('Required experience'));
+        $show->field('photo', __('Photo'))->image();
+        $show->field('how_to_apply', __('How to apply'));
+        $show->field('hiring_firm', __('Hiring firm'));
+        $show->field('deadline', __('Deadline'));
+
+        return $show;
+    }
+
+    protected function search_job()
+    {
+        $jobs = Job::all();
+        $show = new Show($jobs);
+
+        return view('admin.jobs.show', [
+            'jobs' => $jobs
         ]);
 
         // $show->field('id', __('Id'));

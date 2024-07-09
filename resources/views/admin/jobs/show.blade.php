@@ -1,183 +1,139 @@
-<div class="container bg-white p-1 p-md-5">
-    <div class="d-md-flex justify-content-between">
-        <div>
-            {{-- <h2 class="m-0 p-0 text-dark h3 text-uppercase"><b>Suspect {{ ' - ' . $pwd->uwa_suspect_number  '-' }}</b> --}}
-            </h2>
-        </div>
-        <div class="mt-3 mt-md-0">
-            @isset($_SERVER['HTTP_REFERER'])
-                <a href="{{ $_SERVER['HTTP_REFERER'] }}" class="btn btn-secondary btn-sm"><i class="fa fa-chevron-left"></i>
-                    BACK
-                    TO ALL LIST</a>
-            @endisset
-            <a href="{{ admin_url('jobs/' . $job->id . '/edit') }}" class="btn btn-warning btn-sm"><i
-                    class="fa fa-edit"></i>
-                EDIT</a>
-            <a href="#" onclick="window.print();return false;" class="btn btn-primary btn-sm"><i
-                    class="fa fa-print"></i> PRINT</a>
-        </div>
-    </div>
-    <hr class="my-3 my-md-4">
-    <div class="row">
-        <div class="col-3 col-md-2">
-            <div class="border border-1 rounded bg-">
-                @if ($job->photo == null)
-                    <img class="img-fluid" src="{{ asset('assets/img/user-1.png') }}" width="250" height="500">
-                @else
-                    <img class="img-fluid" src="{{ asset('storage/' . $job->photo) }}" width="250" height="500">
-                @endif
-            </div>
-        </div>
-        <div class="col-9 col-md-5">
-            <h3 class="text-uppercase h4 p-0 m-0"><b>About the Job</b></h3>
-            <hr class="my-1 my-md-3">
-
-            @include('components.detail-item', [
-                't' => 'Title',
-                's' => $job->title,
-            ])
-
-            @include('components.detail-item', ['t' => 'Location', 's' => $job->location])
-            @include('components.detail-item', ['t' => 'Hiring Firm', 's' => $job->hiring_firm])
-            @include('components.detail-item', ['t' => 'Created At', 's' => $job->created_at])
-
-        </div>
-
-        <div class="col-9 col-md-5">
-            <h3 class="text-uppercase h4 p-0 m-0"><b>Status</b></h3>
-            <hr class="my-1 my-md-3">
-
-            @include('components.detail-item', [
-                't' => 'Deadline',
-                's' => $job->deadline,
-            ])
-            @include('components.detail-item', [
-                't' => 'Days Remaining',
-                's' => $job->days_remaining,
-            ])
-            @include('components.detail-item', [
-                't' => 'Status',
-                's' => $job->status,
-            ])
-
-
-
-        </div>
-
-    </div>
-
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Description</b></h3>
-    <hr class="m-0 pt-0">
-
-    <p>{{ strip_tags($job->description) }}</p>
-
-
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Minimum Qualification</b></h3>
-    <hr class="m-0 pt-0">
-
-    <p>{{ $job->minimum_academic_qualification }}</p>
-
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Required Experience</b></h3>
-    <hr class="m-0 pt-0">
-
-    <p>{{ $job->required_experience }}</p>
-
-    <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>How to Apply:</b></h3>
-    <hr class="m-0 pt-0">
-
-    <p>{{ $job->how_to_apply }}</p>
-
-    {{-- <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-    <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>ACADEMIC QUALIFACTION</b></h3>
-    <hr class="m-0 pt-0 mb-3">
-    <table class="table table-bordered table-striped table-hover">
-        <tr class="text-bold">
-            <td>Institution</td>
-            <td>Qualification</td>
-            <td>Year Of Completion</td>
-        </tr>
-
-        @foreach ($pwd->academic_qualifications as $record)
-            <tr>
-                <td>{{ $record->institution }}</td>
-                <td>{{ $record->qualification }}</td>
-                <td>{{ $record->year_of_completion }}</td>
-            </tr>
-        @endforeach
-
-    </table>
-
-    @if ($pwd->is_employed == 1)
-        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Current Employment</b></h3>
-        <hr class="m-0 pt-0">
-        <table class="table table-bordered table-striped table-hover">
-            <tr class="text-bold">
-                <td>Name</td>
-                <td>Position</td>
-                <td>Duration</td>
-            </tr>
-            <tr>
-                <td>{{ $pwd->employer }}</td>
-                <td>{{ $pwd->position }}</td>
-                <td>{{ $pwd->year_of_employment }}</td>
-            </tr>
-
-        </table>
-    @endif
-
-    @if ($pwd->is_formerly_employed)
-
-        <hr class="mt-4 mb-2 border-primary pb-0 mt-md-5 mb-md-5">
-        <h3 class="text-uppercase h4 p-0 m-0 text-center"><b>Previous Employment</b></h3>
-        <hr class="m-0 pt-0 mb-3">
-        <table class="table table-bordered table-striped table-hover">
-            <tr class="text-bold">
-                <td>Name</td>
-                <td>Position</td>
-                <td>Duration</td>
-            </tr>
-
-            @foreach ($pwd->employment_history as $record)
-                <tr>
-                    <td>{{ $record->employer }}</td>
-                    <td>{{ $record->position }}</td>
-                    <td>{{ $record->year_of_employment }}</td>
-                </tr>
-            @endforeach
-
-        </table>
-
-    @endif --}}
-
-
-</div>
+<?php
+use App\Models\PostCategory;
+use App\Models\NewsPost;
+use App\Models\Utils;
+if (!isset($header_style)) {
+    $header_style = 11;
+}
+?>
 <style>
-    .content-header {
-        display: none;
+    .pagination {
+        font-size: 3rem;
+
+    }
+
+    .pagination a:hover {
+        background-color: rgb(55, 162, 224);
+        color: white;
+    }
+
+    /* Example CSS */
+    .pagination .page-item.active .page-link {
+        background-color: rgb(55, 162, 224);
+        color: white;
     }
 </style>
 
+<!-- Post title + Meta  -->
+<div class="container">
+    <div class="row">
+        {{-- <div class="col-md-12 text-center">
+                <h3 class="all-jobs mb-4"><span class="text-primary">View Available Jobs</span></h3>
+            </div> --}}
+        {{-- <div class="col-md-12 text-center">
+            <form action="{{ route('job_search') }}" method="GET" class="form-inline d-flex justify-content-center">
+                <div class="form-group mx-2">
+                    <input class="form-control" type="search" name="title_search" placeholder="Search by title/profession"
+                        aria-label="Search" value="{{ request('title_search') }}">
+                </div>
+                <div class="form-group mx-2">
+                    <input class="form-control" type="search" name="location_search" placeholder="Search by location"
+                        aria-label="Search" value="{{ request('location_search') }}">
+                </div>
+                <button class="btn btn-outline-success mx-2" type="submit">Search</button>
+            </form>
+        </div> --}}
+    </div>
+    <h1 class="mt-5 mb-4 text-center" style="color:rgb(72, 171, 228);">Jobs Portal</h1>
+    {{-- Filtering Jobs that have not expired yet --}}
+    @php
+        $activeJobs = $jobs->filter(function ($job) {
+            return $job->status === 'Active';
+        });
+    @endphp
+
+    @if ($activeJobs->isEmpty())
+        <p>No jobs available.</p>
+    @else
+        <div class="container jobs-display">
+            <div class="row">
+                @foreach ($activeJobs as $job)
+                    <div class="col-md-4">
+                        <div class="card card-style">
+                            <div class="card-body">
+                                <h4 style="font-size: 24px;">{{ $job->title }}</h4>
+                                <p><strong>Location:</strong> <span class="fw-bold">{{ $job->location }}</span></p>
+                                <p>
+                                    <strong>Hiring Firm: </strong>
+                                    <span style="color: green">{{ $job->hiring_firm }}</span>
+                                </p>
+                                <p><strong>Type:</strong> <span class="fw-bold">{{ $job->type }}</span></p>
+                                <p><strong>Created Date:</strong> <span
+                                        class="fw-bold">{{ $job->created_at->format('Y-m-d') }}</span></p>
+                                <p><strong>Deadline:</strong> <span class="fw-bold">{{ $job->deadline }}</span></p>
+                                {{-- <p>
+                                    <strong>Days to Close:</strong>
+                                    <span style="color:red">{{ $job->days_remaining }} days remaining</span>
+                                </p> --}}
+                                @php
+                                    $description = strip_tags($job->description);
+                                    $shortDescription = Str::limit($description, 400);
+                                @endphp
+                                <div id="short_{{ $job->id }}" class="text">
+                                    {!! $shortDescription !!}
+                                    @if (str_word_count($description) > 200)
+                                        <span onclick="expandText('{{ $job->id }}')"
+                                            class="read-more text-primary">...........Read More</span>
+                                    @endif
+                                </div>
+
+                                <div id="full_{{ $job->id }}" class="text full-text" style="display: none;">
+                                    {!! $job->description !!}
+                                    <span onclick="collapseText('{{ $job->id }}')"
+                                        class="read-less text-primary">........Read Less</span>
+                                </div>
+                                <p>
+                                    <strong>Required Experience: </strong>
+                                    <span>{{ $job->required_experience }}</span>
+                                </p>
+                                <p>
+                                    <strong>How to apply: </strong>
+                                    <span>{{ $job->how_to_apply }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
+        <hr>
+        {{-- {{ $jobs->links() }} --}}
+    @endif
+
+    {{-- <div class="row">
+        <div class="col-md-4">
+            {{ $jobs->links('pagination::simple-bootstrap-4') }}
+        </div>
+    </div> --}}
+
+</div>
+</div>
 
 
-{{-- Full texts
-id Descending 1	
-created_at	
-updated_at	
-user_id	
-title	
-location	
-description	
-type	
-minimum_academic_qualification	
-required_experience	
-photo	
-how_to_apply	
-hiring_firm	
-deadline	
-days_remaining	
-status	 --}}
+
+<script>
+    function expandText(id) {
+        var shortText = document.getElementById('short_' + id);
+        var fullText = document.getElementById('full_' + id);
+        shortText.style.display = 'none';
+        fullText.style.display = 'block';
+    }
+
+    function collapseText(id) {
+        var shortText = document.getElementById('short_' + id);
+        var fullText = document.getElementById('full_' + id);
+        shortText.style.display = 'block';
+        fullText.style.display = 'none';
+    }
+</script>
