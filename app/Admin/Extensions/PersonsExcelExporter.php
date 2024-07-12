@@ -13,8 +13,9 @@ class PersonsExcelExporter extends ExcelExporter
         'other_names' => 'Other Names',
         'id_number' => 'ID Number',
         'sex' => 'Gender',
-        'dob' => 'Date ',
-        'district_of_origin' => 'District of Origin',
+        'dob' => 'Date Of Birth ',
+        'district_id' => 'District of Residence',
         'profiler' => 'Profiler',
+        'disabilities' => 'Disability Category'
     ];
 }
