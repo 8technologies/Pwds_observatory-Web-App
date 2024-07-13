@@ -31,7 +31,7 @@ class OPDDashboardController extends Controller
             Utils::check_default_organisation();
             $organisation = Organisation::find($user->organisation_id);
             if ($organisation == null) {
-                return redirect()->back()->with('error', 'Organisation not found');
+                return redirect()->route('login')->with('error', 'Organisation not found');
             }
         }
         $content
