@@ -29,7 +29,7 @@ class DuDashboardController extends Controller
             Utils::check_default_organisation();
             $organisation = Organisation::find($user->organisation_id);
             if ($organisation == null) {
-                die("Organisation not found");
+                return redirect()->back()->with('error', 'Organisation not found');
             }
         }
         $content
@@ -155,14 +155,14 @@ class DuDashboardController extends Controller
             });
         });
 
-        $content->row(function (Row $row) {
-            $row->column(6, function (Column $column) {
-                $column->append(Dashboard::dashboard_events());
-            });
-            $row->column(6, function (Column $column) {
-                $column->append(Dashboard::dashboard_news());
-            });
-        });
+        // $content->row(function (Row $row) {
+        //     $row->column(6, function (Column $column) {
+        //         $column->append(Dashboard::dashboard_events());
+        //     });
+        //     $row->column(6, function (Column $column) {
+        //         $column->append(Dashboard::dashboard_news());
+        //     });
+        // });
         return $content;
         return $content
             ->title('Dashboard')
