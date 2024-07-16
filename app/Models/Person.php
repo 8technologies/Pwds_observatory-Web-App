@@ -121,6 +121,22 @@ class Person extends Model
     {
         parent::boot();
 
+        //created
+
+        static::created(function ($person) {
+            try {
+                $person->process_cats();
+            } catch (\Throwable $th) {
+            }
+        });
+
+        static::updated(function ($person) {
+            try {
+                $person->process_cats();
+            } catch (\Throwable $th) {
+            }
+        });
+
         static::creating(function ($person) {
             //Checking for duplicates in Person
 
@@ -148,6 +164,7 @@ class Person extends Model
             }
 
             $person->district_of_residence = $person->district_id;
+            $person->categories_pricessed = 'No';
         });
 
         static::saving(function ($person) {
@@ -180,6 +197,7 @@ class Person extends Model
             $person->village = ucfirst(strtolower($person->village));
             $person->profiler = ucfirst(strtolower($person->profiler));
             $person->is_approved = 1;
+            $person->categories_pricessed = 'No';
 
             if ($person->is_employed == 0) {
                 $person->employment_status = 'Unemployed';
@@ -225,5 +243,33 @@ class Person extends Model
 
         // Allow the creation of the new person
         return true;
+    }
+
+    public function process_cats()
+    {
+        $cats = $this->disabilities;
+        $ifFirst = false;
+        $cats_text = '';
+
+        foreach ($cats as $key => $d) {
+            if (!$ifFirst) {
+                $cats_text = $d->name;
+                $ifFirst = true;
+            } else {
+                $cats_text = $cats_text . ', ' . $d->name;
+            }
+        }
+        if (strlen($cats_text) < 2) {
+            //update sql, set processed yes
+            $sql = "update people set categories_pricessed = 'Yes' where id = " . $this->id;
+            DB::update($sql);
+        }
+
+        //sql escape
+        $cats_text = str_replace("'", "''", $cats_text);
+
+        //update sql
+        $sql = "update people set categories = '" . $cats_text . "', categories_pricessed = 'Yes' where id = " . $this->id;
+        DB::update($sql);
     }
 }
