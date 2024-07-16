@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Disability;
 use App\Models\District;
 use App\Models\Event;
+use App\Models\Innovation;
 use App\Models\Job;
 use App\Models\NewsPost;
 use Encore\Admin\Auth\Database\Administrator;
@@ -136,23 +137,16 @@ class MainController extends BaseController
 
 
 
-  public function dinner()
+  public function dinner(Request $r)
   {
-    $p = Event::find(1);
-    if ($p == null) {
-      die("Post not found.");
-    }
-    return view('dinner', [
-      'd' => $p
-    ]);
+    $p = Event::findOrFail($r->id);
+
+    return view('dinner', ['d' => $p]);
   }
 
   public function news(Request $r)
   {
-    $p = NewsPost::find($r->id);
-    if ($p == null) {
-      die("Post not found.");
-    }
+    $p = NewsPost::findOrFail($r->id);
 
     $posts = [];
     foreach (NewsPost::all() as $key => $v) {
@@ -256,8 +250,8 @@ class MainController extends BaseController
    */
   public function jobs(Request $r)
   {
-    $jobs = \App\Models\Job::orderBy('id', 'desc')->paginate(8);
-    return view('jobs/index', [
+    $jobs = Job::orderBy('id', 'desc')->paginate(8);
+    return view('jobs.index', [
       'jobs' => $jobs
     ]);
   }
@@ -315,10 +309,8 @@ class MainController extends BaseController
    */
   public function job(Request $r)
   {
-    $job = \App\Models\Job::find($r->id);
-    if ($job == null) {
-      die("Job not found.");
-    }
+    $job = Job::findOrFail($r->id);
+
     return view('job', [
       'job' => $job
     ]);
@@ -329,7 +321,7 @@ class MainController extends BaseController
    */
   public function disabilities(Request $r)
   {
-    $disabilities = \App\Models\Disability::paginate(12);
+    $disabilities = Disability::paginate(12);
     return view('disabilities.index', [
       'disabilities' => $disabilities
     ]);
@@ -340,10 +332,8 @@ class MainController extends BaseController
    */
   public function disability(Request $r)
   {
-    $disability = \App\Models\Disability::find($r->id);
-    if ($disability == null) {
-      die("Disability not found.");
-    }
+    $disability = Disability::findOrFail($r->id);
+
     return view('disabilities.show', [
       'disability' => $disability
     ]);
@@ -354,7 +344,7 @@ class MainController extends BaseController
    */
   public function innovations(Request $r)
   {
-    $innovations = \App\Models\Innovation::orderBy('id', 'desc')->paginate(8);
+    $innovations = Innovation::orderBy('id', 'desc')->paginate(8);
     return view('innovations', [
       'innovations' => $innovations
     ]);
@@ -365,10 +355,8 @@ class MainController extends BaseController
    */
   public function innovation(Request $r)
   {
-    $innovation = \App\Models\Innovation::find($r->id);
-    if ($innovation == null) {
-      die("Innovation not found.");
-    }
+    $innovation = Innovation::findOrFail($r->id);
+
     return view('innovation', [
       'innovation' => $innovation
     ]);

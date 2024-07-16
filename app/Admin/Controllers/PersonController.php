@@ -126,6 +126,7 @@ class PersonController extends AdminController
                 $levels = [
                     'PHD' => 'PHD',
                     'Masters' => 'Master\'s Degree',
+                    'Post-Graduate' => 'Post Graduate',
                     'Bachelors' => 'Bachelor\'s Degree',
                     'Diploma' => 'Diploma',
                     'Secondary-UACE' => 'Secondary - UACE',
@@ -150,13 +151,15 @@ class PersonController extends AdminController
             }
         )->sortable();
 
-        $grid->column('profiler', __('Profiler'))->display(function ($profiler) {
-            if (!$profiler) {
-                return "Self Registered";
-            } else {
-                return $profiler;
-            }
-        });
+        $grid->column('profiler', __('Profiler'));
+
+        // $grid->column('profiler', __('Profiler'))->display(function ($profiler) {
+        //     if (!$profiler) {
+        //         return "Self Registered";
+        //     } else {
+        //         return $profiler;
+        //     }
+        // });
 
         $grid->column('disabilities', __('Disabilities'))
             ->display(
@@ -298,11 +301,16 @@ class PersonController extends AdminController
         $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
         $form->email('email', __('Email'))->placeholder('Email');
         $form->divider();
-        $form->text('id_number', __('ID Number'))->placeholder('ID Number')
-            ->help("NIN, Passport Number, Driving Permit Number");
+        $form->radio('id_type', __('ID Type'))->options([
+            'NIN Number' => 'NIN Number', 'Driving Permit' => 'Driving Permit', 'Passport Number' => 'Passport Number'
+        ])->when('NIN Number', function (Form $form) {
+            $form->text('id_number', 'NIN Number')->placeholder('NIN Number');
+        })->when('Driving Permit', function (Form $form) {
+            $form->text('id_number', 'Driving Permit Number')->placeholder('Driving Permit Number');
+        })->when('Passport Number', function (Form $form) {
+            $form->text('id_number', 'Passport Number')->placeholder('Passport Number');
+        })->help("NIN, Passport Number, Driving Permit Number");
         $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
-
-
 
         $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
         $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
@@ -313,15 +321,17 @@ class PersonController extends AdminController
         $form->text('ethnicity', __('Ethnicity'))->help('Your Tribe');
         $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic', 'Born Again Christian' => 'Born Again Christian', 'Other Christian Faith' => 'Other Christan Faith', 'Islam' => 'Islam']);
 
-        $form->divider('Academics');
+        $form->divider('Education');
         $form->select('education_level', __('Education'))->options(
             ['formal Education' => 'Formal Education', 'informal Education' => 'Informal Education', 'no Education' => 'No Education']
         )
             ->when('formal Education', function (Form $form) {
-                $form->select('is_formal_education', __('Formal Education'))->options(['PHD' => 'PHD', 'Masters' => 'Masters', 'Bachelors' => 'Bachelors', 'Diploma' => 'Diploma', 'Secondary-UACE' => 'Secondary-UACE', 'Secondary-UCE' => 'Secondary-UCE', 'Primary' => 'Primary'])->rules('required')
+                $form->select('is_formal_education', __('Formal Education'))->options(['PHD' => 'PHD', 'Masters' => 'Masters', 'Post-Graduate' => 'Post Graduate', 'Bachelors' => 'Bachelors', 'Diploma' => 'Ordinary Diploma', 'Secondary-UACE' => 'Secondary-UACE', 'Secondary-UCE' => 'Secondary-UCE', 'Primary' => 'Primary'])->rules('required')
                     ->when('PHD', function (Form $form) {
                         $form->text('indicate_class', 'Indicate class')->placeholder('Class');
                     })->when('Masters', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Post-Graduate', function (Form $form) {
                         $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
                     })->when('Bachelors', function (Form $form) {
                         $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
@@ -334,6 +344,7 @@ class PersonController extends AdminController
                     })->when('Primary', function (Form $form) {
                         $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
                     });
+                $form->text('field_of_study', __('Field of Study'));
             })->rules('required')
             ->when('informal Education', function (Form $form) {
                 $form->text('informal_education', __('Informal Education'))->placeholder("Enter any informal education forexample: tailoring, carpentry, etc")->rules('required');
@@ -354,6 +365,8 @@ class PersonController extends AdminController
             ->when(1, function (Form $form) {
                 $form->radio('employment_status', __('Indicate type of Employment'))->options(['formal employment' => 'Formal Employment', 'self employment' => 'Self Employment'])->rules('required')
                     ->when('formal employment', function (Form $form) {
+                        $form->text('position', __('Title'));
+                        $form->text('employer', __('Employer Name'));
                         $form->hasMany('employment_history', 'Previous Employment', function (Form\NestedForm $form) {
                             $form->text('employer', __('Employer Name'));
                             $form->text('position', __('Position'))->placeholder("Position");
@@ -420,10 +433,10 @@ class PersonController extends AdminController
         $form->divider('Aspirations');
         $form->quill('aspirations', __('Aspirations'));
 
-        if (!$user->inRoles(['district-union', 'opd'])) {
-            $form->html('
-        <button type="submit" class="btn btn-primary float-right">Submit</button>');
-        }
+        // if (!$user->inRoles(['district-union', 'opd'])) {
+        //     $form->html('
+        // <button type="submit" class="btn btn-primary float-right">Submit</button>');
+        // }
 
 
         if (Admin::user()->inRoles(['district-union', 'opd'])) {

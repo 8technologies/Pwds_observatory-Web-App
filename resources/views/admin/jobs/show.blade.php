@@ -28,6 +28,7 @@ if (!isset($header_style)) {
         height: 500px;
         overflow: auto;
         padding: 10px;
+        margin-bottom: 5px;
     }
 
     .card-title {
@@ -38,15 +39,21 @@ if (!isset($header_style)) {
         padding: 10px;
         border-radius: 5px;
     }
+
+    .card-object {
+        margin-bottom: 20px;
+        width: 100%;
+    }
 </style>
 
 <!-- Post title + Meta  -->
 <div class="container">
-    <div class="row">
-        {{-- <div class="col-md-12 text-center">
+    <h1 class="mt-5 mb-4 text-center" style="color:rgb(72, 171, 228);">Jobs Portal</h1>
+    {{-- <div class="row"> --}}
+    {{-- <div class="col-md-12 text-center">
                 <h3 class="all-jobs mb-4"><span class="text-primary">View Available Jobs</span></h3>
             </div> --}}
-        {{-- <div class="col-md-12 text-center">
+    {{-- <div class="col-md-12 text-center">
             <form action="{{ route('job_search') }}" method="GET" class="form-inline d-flex justify-content-center">
                 <div class="form-group mx-2">
                     <input class="form-control" type="search" name="title_search" placeholder="Search by title/profession"
@@ -59,8 +66,7 @@ if (!isset($header_style)) {
                 <button class="btn btn-outline-success mx-2" type="submit">Search</button>
             </form>
         </div> --}}
-    </div>
-    <h1 class="mt-5 mb-4 text-center" style="color:rgb(72, 171, 228);">Jobs Portal</h1>
+    {{-- </div> --}
     {{-- Filtering Jobs that have not expired yet --}}
     @php
         $activeJobs = $jobs->filter(function ($job) {
@@ -74,7 +80,7 @@ if (!isset($header_style)) {
         <div class="container jobs-display">
             <div class="row">
                 @foreach ($activeJobs as $job)
-                    <div class="col-md-4">
+                    <div class="col-md-4 card-object">
                         <div class="card card-style">
                             <div class="card-body-fixed">
                                 <h4 class="card-title">{{ $job->title }}</h4>
@@ -127,13 +133,15 @@ if (!isset($header_style)) {
         {{-- {{ $jobs->links() }} --}}
     @endif
 
-    {{-- <div class="row">
+    <div class="row">
         <div class="col-md-4">
             {{ $jobs->links('pagination::simple-bootstrap-4') }}
         </div>
-    </div> --}}
+    </div>
 
 </div>
+
+<div class="swiper-pagination position-relative pt-2 pt-sm-3 mt-4"></div>
 </div>
 
 

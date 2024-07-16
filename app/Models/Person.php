@@ -7,8 +7,9 @@ use Encore\Admin\Facades\Admin;
 use Error;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Client\Request as ClientRequest;
+use Illuminate\Http\Request;
+
 
 class Person extends Model
 {
@@ -204,20 +205,22 @@ class Person extends Model
         }
     }
 
-    public function addPerson()
+    public function addPerson(Request $request)
     {
-        $person_name = $this->name . ' ' . $this->other_names;
-        $person_age = $this->age;
+        // Check for duplicates
+        $person_age = $request->input('age');
+        $person_name = $request->input('name');
+        $person_other_name = $request->input('other_name');
+        $person_full_name = $person_name . " " . $person_other_name;
 
         // Check for duplicates
-        $duplicate = self::where('name', $this->name)
-            ->where('other_names', $this->other_names)
+        $duplicate = self::where('name', $person_full_name)
             ->where('age', $person_age)
             ->first();
 
         if ($duplicate) {
-            Log::info('Duplicate person found: ' . $person_name . ', Age: ' . $person_age);
-            die('Person already exists in the database');
+            return redirect()->route('people', ['person' => $duplicate->id]) // Use the existing person's ID
+                ->with('success', $person_name . ' already exists in the database');
         }
 
         // Allow the creation of the new person

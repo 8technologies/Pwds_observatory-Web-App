@@ -132,15 +132,6 @@ class OPDController extends AdminController
         });
         $show->divider();
 
-        //     foreach($obj->attachments as $attachment){
-        //         $show->field('attachments', __('Attachments'))->unescape()->as(function ($attachments) {
-        //             return Arr::map($attachments,function ($attachment) {
-        //                 return '<a href="'.$attachment->downloadable().'" target="_blank">'.$attachment->name.'</a>';
-        //             })->implode('<br>');
-        //         });
-        //     }
-        // //    $show->multipleFile($obj->attachments->downloadable();
-
         return $show;
     }
 

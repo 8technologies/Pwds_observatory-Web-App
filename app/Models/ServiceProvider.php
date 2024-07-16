@@ -41,7 +41,7 @@ class ServiceProvider extends Model
     {
         return json_decode($value);
     }
-
+    //Many to many for districts and service providers
     public function districts_of_operations()
     {
         return $this->belongsToMany(District::class)->withTimestamps();

@@ -28,6 +28,19 @@ if (!isset($header_style)) {
 
     }
 
+    .card-body-fixed {
+        width: 100%;
+        height: 400px;
+        overflow: auto;
+        padding: 10px;
+        margin-bottom: 5px;
+    }
+
+    .card-object {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
     .card-title {
         color: #ffffff;
         font-size: 18px;
@@ -35,6 +48,10 @@ if (!isset($header_style)) {
         margin: 0px;
         padding: 10px;
         border-radius: 5px;
+    }
+
+    .card-text {
+        font-size: 16px;
     }
 </style>
 
@@ -80,8 +97,8 @@ if (!isset($header_style)) {
         <div class="row">
             @foreach ($counselingCentres as $centre)
                 <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
+                    <div class="card mb-4 card-object">
+                        <div class="card-body-fixed">
                             <h5 class="card-title" style="font-size: 24px;">{{ ucwords($centre->name) }}</h5>
                             @if ($centre->about)
                                 <p class="card-text"><strong class="centre-item">About The Centre:

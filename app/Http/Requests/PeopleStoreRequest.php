@@ -35,6 +35,7 @@ class PeopleStoreRequest extends FormRequest
             'disabilities.*' => 'required|exists:disabilities,id',
             'dob' => 'required|date_format:d-m-Y',
             'district_of_origin' => 'required',
+            'district_id' => 'required',
             'village' => 'required',
             'sub_county' => 'required',
             "profiler" => 'required',
@@ -42,7 +43,7 @@ class PeopleStoreRequest extends FormRequest
             'is_formal_education' => [
                 'required_if:education_level,Formal Education',
                 'nullable',
-                'in:Primary,Secondary-UCE,Secondary-UACE,Bachelors, Masters, PHD'
+                'in:Primary,Secondary-UCE,Secondary-UACE, Ordinary Diploma, Bachelors, Postgraduate, Masters, PHD'
             ],
             'informal_education' => 'required_if:education_level,Informal Education|nullable|string',
         ];
