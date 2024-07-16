@@ -16,6 +16,6 @@ class PersonsExcelExporter extends ExcelExporter
         'dob' => 'Date Of Birth ',
         'district_id' => 'District of Residence',
         'profiler' => 'Profiler',
-        'disabilities' => 'Disability Category'
+        'categories' => 'Disability Category'
     ];
 }

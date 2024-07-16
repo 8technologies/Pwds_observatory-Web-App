@@ -54,6 +54,7 @@ class PersonController extends AdminController
             $grid->disableCreateButton();
         }
 
+
         $grid->filter(function ($filter) {
             // Remove the default id filter
             $filter->disableIdFilter();
@@ -85,7 +86,10 @@ class PersonController extends AdminController
         //     $grid->model()->orderBy('id', 'desc');
         // }
 
+
+
         $grid->exporter(new PersonsExcelExporter());
+
         $grid->disableBatchActions();
 
         // $grid->column('id', __('Id'))->sortable();
@@ -158,8 +162,8 @@ class PersonController extends AdminController
             }
         });
 
-        $grid->column('disabilities', __('Disabilities'))
-            ->display(
+        $grid->column('categories', __('Disabilities'))
+            /* ->display(
                 function ($x) {
                     //disabilities in badges
                     if ($this->disabilities()->count() > 0) {
@@ -171,7 +175,9 @@ class PersonController extends AdminController
                         return '-';
                     }
                 }
-            )->style('max-width:200px;word-break:break-all;');
+            ) */->style('max-width:200px;word-break:break-all;')
+            ->sortable()
+            ->filter('%like%');
 
         $grid->column('is_approved', __('Approval'))->display(function ($x) {
             if ($x == 1) {
@@ -180,6 +186,16 @@ class PersonController extends AdminController
                 return "<span class='badge badge-danger'>No</span>";
             }
         });
+        $grid->column('categories_pricessed', __('Processed'))
+            ->using(['Yes' => 'Yes', 'No' => 'No'])
+            ->label([
+                'Yes' => 'success',
+                'No' => 'danger',
+            ])->sortable()
+            ->filter([
+                'Yes' => 'Yes',
+                'No' => 'No',
+            ])->hide();
         return $grid;
     }
 

@@ -556,11 +556,22 @@ DELETE FROM people WHERE id > 8954
         Please this form to apply for your ticket now! {$btn}"
         );
     }
+    public static function process_categories()
+    {
+        $unprocess = Person::where('categories_pricessed', '!=', 'Yes')
+            ->orderBy('id', 'desc')
+            ->limit(10000)->get();
+        foreach ($unprocess as $key => $p) {
+            $p->process_cats();
+        }
+    }
     public static function system_boot()
     {
+
         $u = Admin::user();
 
         if ($u != null) {
+            self::process_categories();
             $r = AdminRoleUser::where([
                 'user_id' => $u->id
             ])->first();
