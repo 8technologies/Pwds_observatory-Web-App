@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\DB;
 
 class Person extends Model
 {
