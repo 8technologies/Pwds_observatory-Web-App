@@ -9,6 +9,7 @@ use App\Models\Location;
 use App\Models\Utils;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -42,6 +43,13 @@ class CounsellingCentreController extends AdminController
                 $actions->disableDelete();
             }
         });
+        if (!Admin::user()->inRoles(['administrator', 'nudipu'])) {
+            $grid->disableCreateButton();
+            $grid->actions(function ($actions) {
+                $actions->disableDelete();
+                $actions->disableEdit();
+            });
+        }
 
 
         $grid->filter(function ($f) {

@@ -1,23 +1,39 @@
 {{-- View for Creating bar Chart for representing number of people with Disability per district --}}
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">Percentage Of PWDs By Gender</h5>
-        </div>
-        <div class="col-md-12" id="item-select">
-            <label for="districtSelect">
-                <select id="districtSelect" onchange="updateDistrict()" class="form-select">
-                    <option value="">All Districts</option>
-                    @foreach ($barChart->pluck('district')->unique() as $district)
-                        <option value="{{ $district }}">{{ $district }}</option>
-                    @endforeach
-                </select>
-            </label>
-        </div>
-    </div>
+<style>
+    #card-element {
+        background: #ffffff;
+        margin: 10px;
+        padding: 10px;
+        height: 400px;
+        width: 100%;
+    }
 
-    <div class="chart-container p-2 mb-2">
-        <canvas id="pieChart"></canvas>
+    .body-element {
+        margin: 10px;
+        padding: 10px;
+
+    }
+
+    .chart-container {
+        height: 300px;
+        width: 100%;
+    }
+</style>
+
+<div class="card" id="card-element">
+    <div class="card-body" id="body-element">
+        <h5 class="card-text text-center">Percentage Of PWDs By Gender</h5>
+        <label for="districtSelect">
+            <select id="districtSelect" onchange="updateDistrict()" class="form-select">
+                <option value="">All Districts</option>
+                @foreach ($barChart->pluck('district')->unique() as $district)
+                    <option value="{{ $district }}">{{ $district }}</option>
+                @endforeach
+            </select>
+        </label>
+        <div class="chart-container p-2 mb-2">
+            <canvas id="pieChart"></canvas>
+        </div>
     </div>
 </div>
 

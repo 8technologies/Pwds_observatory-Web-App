@@ -1,21 +1,17 @@
 {{-- This is the view file for the chart. It uses the Chart.js library to display the chart for DUs and OPDs per region.  --}}
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">District Unions Vs NOPDs Per Region</h5>
+<div class="card text-center" id="card-element">
+    <div class="card-body" id="body-element">
+        <h5 class="card-text text-center">District Unions Vs NOPDs Per Region</h5>
+        <label for="organisationType">
+            <select name="organisationType" id="organisationType" class="form-select">
+                <option value="all">Show All</option>
+                <option value="du">District Unions</option>
+                <option value="opd">NOPDs</option>
+            </select>
+        </label>
+        <div class="chart-container">
+            <canvas id="regionChart"></canvas>
         </div>
-        <div class="col-12" id="item-select">
-            <label for="organisationType">
-                <select name="organisationType" id="organisationType" class="form-select">
-                    <option value="all">Show All</option>
-                    <option value="du">District Unions</option>
-                    <option value="opd">NOPDs</option>
-                </select>
-            </label>
-        </div>
-    </div>
-    <div class="chart-container">
-        <canvas id="regionChart"></canvas>
     </div>
 </div>
 

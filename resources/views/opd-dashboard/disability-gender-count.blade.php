@@ -1,78 +1,30 @@
 <style>
-    .chart-container {
-        position: relative;
-        margin: auto;
-        width: 100%;
-        height: 50vh;
-        padding-bottom: 5px;
-        /* 70% of the viewport height */
-    }
-
-    #chart-content {
-        height: 10vh;
-        /* 10% of the viewport height */
-        width: 100%;
-        line-height: 4px;
-    }
-
-    #chart-description {
-        height: 52vh;
-        /* Adjust the height as needed */
-        width: 100%;
-
-    }
-
-    #heading {
-        padding: 2px;
-        ;
-    }
-
-    #heading .text-center {
-        font-weight: 500;
-        font-family: "Roboto Mono", sans-serif;
-        font-style: normal;
-        font-size: 16px;
-    }
-
-
-    #item-select {
-        height: 10vh;
-        /* Adjust the height as needed */
-        width: 100%;
-    }
-
-    #item-select label {
-        font-weight: light;
-        font-family: "Roboto", sans-serif;
-        font-style: normal;
-        font-size: 15px;
-        padding: auto;
-        margin: auto;
-
-    }
-
-    @media only screen and (min-width: 768px) {
-        .chart-container {
-            height: 300px;
-            /* Shorter on small devices */
-        }
-
-    }
-
     .card {
-        background-color: #fff;
+        background: #ffffff;
         margin: 10px;
+        padding: 10px;
+        height: 400px;
+        width: 100%;
+    }
+
+    .card-body {
+        margin: 10px;
+        padding: 10px;
+
+    }
+
+    .chart-container {
+        height: 300px;
+        width: 100%;
     }
 </style>
 
-<div class="container card pt-5 mb-5 bg-white" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">Percentage Of PWDs By Gender in {{ $opdName }}</h5>
+<div class="card text-center">
+    <div class="card-body">
+        <h5 class="card-text text-center">Percentage Of Person with Disabilities By Gender in {{ $opdName }}</h5>
+        <div class="chart-container p-2 mb-2">
+            <canvas id="opdGenderCount"></canvas>
         </div>
-    </div>
-    <div class="chart-container p-2 mb-2">
-        <canvas id="opdGenderCount"></canvas>
     </div>
 </div>
 

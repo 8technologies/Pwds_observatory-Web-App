@@ -78,7 +78,7 @@ class JobController extends AdminController
      */
     protected function detail()
     {
-        $jobs = Job::all();
+        $jobs = Job::paginate(8);
         $show = new Show($jobs);
 
         return view('admin.jobs.show', [
@@ -169,7 +169,7 @@ class JobController extends AdminController
             ])->rules('required');
         $form->text('required_experience', __('Required experience'));
         $form->image('photo', __('Photo'));
-        $form->textarea('how_to_apply', __('How to apply'));
+        $form->quill('how_to_apply', __('How to apply'));
         $form->text('hiring_firm', __('Hiring firm'));
         $form->quill('description', __('Description'));
 

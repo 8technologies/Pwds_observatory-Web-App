@@ -1,22 +1,19 @@
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">Employment Status by Gender</h5>
-        </div>
-        <div class="col-12" id="item-select">
-            <label for="EmploymentStatus">
-                <select id="opdEmploymentSelector" class="form-select">
-                    <option value="Formal Employment">Formal Employment</option>
-                    <option value="Self Employment">Self Employment</option>
-                    {{-- To be worked on --}}
-                    {{-- <option value="Unemployed">Unemployed</option> --}}
-                </select>
-            </label>
-        </div>
+<div class="card text-center">>
+    <div class="card-body">
+        <h5 class="card-text text-center">Employment Status by Gender</h5>
+        <label for="EmploymentStatus">
+            <select id="opdEmploymentSelector" class="form-select">
+                <option value="Formal Employment">Formal Employment</option>
+                <option value="Self Employment">Self Employment</option>
+                {{-- To be worked on --}}
+                {{-- <option value="Unemployed">Unemployed</option> --}}
+            </select>
+            <div class="chart-container">
+                <canvas id="opdEmploymentStatusChart"></canvas>
+            </div>
+        </label>
     </div>
-    <div class="chart-container p-2 mb-2">
-        <canvas id="opdEmploymentStatusChart"></canvas>
-    </div>
+
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

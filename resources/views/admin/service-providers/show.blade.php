@@ -36,6 +36,24 @@ if (!isset($header_style)) {
         padding: 10px;
         border-radius: 5px;
     }
+
+
+    .card-body-fixed {
+        width: 100%;
+        height: 400px;
+        overflow: auto;
+        padding: 10px;
+        margin-bottom: 5px;
+    }
+
+    .card-object {
+        margin-bottom: 20px;
+        width: 100%;
+    }
+
+    .card-text {
+        font-size: 16px;
+    }
 </style>
 
 
@@ -47,8 +65,8 @@ if (!isset($header_style)) {
         <div class="row">
             @foreach ($service_providers as $provider)
                 <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-body">
+                    <div class="card mb-4 card-object">
+                        <div class="card-body-fixed">
                             <h5 class="card-title">{{ $provider->name }}
                             </h5>
                             @if ($provider->disability_categories->isNotEmpty())

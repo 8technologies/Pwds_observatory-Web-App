@@ -1,12 +1,10 @@
 {{-- View for Creating bar Chart for representing number of service providers per target group --}}
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">Count Of Service Providers Per Target Group</h5>
+<div class="card text-center" id="card-element">
+    <div class="card-body" id="body-element">
+        <h5 class="card-text text-center">Count Of Service Providers Per Target Group</h5>
+        <div class="chart-container">
+            <canvas id="targetGroupChart"></canvas>
         </div>
-    </div>
-    <div class="chart-container">
-        <canvas id="targetGroupChart"></canvas>
     </div>
 </div>
 

@@ -1,20 +1,16 @@
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">PWDs Employment Status By Gender</h5>
+<div class="card text-center" id="card-element">
+    <div class="card-body" id="body-element">
+        <h5 class="card-text text-center">PWDs Employment Status By Gender</h5>
+        <label for="EmploymentStatus">
+            <select id="employmentStatusSelector" class="form-select">
+                <option value="Formal Employment">Formal Employment</option>
+                <option value="Self Employment">Self Employment</option>
+                <option value="Unemployed">Unemployed</option>
+            </select>
+        </label>
+        <div class="chart-container p-2 mb-2">
+            <canvas id="employmentStatusChart"></canvas>
         </div>
-        <div class="col-12" id="item-select">
-            <label for="EmploymentStatus">
-                <select id="employmentStatusSelector" class="form-select">
-                    <option value="Formal Employment">Formal Employment</option>
-                    <option value="Self Employment">Self Employment</option>
-                    <option value="Unemployed">Unemployed</option>
-                </select>
-            </label>
-        </div>
-    </div>
-    <div class="chart-container p-2 mb-2">
-        <canvas id="employmentStatusChart"></canvas>
     </div>
 </div>
 

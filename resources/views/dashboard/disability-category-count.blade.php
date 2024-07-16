@@ -1,22 +1,17 @@
-<div class="container card pt-5 mb-5" id='chart-description'>
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">Count Of PWDs by Disability Category</h5>
+<div class="card text-center" id="card-element">
+    <div class="card-body" id="body-element">
+        <h5 class="card-text text-center">Count Of PWDs by Disability Category</h5>
+        <label for="districtSelect">
+            <select name="districtSelector" id="districtSelector" onchange="UpdateCategory()" class="form-select">
+                <option value="all">All Districts</option>
+                @foreach ($districtDisabilityCounts as $districtName => $counts)
+                    <option value="{{ $districtName }}">{{ $districtName }}</option>
+                @endforeach
+            </select>
+        </label>
+        <div class="chart-container">
+            <canvas id="disabilityCountChart"></canvas>
         </div>
-        <div class="col-12" id="item-select">
-            <label for="districtSelect">
-                <select name="districtSelector" id="districtSelector" onchange="UpdateCategory()" class="form-select">
-                    <option value="all">All Districts</option>
-                    @foreach ($districtDisabilityCounts as $districtName => $counts)
-                        <option value="{{ $districtName }}">{{ $districtName }}</option>
-                    @endforeach
-                </select>
-            </label>
-
-        </div>
-    </div>
-    <div class="chart-container">
-        <canvas id="disabilityCountChart"></canvas>
     </div>
 </div>
 

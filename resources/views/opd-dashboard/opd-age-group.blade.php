@@ -1,11 +1,9 @@
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">PWDs By Age-group and Gender in {{ $opdName }}</h5>
+<div class="card text-center">
+    <div class="card-body">
+        <h5 class="card-text text-center">PWDs By Age-group and Gender in {{ $opdName }}</h5>
+        <div class="chart-container">
+            <canvas id="OpdAgeGroup"></canvas>
         </div>
-    </div>
-    <div class="chart-container">
-        <canvas id="OpdAgeGroup"></canvas>
     </div>
 </div>
 

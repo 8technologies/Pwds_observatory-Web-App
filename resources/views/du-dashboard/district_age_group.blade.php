@@ -1,11 +1,10 @@
-<div class="container card pt-5 mb-5" id="chart-description">
-    <div class="row" id="chart-content">
-        <div class="col-12" id="heading">
-            <h5 class="text-center">PWDs By Age-group And Gender in {{ $districtName }}</h5>
+<div class="card text-center">
+    <div class="card-body">
+        <h5 class="text-center">Persons with Disabilities By Age-group And Gender in {{ $districtName }}</h5>
+
+        <div class="chart-container">
+            <canvas id="districtAgeGroup"></canvas>
         </div>
-    </div>
-    <div class="chart-container">
-        <canvas id="districtAgeGroup"></canvas>
     </div>
 </div>
 
