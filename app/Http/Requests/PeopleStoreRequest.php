@@ -35,7 +35,7 @@ class PeopleStoreRequest extends FormRequest
             'disabilities.*' => 'required|exists:disabilities,id',
             'dob' => 'required|date_format:d-m-Y',
             'district_of_origin' => 'required',
-            'district_id' => 'required',
+            'district_id' => 'nullable',
             'village' => 'required',
             'sub_county' => 'required',
             "profiler" => 'required',
