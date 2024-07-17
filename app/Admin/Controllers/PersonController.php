@@ -44,6 +44,17 @@ class PersonController extends AdminController
 
         $grid = new Grid(new Person());
 
+        $grid->filter(function ($f) {
+            // Remove the default id filter
+            $f->disableIdFilter();
+            $f->between('created_at', 'Filter by registered')->date();
+
+            $f->between('dob', 'Filter by date of birth range')->date();
+
+            $f->equal('profiler', 'Filter by profiler Name')->select(
+                Person::whereNotNull('profiler')->orderBy('profiler', 'asc')->pluck('profiler', 'profiler')
+            );
+        });
         //TODO: fix filters, and also display users from the opd, and district unions
         $user = Admin::user();
         if ($user->inRoles(['basic', 'pwd'])) {
@@ -81,10 +92,6 @@ class PersonController extends AdminController
         } else if ($user->isRole('opd')) {
             $grid->model()->where('opd_id', $organisation->id)->orderBy('created_at', 'desc');
         }
-        //  else {
-        //     // dd("ddd");
-        //     $grid->model()->orderBy('id', 'desc');
-        // }
 
 
 
@@ -165,8 +172,8 @@ class PersonController extends AdminController
         //     }
         // });
 
-        $grid->column('categories', __('Disabilities'))
-            /* ->display(
+        $grid->column('disabilities', __('Disabilities'))
+            ->display(
                 function ($x) {
                     //disabilities in badges
                     if ($this->disabilities()->count() > 0) {
@@ -178,7 +185,7 @@ class PersonController extends AdminController
                         return '-';
                     }
                 }
-            ) */->style('max-width:200px;word-break:break-all;')
+            )->style('max-width:200px;word-break:break-all;')
             ->sortable()
             ->filter('%like%');
 
@@ -335,7 +342,7 @@ class PersonController extends AdminController
             ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
         )->rules('required');
         $form->text('ethnicity', __('Ethnicity'))->help('Your Tribe');
-        $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic', 'Born Again Christian' => 'Born Again Christian', 'Other Christian Faith' => 'Other Christan Faith', 'Islam' => 'Islam']);
+        $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic', 'Born Again Christian' => 'Born Again Christian', 'Other Christian Faith' => 'Other Christian Faith', 'Islam' => 'Islam']);
 
         $form->divider('Education');
         $form->select('education_level', __('Education'))->options(
