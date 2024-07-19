@@ -41,7 +41,7 @@ if (!isset($header_style)) {
                             </div>
                             <select class="form-select">
                                 <option>All categories</option>
-                                @foreach (PostCategory::all() as $cat)
+                                @foreach ($categories as $cat)
                                     <option value="{{ $cat->name }}">{{ $cat->name }}</option>
                                 @endforeach
                             </select>
@@ -58,7 +58,7 @@ if (!isset($header_style)) {
             </div>
         </div>
 
-        @foreach (NewsPost::all() as $post)
+        @foreach ($news as $post)
             <!-- Item -->
             <article class="card border-0 shadow-sm overflow-hidden mb-4">
                 <div class="row g-0">
@@ -75,8 +75,10 @@ if (!isset($header_style)) {
                     <div class="col-sm-8">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <a href="news" class="badge fs-sm text-nav bg-secondary text-decoration-none">{{   $post->category->name }}</a>
-                                <span class="fs-sm text-muted border-start ps-3 ms-3">{{ Utils::my_date($post->created_at) }}</span>
+                                <a href="news"
+                                    class="badge fs-sm text-nav bg-secondary text-decoration-none">{{ $post->category->name }}</a>
+                                <span
+                                    class="fs-sm text-muted border-start ps-3 ms-3">{{ Utils::my_date($post->created_at) }}</span>
                             </div>
                             <h3 class="h4">
                                 <a href="{{ url('news/' . $post->id) }}" title="{{ $post->title }}">
@@ -86,11 +88,11 @@ if (!isset($header_style)) {
                             <p> {{ Str::limit($post->description, 300) }}</p>
                             <hr class="my-4">
                             <div class="d-flex align-items-center justify-content-between">
-                                <a href="{{ url('admin/members/'.$post->created_by->id) }}"
+                                <a href="{{ url('admin/members/' . $post->created_by->id) }}"
                                     class="d-flex align-items-center fw-bold text-dark text-decoration-none me-3">
-                                    <img src="{{   $post->created_by->avatar  }}" class="rounded-circle me-3" width="48"
+                                    <img src="{{ $post->created_by->avatar }}" class="rounded-circle me-3" width="48"
                                         alt="Avatar">
-                                        {{   $post->created_by->name }}
+                                    {{ $post->created_by->name }}
                                 </a>
                                 <div class="d-flex align-items-center text-muted">
                                     <div class="d-flex align-items-center me-3">
@@ -115,6 +117,4 @@ if (!isset($header_style)) {
 
 
     </section>
-
- 
 @endsection

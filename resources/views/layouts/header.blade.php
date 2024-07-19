@@ -121,10 +121,10 @@ if (!isset($header_style)) {
             <label class="form-check-label d-none d-sm-block" for="theme-mode">Dark</label>
         </div>
     </div>
-    <div>
+    {{-- <div>
         <a href="#" class="modal-open nav-link">
             <i class='bx bx-search-alt bx-lg'></i>
         </a>
-    </div>
+    </div> --}}
 </div>
 </header>
