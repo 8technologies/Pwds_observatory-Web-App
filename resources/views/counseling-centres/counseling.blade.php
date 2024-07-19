@@ -22,6 +22,14 @@ if (!isset($header_style)) {
         background-color: rgb(55, 162, 224);
         color: white;
     }
+
+    .card-body-fixed {
+        width: 100%;
+        height: 500px;
+        overflow: auto;
+        padding: 10px;
+        margin-bottom: 5px;
+    }
 </style>
 @extends('layouts.layout-main')
 @section('main-content')
@@ -83,7 +91,7 @@ if (!isset($header_style)) {
                 @foreach ($counselingCentres as $centre)
                     <div class="col-md-6">
                         <div class="card mb-4">
-                            <div class="card-body">
+                            <div class="card-body-fixed">
                                 <h5 class="card-title">{{ $centre->name }}</h5>
                                 @if ($centre->disabilities->isNotEmpty())
                                     <p class="card-text"><strong>Disability Names:</strong>

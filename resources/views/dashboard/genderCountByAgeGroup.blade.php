@@ -1,6 +1,6 @@
 <div class="card text-center" id="card-element">
     <div class="card-body" id="body-element">
-        <h5 class="card-text text-center">Number Of PWDs By Age-group and Gender</h5>
+        <h5 class="card-text text-center">Number Of Persons With Disabilities By Age-group and Gender</h5>
         <div class="chart-container">
             <canvas id="pyramidChart"></canvas>
         </div>

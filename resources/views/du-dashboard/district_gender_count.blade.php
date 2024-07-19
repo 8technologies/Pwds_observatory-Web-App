@@ -20,7 +20,7 @@
 </style>
 <div class="card text-center">
     <div class="card-body">
-        <h5 class=" card-text text-center">Percentage Of Persons with Disabilities By Gender</h5>
+        <h5 class=" card-text text-center">Percentage Of Persons With Disabilities By Gender</h5>
         <div class="chart-container ">
             <canvas id="districtGenderCount"></canvas>
         </div>

@@ -22,7 +22,7 @@
 
 <div class="card" id="card-element">
     <div class="card-body" id="body-element">
-        <h5 class="card-text text-center">Percentage Of PWDs By Gender</h5>
+        <h5 class="card-text text-center">Percentage Of Persons With Disabilities By Gender</h5>
         <label for="districtSelect">
             <select id="districtSelect" onchange="updateDistrict()" class="form-select">
                 <option value="">All Districts</option>

@@ -1,6 +1,6 @@
 <div class="card text-center" id="card-element">
     <div class="card-body" id="body-element">
-        <h5 class="card-text text-center">PWDs Employment Status By Gender</h5>
+        <h5 class="card-text text-center">Persons With Disabilities Employment Status By Gender</h5>
         <label for="EmploymentStatus">
             <select id="employmentStatusSelector" class="form-select">
                 <option value="Formal Employment">Formal Employment</option>

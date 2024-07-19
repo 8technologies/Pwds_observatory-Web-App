@@ -1,6 +1,6 @@
 <div class="card text-center" id="card-element">
     <div class="card-body" id="body-element">
-        <h5 class="card-text text-center">PWDs Education Status By Gender</h5>
+        <h5 class="card-text text-center">Persons With Disabilities Education Status By Gender</h5>
         <div class="chart-container">
             <canvas id="educationGenderData"></canvas>
         </div>

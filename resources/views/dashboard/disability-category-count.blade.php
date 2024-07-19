@@ -1,6 +1,6 @@
 <div class="card text-center" id="card-element">
     <div class="card-body" id="body-element">
-        <h5 class="card-text text-center">Count Of PWDs by Disability Category</h5>
+        <h5 class="card-text text-center">Count Of Persons With Disabilities by Disability Category</h5>
         <label for="districtSelect">
             <select name="districtSelector" id="districtSelector" onchange="UpdateCategory()" class="form-select">
                 <option value="all">All Districts</option>

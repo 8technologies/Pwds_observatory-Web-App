@@ -21,7 +21,7 @@
 
 <div class="card text-center">
     <div class="card-body">
-        <h5 class="card-text text-center">Percentage Of Person with Disabilities By Gender in {{ $opdName }}</h5>
+        <h5 class="card-text text-center">Percentage Of Persons With Disabilities By Gender in {{ $opdName }}</h5>
         <div class="chart-container p-2 mb-2">
             <canvas id="opdGenderCount"></canvas>
         </div>

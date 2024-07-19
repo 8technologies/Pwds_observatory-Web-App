@@ -1,6 +1,6 @@
 <div class="card text-center">
     <div class="card-body">
-        <h5 class="text-center">PWDs Education Status By Gender in {{ $opdName }}</h5>
+        <h5 class="text-center">Persons With Disabilities Education Status By Gender in {{ $opdName }}</h5>
         <div class="chart-container">
             <canvas id="opdEducationGender"></canvas>
         </div>

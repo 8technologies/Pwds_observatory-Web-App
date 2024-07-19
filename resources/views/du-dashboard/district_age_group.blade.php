@@ -1,6 +1,6 @@
 <div class="card text-center">
     <div class="card-body">
-        <h5 class="text-center">Persons with Disabilities By Age-group And Gender in {{ $districtName }}</h5>
+        <h5 class="text-center">Persons With Disabilities By Age-group And Gender In {{ $districtName }}</h5>
 
         <div class="chart-container">
             <canvas id="districtAgeGroup"></canvas>

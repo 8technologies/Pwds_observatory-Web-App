@@ -225,7 +225,7 @@ class DistrictUnionController extends AdminController
         $form->hidden('relationship_type')->default('du');
         $form->hidden('parent_organisation_id')->default(0);
 
-        $form->divider('[Section 4 of 5] - DU Administrator');
+        $form->divider('[Section 5 of 5] - DU Administrator');
         $form->text('admin_email', ('Administrator Email Address'))
             ->rules("required|email")
             ->help("This will be emailed with the password to log into the system");
