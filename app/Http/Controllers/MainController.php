@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\Person;
+use App\Models\PostCategory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
@@ -132,21 +133,38 @@ class MainController extends BaseController
   }
   public function news_category()
   {
-    return view('news-category');
+    $news_post = NewsPost::orderBy('id', 'desc')->paginate(8);
+    $post_category = PostCategory::orderBy('id', 'desc')->get();
+    return view('news-category', ['news' => $news_post, 'categories' => $post_category]);
+  }
+  public function output()
+  {
+    return view('output');
+  }
+  public function testimonial()
+  {
+    return view('testimonial');
   }
 
 
 
-  public function dinner(Request $r)
+  public function dinner()
   {
-    $p = Event::findOrFail($r->id);
-
-    return view('dinner', ['d' => $p]);
+    $p = Event::find(1);
+    if ($p == null) {
+      die("Post not found.");
+    }
+    return view('dinner', [
+      'd' => $p
+    ]);
   }
 
   public function news(Request $r)
   {
-    $p = NewsPost::findOrFail($r->id);
+    $p = NewsPost::findORFail($r->id);
+    if ($p == null) {
+      die("Post not found.");
+    }
 
     $posts = [];
     foreach (NewsPost::all() as $key => $v) {
@@ -181,18 +199,6 @@ class MainController extends BaseController
 
     // Pass the data to the Blade view
     return view('counseling-centres.counseling', ['counselingCentres' => $counselingCentres, 'districts' => $districts, 'disabilities' => $disabilities]);
-  }
-
-  public function show_counseling_centres()
-  {
-
-    $counselingCentres = CounsellingCentre::with(['disabilities', 'districts'])->paginate(8);
-
-    $districts = District::all();
-    $disabilities = Disability::all();
-
-    // Pass the data to the Blade view
-    return view('counseling-centres.show', ['counselingCentres' => $counselingCentres, 'districts' => $districts, 'disabilities' => $disabilities]);
   }
 
   /**
@@ -250,8 +256,8 @@ class MainController extends BaseController
    */
   public function jobs(Request $r)
   {
-    $jobs = Job::orderBy('id', 'desc')->paginate(8);
-    return view('jobs.index', [
+    $jobs = \App\Models\Job::orderBy('id', 'desc')->paginate(8);
+    return view('jobs/index', [
       'jobs' => $jobs
     ]);
   }
@@ -310,8 +316,7 @@ class MainController extends BaseController
   public function job(Request $r)
   {
     $job = Job::findOrFail($r->id);
-
-    return view('job', [
+    return view('jobs/single_job', [
       'job' => $job
     ]);
   }
@@ -321,7 +326,7 @@ class MainController extends BaseController
    */
   public function disabilities(Request $r)
   {
-    $disabilities = Disability::paginate(12);
+    $disabilities = \App\Models\Disability::paginate(12);
     return view('disabilities.index', [
       'disabilities' => $disabilities
     ]);
@@ -332,8 +337,10 @@ class MainController extends BaseController
    */
   public function disability(Request $r)
   {
-    $disability = Disability::findOrFail($r->id);
-
+    $disability = \App\Models\Disability::find($r->id);
+    if ($disability == null) {
+      die("Disability not found.");
+    }
     return view('disabilities.show', [
       'disability' => $disability
     ]);
@@ -355,8 +362,10 @@ class MainController extends BaseController
    */
   public function innovation(Request $r)
   {
-    $innovation = Innovation::findOrFail($r->id);
-
+    $innovation = \App\Models\Innovation::find($r->id);
+    if ($innovation == null) {
+      die("Innovation not found.");
+    }
     return view('innovation', [
       'innovation' => $innovation
     ]);
