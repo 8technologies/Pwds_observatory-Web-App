@@ -40,10 +40,10 @@ if (!isset($header_style)) {
                             <a href="{{ url('about-us') }}" class="dropdown-item">Program Overview</a>
                         </li>
                         <li>
-                            <a href="{{ url('vision-mission') }}" class="dropdown-item">Governance</a>
+                            <a href="{{ url('output') }}" class="dropdown-item">OutPuts</a>
                         </li>
                         <li>
-                            <a href="{{ url('constitution') }}" class="dropdown-item">Partnerships</a>
+                            <a href="{{ url('testimonial') }}" class="dropdown-item">Testimonials</a>
                         </li>
                         <li>
                             <a href="{{ url('our-team') }}" class="dropdown-item">Our Team </a>
@@ -121,10 +121,5 @@ if (!isset($header_style)) {
             <label class="form-check-label d-none d-sm-block" for="theme-mode">Dark</label>
         </div>
     </div>
-    {{-- <div>
-        <a href="#" class="modal-open nav-link">
-            <i class='bx bx-search-alt bx-lg'></i>
-        </a>
-    </div> --}}
 </div>
 </header>
