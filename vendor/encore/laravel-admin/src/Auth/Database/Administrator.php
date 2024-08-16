@@ -3,6 +3,7 @@
 namespace Encore\Admin\Auth\Database;
 
 use App\Models\Campus;
+use App\Models\Organisation;
 use App\Models\UserHasProgram;
 use Carbon\Carbon;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
@@ -139,5 +140,15 @@ class Administrator extends Model implements AuthenticatableContract, CanResetPa
         $relatedModel = config('admin.database.permissions_model');
 
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
+    }
+
+    public function organisation()
+    {
+        $org = Organisation::find($this->organisation_id);
+        if($org == null){
+            $this->organisation_id = 1;
+            $this->save(); 
+        }
+        return $this->belongsTo(Organisation::class);
     }
 }
