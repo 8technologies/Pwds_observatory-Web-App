@@ -72,7 +72,7 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
-                    'number' => Person::count(),
+                    'number' => number_format(Person::count()),
                     'sub_title' => 'pwd',
                     'link' => admin_url('people'),
                 ]));

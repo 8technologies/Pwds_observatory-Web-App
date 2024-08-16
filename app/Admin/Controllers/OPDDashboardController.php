@@ -49,7 +49,7 @@ class OPDDashboardController extends Controller
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
                     'sub_title' => 'pwds',
-                    'number' => $count_pwd,
+                    'number' => number_format($count_pwd), 
                     'font_size' => '1.5em',
                     'link' => admin_url("people?opd_id={$organisation->id}"),
                 ];
