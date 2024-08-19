@@ -112,3 +112,12 @@ place_of_birth
 birth_no_hospital_description
 disabilities
  
+
+
+
+ // Ogiki Moses Odera 
+
+
+ php artisan admin:make ReportController --model=App\Models\Report
+
+ php artisan make:model Report 

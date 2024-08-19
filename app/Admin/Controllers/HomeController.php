@@ -72,9 +72,19 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
-                    'number' => number_format(Person::count()),
+                    'number' => Person::count(),
                     'sub_title' => 'pwd',
                     'link' => admin_url('people'),
+                ]));
+            });
+
+            $row->column(3, function (Column $column) {
+                $column->append(view('widgets.box-5', [
+                    'is_dark' => false,
+                    'title' => 'Report',
+                    'number' => "Click Here to Generate Report",
+                    'sub_title' => 'Report',
+                    'link' => admin_url('reports'),
                 ]));
             });
         });

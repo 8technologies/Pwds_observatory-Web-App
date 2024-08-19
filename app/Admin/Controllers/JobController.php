@@ -37,6 +37,21 @@ class JobController extends AdminController
             $grid->disableCreateButton();
         }
 
+        $grid->filter(function ($filter) {
+            $filter->disableIdFilter();
+
+            $filter->equal('type','Job Type')->select(Job::pluck('type', 'type'));
+            $filter->equal('location','Location')->select(Job::pluck('location', 'location'));
+            $filter->equal('hiring_firm','Hiring Firm')->select(Job::pluck('hiring_firm', 'hiring_firm'));
+            $filter->equal('minimum_academic_qualification','Minimum Academic Qualification')->select(Job::pluck('minimum_academic_qualification', 'minimum_academic_qualification'));
+            $filter->equal('required_experience','Years Of Experience')->select(Job::pluck('required_experience', 'required_experience'));
+            $filter->date('deadline', 'Filter By Deadline')->date();
+           
+        });
+
+        $grid->quickSearch('title', 'location', 'type', 'minimum_academic_qualification', 'required_experience', 'hiring_firm', 'deadline')->placeholder('Search...');
+
+
         $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
             $job = $actions->row;
             if ($job->user_id !== $user->id) {

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Routing\Router;
+use App\Admin\Controllers\ReportController;
 
 Admin::routes();
 
@@ -46,4 +47,9 @@ Route::group([
     $router->get('service-providers/{id}/verify', 'ServiceProviderController@verify')->name('service-providers.verify');
     $router->resource('gens', GenController::class);
     $router->resource('guest', GuestController::class);
+
+    // Ogiki Moses Odera 
+    
+    $router->get('reports', [ReportController::class, 'index']);
+    $router->resource('reports', ReportController::class)->except(['index']);
 });

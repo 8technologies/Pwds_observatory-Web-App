@@ -87,11 +87,6 @@ class User extends Administrator implements JWTSubject, AuthenticatableContract,
     //user belongs to organisation
     public function organisation()
     {
-        $org = Organisation::find($this->organisation_id);
-        if($org == null){
-            $this->organisation_id = 1;
-            $this->save(); 
-        }
         return $this->belongsTo(Organisation::class);
     }
 

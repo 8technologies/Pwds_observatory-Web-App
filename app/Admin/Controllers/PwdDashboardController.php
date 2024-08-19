@@ -43,7 +43,7 @@ class PwdDashboardController extends Controller
             $userGreeting = 'Hello ' . $user->first_name . '!';
         } elseif ($user && $admin_role == 'basic') {
             // For basic, use 'name'
-            $userGreeting = 'Hello ' . $user->name . '!';
+            $userGreeting = 'Helo ' . $user->name . '!';
         } else {
             $userGreeting = 'Hello!';
         }

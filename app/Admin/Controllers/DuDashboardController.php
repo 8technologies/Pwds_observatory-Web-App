@@ -47,7 +47,7 @@ class DuDashboardController extends Controller
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
                     'sub_title' => 'pwds',
-                    'number' => number_format($count_pwd),
+                    'number' => $count_pwd,
                     'font_size' => '1.5em',
                     'link' => admin_url("people?district_id={$district_id}"),
                 ];

@@ -13,6 +13,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+//use Illuminate\Support\Facades\Hash;
 
 class AccountController extends BaseController
 {
@@ -26,6 +27,10 @@ class AccountController extends BaseController
     }
     public function login(Request $request)
     {
+        // $password = '1234';
+        // $hashedPassword = Hash::make($password);
+        // dd($hashedPassword);
+        // die();
         if (Auth::guard()->check()) {
             // User is already logged in
             $user = Auth::user();

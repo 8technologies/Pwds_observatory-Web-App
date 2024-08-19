@@ -70,7 +70,7 @@ class PersonController extends AdminController
             // Remove the default id filter
             $filter->disableIdFilter();
             //filter by district, Gender, and disability type
-            $filter->equal('district_id', 'Filter by district')
+            $filter->equal('district_id', 'Filter by District')
                 ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
 
             $filter->equal('sex', 'Filter by Gender')->select([
