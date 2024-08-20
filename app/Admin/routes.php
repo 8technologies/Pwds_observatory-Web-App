@@ -52,4 +52,5 @@ Route::group([
     
     $router->get('reports', [ReportController::class, 'index']);
     $router->resource('reports', ReportController::class)->except(['index']);
+    
 });

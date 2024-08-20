@@ -78,15 +78,15 @@ class HomeController extends Controller
                 ]));
             });
 
-            $row->column(3, function (Column $column) {
-                $column->append(view('widgets.box-5', [
-                    'is_dark' => false,
-                    'title' => 'Report',
-                    'number' => "Click Here to Generate Report",
-                    'sub_title' => 'Report',
-                    'link' => admin_url('reports'),
-                ]));
-            });
+            // $row->column(3, function (Column $column) {
+            //     $column->append(view('widgets.box-5', [
+            //         'is_dark' => false,
+            //         'title' => 'Report',
+            //         'number' => "Click Here to Generate Report",
+            //         'sub_title' => 'Report',
+            //         'link' => admin_url('reports'),
+            //     ]));
+            // });
         });
 
 
