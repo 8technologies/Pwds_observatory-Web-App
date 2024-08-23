@@ -307,9 +307,9 @@ class PersonController extends AdminController
         $form->footer(function ($footer) {
             $footer->disableReset();
             $footer->disableViewCheck();
-            $footer->disableEditingCheck();
-            $footer->disableCreatingCheck();
-            $footer->disableSubmit();
+            // $footer->disableEditingCheck();
+            // $footer->disableCreatingCheck();
+            // $footer->disableSubmit();
         });
         $form->divider('Bio Data');
         $form->image('photo', __('Photo'))->uniqueName();
@@ -325,7 +325,9 @@ class PersonController extends AdminController
         $form->email('email', __('Email'))->placeholder('Email');
         $form->divider();
         $form->radio('id_type', __('ID Type'))->options([
-            'NIN Number' => 'NIN Number', 'Driving Permit' => 'Driving Permit', 'Passport Number' => 'Passport Number'
+            'NIN Number' => 'NIN Number',
+            'Driving Permit' => 'Driving Permit',
+            'Passport Number' => 'Passport Number'
         ])->when('NIN Number', function (Form $form) {
             $form->text('id_number', 'NIN Number')->placeholder('NIN Number');
         })->when('Driving Permit', function (Form $form) {

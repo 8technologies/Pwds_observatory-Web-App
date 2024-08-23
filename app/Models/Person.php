@@ -261,15 +261,23 @@ class Person extends Model
         }
         if (strlen($cats_text) < 2) {
             //update sql, set processed yes
-            $sql = "update people set categories_pricessed = 'Yes' where id = " . $this->id;
-            DB::update($sql);
+            //$sql = "update people set categories_pricessed = 'Yes' where id = " . $this->id;
+            //DB::update($sql);
+            //make the above prepared statement
+            $sql = "update people set categories_pricessed = 'Yes' where id = ?";
+            DB::update($sql, [$this->id]);
+            return;
         }
 
         //sql escape
         $cats_text = str_replace("'", "''", $cats_text);
 
         //update sql
-        $sql = "update people set categories = '" . $cats_text . "', categories_pricessed = 'Yes' where id = " . $this->id;
-        DB::update($sql);
+        //$sql = "update people set categories = '" . $cats_text . "', categories_pricessed = 'Yes' where id = " . $this->id;
+        //DB::update($sql);
+        //make the above prepared statement
+        $sql = "update people set categories
+        = ?, categories_pricessed = 'Yes' where id = ?";
+        DB::update($sql, [$cats_text, $this->id]);
     }
 }
