@@ -175,7 +175,6 @@ return array(
     'App\\Models\\ProductOrder' => $baseDir . '/app/Models/ProductOrder.php',
     'App\\Models\\Program' => $baseDir . '/app/Models/Program.php',
     'App\\Models\\Region' => $baseDir . '/app/Models/Region.php',
-    'App\\Models\\Report' => $baseDir . '/app/Models/Report.php',
     'App\\Models\\Resource' => $baseDir . '/app/Models/Resource.php',
     'App\\Models\\ServiceProvider' => $baseDir . '/app/Models/ServiceProvider.php',
     'App\\Models\\ServiceProviderContactPerson' => $baseDir . '/app/Models/ServiceProviderContactPerson.php',
