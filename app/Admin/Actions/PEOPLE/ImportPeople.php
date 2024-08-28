@@ -15,6 +15,9 @@ class ImportPeople extends Action
 
     public function handle(Request $request)
     {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls',
+        ]);
         // The following code gets the uploaded file, then uses the package `maatwebsite/excel` to process and upload your file and save it to the database.
         $file = $request->file('file');
 
@@ -35,7 +38,7 @@ class ImportPeople extends Action
     public function html()
     {
         return <<<HTML
-        <a class="btn btn-sm btn-default import-people">Import People</a>
+        <a class="btn btn-sm btn-success import-people">Upload File</a>
 HTML;
     }
 }

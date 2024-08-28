@@ -1,5 +1,6 @@
 <?php
 
+use App\Admin\Controllers\ImportPeopleController;
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\ReportController;
 
@@ -52,5 +53,18 @@ Route::group([
     
     $router->get('reports', [ReportController::class, 'index']);
     $router->resource('reports', ReportController::class)->except(['index']);
+
+    // Second route for the reports
     
+    $router->resource('reportspwd', Report_1Controller::class);
+
+    $router->resource('reportspwd2', Report_2Controller::class);
+    $router->resource('data-imports', DataImportController::class);
+
+  
+
+
+
+
+
 });

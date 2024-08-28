@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+//use App\Admin\Actions\PEOPLE\ImportPeople;
+
 use App\Admin\Actions\PEOPLE\ImportPeople;
 use App\Models\Disability;
 use App\Models\Organisation;
@@ -79,9 +81,31 @@ class PersonController extends AdminController
             ]);
             $filter->equal('disabilities.name', 'Disability Name')
                 ->select(Disability::pluck('name', 'name'));
+
+            $filter->between('age','Age');
+            $filter->equal('is_formal_education','Filter By Formal Education')
+                 ->select([
+
+                    'PHD' => 'PHD',
+                    'Masters' => 'Master\'s Degree',
+                    'Post-Graduate' => 'Post Graduate',
+                    'Bachelors' => 'Bachelor\'s Degree',
+                    'Diploma' => 'Diploma',
+                    'Secondary-UACE' => 'Secondary - UACE',
+                    'Secondary-UCE' => 'Secondary - UCE',
+                    'Primary' => 'Primary - PLE',
+
+                 ]);
         });
 
         $grid->quickSearch('name')->placeholder('Search by name');
+
+        //Ogiki
+        // $grid->tools(function (Grid\Tools $tools) {
+        //     // Add your custom button
+        //     $tools->append('<a class="btn btn-success" href="/admin/custom-action"><i class="fa fa-cog"></i> Upload</a>');
+        // });
+        
 
         $user = Admin::user();
         $organisation = Organisation::find(Admin::user()->organisation_id);
@@ -96,6 +120,9 @@ class PersonController extends AdminController
 
 
         $grid->exporter(new PersonsExcelExporter());
+       // $grid->import(new ImportPeople());
+        
+        
 
         $grid->disableBatchActions();
 
@@ -105,8 +132,14 @@ class PersonController extends AdminController
                 return Utils::my_date($x);
             }
         )->sortable();
-        $grid->column('name', __('Name'))->sortable();
-        $grid->column('other_names', __('Other Names'))->sortable();
+        // $grid->column('name', __('Name'))->sortable();   
+        // $grid->column('other_names', __('Other Names'))->sortable();
+        $grid->column('full_name', __('Full Name'))
+        ->display(function () {
+            return $this->name . ' ' . $this->other_names;
+        })
+        ->sortable();
+        
         $grid->column('sex', __('Gender'))->sortable();
         $grid->column('education_level', __('Education'))->display(
             function ($education_level) {
@@ -150,7 +183,8 @@ class PersonController extends AdminController
                     return 'Not mentioned';
                 }
             }
-        )->sortable()->hide();
+        )->sortable();
+        $grid->column('age', __('Age'))->sortable();
         $grid->column('informal_education', __('Informal Education'))->hide();
 
         $grid->column('district_id', __('Attached District'))->display(
@@ -189,13 +223,17 @@ class PersonController extends AdminController
             ->sortable()
             ->filter('%like%');
 
-        $grid->column('is_approved', __('Approval'))->display(function ($x) {
-            if ($x == 1) {
-                return "<span class='badge badge-success'>Yes</span>";
-            } else {
-                return "<span class='badge badge-danger'>No</span>";
-            }
-        });
+        // $grid->column('is_approved', __('Approval'))->display(function ($x) {
+        //     if ($x == 1) {
+        //         return "<span class='badge badge-success'>Yes</span>";
+        //     } else {
+        //         return "<span class='badge badge-danger'>No</span>";
+        //     }
+        // });
+        
+        
+
+
         $grid->column('categories_pricessed', __('Processed'))
             ->using(['Yes' => 'Yes', 'No' => 'No'])
             ->label([
@@ -303,6 +341,19 @@ class PersonController extends AdminController
     protected function form()
     {
         $form = new Form(new Person());
+
+        //Ogiki Moses Odera
+        // $form->tools(function (Form\Tools $tools) {
+        //     // Attach the ImportPeople action
+        //     $tools->append(new ImportPeople());
+        // });
+
+        //button 
+        // $form->tools(function (Form\Tools $tools) {
+        //     $tools->append('<a class="btn btn-sm btn-success" href="/admin/import-people"> Upload File</a>');
+        // });
+
+        
 
         $form->footer(function ($footer) {
             $footer->disableReset();

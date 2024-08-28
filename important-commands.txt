@@ -118,9 +118,14 @@ disabilities
  // Ogiki Moses Odera 
 
 
- php artisan admin:make ReportController --model=App\Models\Report
+ php artisan admin:make DataImportController --model=App\Models\DataImport
 
- php artisan make:model Report 
+ php artisan make:model DataImport  -m 
+
+ php artisan admin:make Report_2Controller --model=App\Models\Report
+
+ php artisan make:migration add_column_district_union_to_table_name --table=data_imports
+
 
 
 

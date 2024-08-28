@@ -22,6 +22,8 @@ class Person extends Model
         'is_same_address',
     ];
 
+   
+
     protected $fillable = [
         'name',
         'other_names',
@@ -153,14 +155,19 @@ class Person extends Model
             }
 
             $user = auth()->user();
-            $organisation = Organisation::find($user->organisation_id);
-            if ($organisation->relationship_type == 'opd') {
-                $person->opd_id = $organisation->id;
+            if($user != null){   
+                $organisation = Organisation::find($user->organisation_id);
+                if ($organisation->relationship_type == 'opd') {
+                    $person->opd_id = $organisation->id;
+                    $person->is_approved = 1;
+                }
+                if ($organisation->relationship_type == 'du') {
+                    $d = District::find($organisation->district_id);
+                    if($d == null){
+                    $person->district_id = $organisation->district_id;
+                }
                 $person->is_approved = 1;
-            }
-            if ($organisation->relationship_type == 'du') {
-                $person->district_id = $organisation->district_id;
-                $person->is_approved = 1;
+                }
             }
 
             $person->district_of_residence = $person->district_id;

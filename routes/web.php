@@ -8,6 +8,7 @@ use App\Models\Gen;
 use Illuminate\Support\Facades\Route;
 use App\Admin\Controllers\DuDashboardController;
 use App\Admin\Controllers\GuestController;
+use App\Admin\Controllers\ImportPeopleController;
 use App\Admin\Controllers\OPDDashboardController;
 use App\Admin\Controllers\PersonController;
 use App\Admin\Controllers\PwdDashboardController;
@@ -18,6 +19,8 @@ use App\Mail\CreatedDistrictUnionMail;
 use App\Models\Organisation;
 use App\Models\Utils;
 use Illuminate\Support\Facades\Mail;
+use App\Admin\Controllers\Report_1Controller;
+use App\Admin\Controllers\Report_2Controller;
 
 Route::get('du-admin-password-reset', function () {
     $du_id = $_GET['du_id'];
@@ -154,3 +157,13 @@ Route::get('/logout', [AccountController::class, 'logout']);
 Route::get('/gen', function () {
     die(Gen::find($_GET['id'])->do_get());
 })->name("gen");
+
+
+
+//Ogiki Moses Odera 
+Route::get('admin/reports/generate-pdf/{id}', [Report_1Controller::class, 'generatePdf'])->name('admin.reports.generate-pdf');
+Route::get('admin/reports/generate-pdf/{id}', [Report_2Controller::class, 'generatePdf'])->name('admin.reports.generate-pdf');
+
+Route::get('/admin/import-people', [ImportPeopleController::class, 'showForm']);
+Route::get('import-people-process', [ImportPeopleController::class, 'import_people_process']);
+Route::post('/admin/import-people', [ImportPeopleController::class, 'import']);

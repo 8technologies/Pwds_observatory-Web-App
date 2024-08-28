@@ -37,6 +37,7 @@ class JobController extends AdminController
             $grid->disableCreateButton();
         }
 
+
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
 
