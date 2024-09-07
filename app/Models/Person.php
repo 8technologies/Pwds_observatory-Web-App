@@ -157,13 +157,22 @@ class Person extends Model
             $user = auth()->user();
             if($user != null){   
                 $organisation = Organisation::find($user->organisation_id);
+
+               //Ogiki Moses Odera 
+                if ($organisation == null) {
+                    // To Handle the case where no organization is found
+                    return redirect()->back()->withErrors(['error' => 'No organization associated with this user.']);
+                }
+
+
                 if ($organisation->relationship_type == 'opd') {
                     $person->opd_id = $organisation->id;
                     $person->is_approved = 1;
                 }
                 if ($organisation->relationship_type == 'du') {
                     $d = District::find($organisation->district_id);
-                    if($d == null){
+                    //Ogiki Moses Odera Changed from == to != to allow for the district to be set
+                    if($d != null){
                     $person->district_id = $organisation->district_id;
                 }
                 $person->is_approved = 1;

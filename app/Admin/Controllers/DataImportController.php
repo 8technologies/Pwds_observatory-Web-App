@@ -33,6 +33,9 @@ class DataImportController extends AdminController
            
         $grid = new Grid(new DataImport());
 
+        //disableIdFilter
+        $grid->disableFilter();
+
         $user = Admin::user();
 
         $organisation = Organisation::find(Admin::user()->organisation_id);
