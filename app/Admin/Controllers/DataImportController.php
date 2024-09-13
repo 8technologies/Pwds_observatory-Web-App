@@ -68,9 +68,9 @@ class DataImportController extends AdminController
                 $url =url('import-people-process?id='.$this->id);
                 if ($this->processed == 'Yes') {
                     //btn open in new tab, add  btn classes
-                    return "<a href='{$url}' target='_blank'>Import Again</a>";
+                    return "<a href='{$url}' target='_blank' class='btn btn-danger'>Import Done!</a>";
                 }
-                return "<a target='_blank' href='{$url}'>Import</a>";
+                return "<a target='_blank' href='{$url}' class='btn btn-success'>Import</a>";
             });
 
        
