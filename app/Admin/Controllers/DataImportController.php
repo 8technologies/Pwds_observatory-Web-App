@@ -57,12 +57,12 @@ class DataImportController extends AdminController
         $grid->column('file', __('File'));
         $grid->column('district', __('District'));
         $grid->column('processed', __('Processed'));
-        $grid->column('has_error', __('Has error'));
-        $grid->column('error_message', __('Error message'));
+        $grid->column('has_error', __('Has error'))->hide();
+        $grid->column('error_message', __('Error message'))->hide();
         $grid->column('total_records', __('Total records'));
         $grid->column('total_imported', __('Total imported'));
         $grid->column('total_failed', __('Total failed'));
-        $grid->column('import', __('Import'))
+        $grid->column('import', __('Import Status'))
             ->display(function ($import) {
                 //if already
                 $url =url('import-people-process?id='.$this->id);
