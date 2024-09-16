@@ -124,7 +124,7 @@ class PersonController extends AdminController
         
         
 
-        $grid->disableBatchActions();
+        //$grid->disableBatchActions();
 
         // $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Registered'))->display(
