@@ -5,134 +5,51 @@
  p{
      font-family: "Montserrat", sans-serif;
       line-height: 1.8;
-      font-size:16px;
+      font-size:15px;
  }
-
+.hero-content h1{
+      font-size: 45px;
+      text-transform:uppercase;
+     font-family: "Lora", serif;
+      color:#136ad5;
+ }
+ 
+.hero-content p{
+      font-size: 15px !important;
+     
+ }
  .parallax{
      overflow:hidden;
  }
 h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
     font-family: "Lora", serif;
-   font-size:30px;
-  color:#0d63ca; }
+   font-size:36px;
+  color:#136ad5; }
 
-
-.card-style{
-    background:#fff;
-    border-radius:3px !important;
-    -webkit-box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
-     box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.1);
-}
-.card-style h4{
-    font-family: "Lora", serif;
-    margin-bottom: 10px;
-    font-size: 23px;
-    line-height: 1;
-    color:#0d63ca;
-}
-.jobs-display h4{
-   font-size:20px !important;
-   
-}
-.read-less,.read-more:hover{
-    cursor:pointer;
-}
-
-.nav-link{
-    font-family: "Lora", serif;
-    font-size:13px;
-    text-transform:uppercase;
-    font-weight:800;
-}
-.text-dark{
-    font-size:27px;
-    font-family: "Lora", serif;
-}
-.post-style{
-   background:#F8FDFF;
-}
-.post-style h3 a{
-     font-size:18px;
-      font-style: italic;
-      text-transform:capitalize;
-}
-.post-link{
-    color:#136ad5;
-}
-.created-name{
-    font-size:14px;
-}
-.btn{
-    font-family: "Lora", serif;
-  padding: 12px 20px;
-  border-radius: 3px !important;
-  font-size: 12px !important;
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: .05rem;
- 
-}
- .btn-primary {
-    background: #1573e8;
-    border-color: #136ad5; }
-    .btn-primary:hover {
-      border-color: #1573e8;
-      background: #4DBF49; }
-.header-section{
- margin-top: 4.5rem;
- background-image: linear-gradient(rgba(0,0,0,0),rgb(0,0,0,0)),url('/assets/images/header-bg1.jpg');
- background-size:cover;
- background-position: left-center;
-}
-.header-section h1{
-    
-    text-transform:uppercase;
-    font-size:45px;
-}
-/*
-.header-section h5{
-    color:#fff;
-}
-.header-section p{
-    color:#fefefe;
-    }
-*/
-.modal-header{
-     padding:15px;
-     
-}
-.modal-title{
-   text-transform:uppercase;
-      font-family: "Lora", serif;
-      font-size:16px;
-       
-}
-.top-lining{
-   background-image: linear-gradient(rgba(0,0,0,0),rgb(0,0,0,0)),url('/assets/images/header-bg1.jpg');  
-   background-size:cover;
-}
-.about-images{
-    margin-top:80px;
-}
-
-.output-card {
+.count-numbers .counter {
+  font-size: 26px;
+  font-family: "Montserrat", serif;
+  color: #136ad5; }
+  .category {
   display: inline-block;
   padding: 20px;
   background: rgba(19, 106, 213, 0.05);
   border-radius: 4px;
   text-decoration: none !important; }
-  .output-card, .output-card h3, .output-card span {
+  .category, .category h3, .category span {
     -webkit-transition: .3s all ease;
     -o-transition: .3s all ease;
     transition: .3s all ease; }
-  .output-card h3 {
-    font-family: "Lora", serif;
+  .category h3 {
+    font-family: "Montserrat", sans-serif;
     margin: 0;
-    font-size: 20px;
+    font-size: 16px;
     line-height: 1;
-    color:#0d63ca; }
- 
-  .output-card i {
+    color: #343a40; }
+  .category span {
+    font-size: 13px;
+    color: rgba(52, 58, 64, 0.4); }
+  .category .uil {
     text-align: center;
     display: inline-block;
     color: #00aeff;
@@ -143,46 +60,96 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4 {
     background: #ffffff;
     font-size: 30px;
     line-height: 40px; }
- .output-card p{
-     padding-top:8px;
- }
-
-
- .video-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  .category:hover {
+    background: #00aeff; }
+    .category:hover h3, .category:hover span {
+      color: #ffffff; }
+    .category:hover span {
+      color: rgba(255, 255, 255, 0.5); }
+      
+.display-font{
+    font-size:24px;
+    font-family: "Montserrat", sans-serif;
+    font-weight:bold;
 }
-
-.video-item {
-
-  border: 1px solid #f8f6f6;
-  border-radius: 5px;
-  overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.step h3{
+    font-size:25px !important;
 }
-
-video {
-  width: 100%;
-  display: block;
-}
-
-.video-caption {
-  padding: 10px;
-  text-align: center;
-   background-color: #ffffff;
-  border-top: 1px solid #ddd;
-}
-.video-caption h4{
-    font-size:16px;
+.services-item h3{
+    color:#136ad5;
 }
 
 
+.untree_co-section {
+  padding: 100px 0;
+  position: relative; }
+  .feature {
+  margin-bottom: 40px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 4px;
+  text-align: center; }
+  .feature h3 {
+    font-size: 18px;
+    color: #136ad5; }
+  .feature p {
+    font-size: 15px;
+     }
+.feature .uil{
+    font-size:30px;
+    color:#136ad5;
+}
+ .feature [class^="flaticon-"],
+  .feature [class^="icon-"],
+  .feature [class^="uil uil-"] {
+    position: relative;
+    margin-bottom: 30px;
+    font-size: 30px;
+    color: #136ad5;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    display: inline-block;
+    border-radius: 50%;
+    text-align: center; }
+    .feature [class^="flaticon-"]:after,
+    .feature [class^="icon-"]:after,
+    .feature [class^="uil uil-"]:after {
+      content: "";
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      left: -5px;
+      top: -5px;
+      border-radius: 50%;
+      border: 1px solid rgba(19, 106, 213, 0.2); }
+      
+     .news-item h3{
+    font-size:23px !important;
+    
+     }
+     .news-item a{
+    color:#136ad5;
+    
+     }
+     
+.service-hero{
+    padding:250px 200px;
+       background-image: linear-gradient(rgba(120, 128, 120, 0.8), rgba(0, 0, 0, 0.3)),url('/assets/images/Smart Wearable.jpg');
+    background-size:cover;
+    background-position:center;
+ 
+}
+.service-hero p{
+    color:#fff!important;
+}
+.service-hero h2{
+    color:#fff!important;
+    text-transform:uppercase;
+}
 
-
-
-
-
-
+#barchart_material{
+    overflow:hidden;
+}
 
