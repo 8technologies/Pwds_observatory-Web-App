@@ -17,7 +17,7 @@ class BatchDataController extends Controller
      */
     public function index()
     {
-        //
+        
     }
 
     /**
@@ -38,6 +38,7 @@ class BatchDataController extends Controller
      */
     public function store(Request $request)
     {
+        
         $validatedData = $request->all();
 
         $createdPeople = [];

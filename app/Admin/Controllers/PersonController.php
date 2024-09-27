@@ -530,8 +530,8 @@ class PersonController extends AdminController
                 }
                 $form->divider();
                 //Add submit button
-                $form->html('
-                        <button type="submit" class="btn btn-primary float-right">Submit</button>');
+                // $form->html('
+                //         <button type="submit" class="btn btn-primary float-right">Submit</button>');
             });
         }
 

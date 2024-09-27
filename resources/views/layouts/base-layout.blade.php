@@ -39,12 +39,24 @@
 
     <!-- Vendor Styles -->
     <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/vendor/boxicons/css/boxicons.min.css" />
-    <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/vendor/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/main-styles.css') }} "/>
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/bootstrap.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/css2.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/style.min.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/animate.min.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/jquery.fancybox.min.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/aos.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/styles.css') }}">
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/theme.min.css') }}">
+    <script src="{{url('/assets/js/custom.js')}}"></script>
+    <script src="{{url('/assets/js/app.min.js')}}"></script>
+    <link rel="stylesheet" media="screen" href="{{ url('/assets/vendor/swiper/swiper-bundle.min.css') }}" />
     <link rel="stylesheet" media="screen"
         href="{{ url('') }}/assets/vendor/lightgallery/css/lightgallery-bundle.min.css" />
 
     <!-- Main Theme Styles + Bootstrap -->
     <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/css/theme.min.css">
+    
 
     <!-- Page loading styles -->
     <style>
