@@ -69,8 +69,6 @@ Route::get('generate-class', [MainController::class, 'generate_class']);
 Route::get('generate-variables', [MainController::class, 'generate_variables']);
 Route::get('/', [MainController::class, 'index'])->name('home');
 Route::get('/about-us', [MainController::class, 'about_us']);
-Route::get('/output', [MainController::class, 'output']);
-Route::get('/testimonial', [MainController::class, 'testimonial']);
 Route::get('/our-team', [MainController::class, 'our_team']);
 Route::get('/news-category/{id}', [MainController::class, 'news_category']);
 Route::get('/news-category', [MainController::class, 'news_category']);
@@ -78,6 +76,8 @@ Route::get('/news', [MainController::class, 'news_category']);
 Route::get('/news/{id}', [MainController::class, 'news']);
 Route::get('/members', [MainController::class, 'members']);
 Route::get('/dinner', [MainController::class, 'dinner']);
+Route::get('/output', [MainController::class, 'output']);
+Route::get('/testimonial', [MainController::class, 'testimonial']);
 Route::get('/ucc', function () {
     return view('chair-person-message');
 });
