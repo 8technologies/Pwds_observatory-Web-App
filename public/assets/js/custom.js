@@ -304,6 +304,31 @@ $(function(){
 
 	
 
+	var accordion = function() {
+		$('.btn-link[aria-expanded="true"]').closest('.accordion-item').addClass('active');
+		$('.collapse').on('show.bs.collapse', function () {
+			$(this).closest('.accordion-item').addClass('active');
+		});
+
+		$('.collapse').on('hidden.bs.collapse', function () {
+			$(this).closest('.accordion-item').removeClass('active');
+		});
+	}
+	accordion();
+
+	var siteDatePicker = function() {
+
+		if ( $('.datepicker').length > 0 ) {
+			$('.datepicker').datepicker();
+		}
+
+	};
+	siteDatePicker();
+
+	var siteSticky = function() {
+		$(".js-sticky-header").sticky({topSpacing:0});
+	};
+	siteSticky();
 
 
 })
