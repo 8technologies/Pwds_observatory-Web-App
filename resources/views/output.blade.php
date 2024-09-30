@@ -1,5 +1,3 @@
-
-
 @extends('layouts.layout-main')
 @section('main-content')
     <!-- Hero -->
@@ -27,7 +25,7 @@
                 </div>
             </div>
               <div class="row justify-content-center mb-3">
-      <div class="col-lg-7 text-center" >
+      <div class="col-lg-7 text-center" data-aos="fade-up" data-aos-delay="0">
         <h2 class="line-bottom text-center mb-4">Program OutPuts</h2>
         <p class="text-center mt-2">
                 During the past years the program has under taken a number of activities and come up with outputs has
@@ -43,8 +41,9 @@
     <!-- Service-->
 <div class="untree_co-section">
   <div class="container">
-      <div class="row align-items-stretch">
-      <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+  
+    <div class="row align-items-stretch">
+      <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
         <div class="output-card d-flex align-items-start h-100">
           <div>
            <i class='bx bx-book-open'></i>
@@ -56,7 +55,7 @@
           </div>
         </div>
       </div>
-        <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+        <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-laptop'></i>
@@ -67,7 +66,7 @@
               </div>
             </div>
         </div>
-         <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+         <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-user'></i>
@@ -78,7 +77,7 @@
               </div>
             </div>
         </div>
-    <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+    <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-book-alt'></i>
@@ -89,7 +88,7 @@
               </div>
             </div>
         </div>
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-mobile'></i>
@@ -100,7 +99,7 @@
               </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+        <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-code-alt'></i>
@@ -111,7 +110,7 @@
               </div>
             </div>
         </div>
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-globe-alt'></i>
@@ -122,7 +121,7 @@
               </div>
             </div>
         </div>
-            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-globe'></i>
@@ -133,7 +132,7 @@
               </div>
             </div>
         </div>
-            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bxs-briefcase'></i>
@@ -144,7 +143,7 @@
               </div>
             </div>
             </div>
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                 <i class='bx bx-dish'></i>
@@ -155,7 +154,7 @@
               </div>
             </div>
         </div>
-         <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+         <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
                <i class='bx bx-notepad'></i>
@@ -166,7 +165,7 @@
               </div>
             </div>
         </div> 
-            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
               <i class='bx bx-link'></i>
@@ -177,7 +176,7 @@
               </div>
             </div>
         </div> 
-            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+            <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
               <i class='bx bxs-report'></i>
@@ -189,7 +188,7 @@
               </div>
             </div>
         </div>
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" >
+          <div class="col-sm-6 col-md-6 col-lg-4 mb-5" data-aos="fade-up" data-aos-delay="0">
             <div class="output-card d-flex align-items-start h-100">
               <div>
              <i class='bx bxl-microsoft-teams'></i>
