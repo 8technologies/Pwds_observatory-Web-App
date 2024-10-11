@@ -33,6 +33,8 @@ class DataImportController extends AdminController
            
         $grid = new Grid(new DataImport());
 
+        $grid->disableBatchActions();
+
         //disableIdFilter
         $grid->disableFilter();
 
@@ -50,8 +52,13 @@ class DataImportController extends AdminController
 
 
         $grid->model()->where('user_id', $user->id);
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', __('Registered Date'))->display(function ($date) {
+            return \Carbon\Carbon::parse($date)->format('d-m-Y');
+        });
+        
+        $grid->column('updated_at', __('Updated at'))->display(function ($date) {
+            return \Carbon\Carbon::parse($date)->format('d-m-Y');
+        })->hide();
         
         $grid->column('title', __('Title'));
         $grid->column('file', __('File'));
@@ -126,7 +133,9 @@ class DataImportController extends AdminController
             ->rules('required|mimes:xlsx,xls')
             ->uniqueName();
         
-        $form->select('district', __('District'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+        $form->select('district', __('District'))
+        ->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))
+        ->rules('required');
      
         return $form;
     }

@@ -192,6 +192,13 @@ class Person extends Model
             $person->village = ucfirst(strtolower($person->village));
             $person->profiler = ucfirst(strtolower($person->profiler));
 
+            // Update 'm' to 'Male' and 'f' to 'Female' in sex attribute
+            if (strtolower($person->sex) === 'm') {
+                $person->sex = 'Male';
+            } elseif (strtolower($person->sex) === 'f') {
+                $person->sex = 'Female';
+            }
+
             //is_employed == 0 must be taken as unemployed
             if ($person->is_employed == 2) {
                 $person->employment_status = 'unemployed';
