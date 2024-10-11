@@ -39,25 +39,15 @@
 
     <!-- Vendor Styles -->
     <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/vendor/boxicons/css/boxicons.min.css" />
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/main-styles.css') }} "/>
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/bootstrap.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/css2.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/style.min.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/animate.min.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/jquery.fancybox.min.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/aos.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/styles.css') }}">
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/css/theme.min.css') }}">
-    <script src="{{url('/assets/js/custom.js')}}"></script>
-    <script src="{{url('/assets/js/app.min.js')}}"></script>
-    <link rel="stylesheet" media="screen" href="{{ url('/assets/vendor/swiper/swiper-bundle.min.css') }}" />
+    <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/vendor/swiper/swiper-bundle.min.css" />
     <link rel="stylesheet" media="screen"
         href="{{ url('') }}/assets/vendor/lightgallery/css/lightgallery-bundle.min.css" />
 
     <!-- Main Theme Styles + Bootstrap -->
     <link rel="stylesheet" media="screen" href="{{ url('') }}/assets/css/theme.min.css">
-    
-
+  <link rel="stylesheet"  href="{{url('/assets/css/main-styles.css')}}">
+    <link rel="stylesheet" href="{{ url ('/assets/css/aos.css')}}">
+    <link rel="stylesheet" href="{{ url ('/assets/css/style.min.css')}}">
     <!-- Page loading styles -->
     <style>
         .page-loading {
@@ -171,6 +161,47 @@
         })();
     </script> --}}
 
+<style type="text/css">
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-toggle a {
+             background-color: #4054b2;
+             color: #ffffff;
+         }
+
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-overlay,
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-overlay ul.pojo-a11y-toolbar-items.pojo-a11y-links {
+             border-color: #4054b2;
+         }
+
+         body.pojo-a11y-focusable a:focus {
+             outline-style: solid !important;
+             outline-width: 1px !important;
+             outline-color: #FF0000 !important;
+         }
+
+         #pojo-a11y-toolbar {
+             top: 100px !important;
+         }
+
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-overlay {
+             background-color: #ffffff;
+         }
+
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-overlay ul.pojo-a11y-toolbar-items li.pojo-a11y-toolbar-item a,
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-overlay p.pojo-a11y-toolbar-title {
+             color: #333333;
+         }
+
+         #pojo-a11y-toolbar .pojo-a11y-toolbar-overlay ul.pojo-a11y-toolbar-items li.pojo-a11y-toolbar-item a.active {
+             background-color: #4054b2;
+             color: #ffffff;
+         }
+
+         @media (max-width: 767px) {
+             #pojo-a11y-toolbar {
+                 top: 50px !important;
+             }
+         }
+     </style>
 </head>
 
 
@@ -208,6 +239,17 @@
 
     <!-- Main Theme Script -->
     <script src="{{ url('') }}/assets/js/theme.min.js"></script>
+    <script src="{{url('/assets/js/aos.js')}}"></script>
+     <script src="{{url('/assets/js/jquery-3.4.1.min.js')}}"></script>
+      <script src="{{url('/assets/js/custom.js')}}"></script>
+      <script src="{{url('/assets/js/app.min.js')}}"></script>
+    <!-- addons-->
+       <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+         integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+     </script>
+     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+     </script>
 
     @yield('bellow-footer')
 
