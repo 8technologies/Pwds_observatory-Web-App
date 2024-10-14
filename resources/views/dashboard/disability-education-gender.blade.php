@@ -8,9 +8,29 @@
 </div>
 
 <script>
-    var educationData = @json($educationData);
-    var gender = @json($gender).filter(label => label !== null && label !== 'N/A');
-    var educationLevels = @json($educationLevels).filter(educ_levels => educ_levels != 'Unknown');
+    // var educationData = @json($educationData);
+    // var gender = @json($gender).filter(label => label !== null && label !== 'N/A');
+    // var educationLevels = @json($educationLevels).filter(educ_levels => educ_levels != 'Unknown');
+
+
+    // var gender = ['Male', 'Female'];
+    // var educationLevels = ['Primary', 'Secondary', 'Tertiary'];
+    // var educationData = [
+    //     { education_level: 'Primary', sex: 'Male', count: 50 },
+    //     { education_level: 'Secondary', sex: 'Male', count: 40 },
+    //     { education_level: 'Tertiary', sex: 'Male', count: 30 },
+    //     { education_level: 'Primary', sex: 'Female', count: 55 },
+    //     { education_level: 'Secondary', sex: 'Female', count: 45 },
+    //     { education_level: 'Tertiary', sex: 'Female', count: 35 }
+    // ];
+
+    var gender = Array.isArray(@json($gender)) ? @json($gender).filter(label => label !== null && label !== 'N/A') : [];
+    var educationLevels = Array.isArray(@json($educationLevels)) ? @json($educationLevels).filter(educ_levels => educ_levels != 'Unknown') : [];
+    var educationData = @json($educationData);  
+
+    console.log("Gender:", gender);
+    console.log("Education Levels:", educationLevels);
+    console.log("Education Data:", educationData);
 
     var data = {
         labels: educationLevels,
@@ -18,9 +38,7 @@
             label: g,
             backgroundColor: g === 'Male' ? 'skyblue' : 'green',
             data: educationLevels.map(level => {
-                const found = educationData.find(d => d.education_level === level && d
-                    .sex ===
-                    g);
+                const found = educationData.find(d => d.education_level === level && d.sex === g);
                 return found ? found.count : 0;
             })
         }))
