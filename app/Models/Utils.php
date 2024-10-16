@@ -941,51 +941,39 @@ DELETE FROM people WHERE id > 8954
 
 
     public static function mail_send($data)
-{
-    // Check if $data['email'] is set, throw an exception if not
-    if (!isset($data['email'])) {
-        throw new \Exception('Failed to send email because email is not set');
-    }
+    {
+        //$data['email'] is not set
+        if (!isset($data['email'])) {
+            throw new \Exception('Failed to send email because email is not set');
+        }
 
-    // Set name to be the email if $data['name'] is not provided
-    if (!isset($data['name'])) {
-        $data['name'] = $data['email'];
-    }
+        //if $data['name'] is not set, set name to be mail
+        if (!isset($data['name'])) {
+            $data['name'] = $data['email'];
+        }
 
-    // Check if $data['subject'] is set, throw an exception if not
-    if (!isset($data['subject'])) {
-        throw new \Exception('Failed to send email because subject is not set');
-    }
+        // check if $data['subject'] not set, throw an error
+        if (!isset($data['subject'])) {
+            throw new \Exception('Failed to send email because subject is not set');
+        }
+        // do the same to body $data['body']
+        if (!isset($data['body'])) {
+            throw new \Exception('Failed to send email because body is not set');
+        }
 
-    // Check if $data['body'] is set, throw an exception if not
-    if (!isset($data['body'])) {
-        throw new \Exception('Failed to send email because body is not set');
-    }
-
-    // Optional: Check if receiver email is set
-    $receiverEmail = isset($data['receiver']) ? $data['receiver'] : null;
-    
-    try {
-        Mail::send(
-            'emails.mail-template-1',
-            $data,
-            function ($m) use ($data, $receiverEmail) {
-                // Send to the main recipient
-                $m->to($data['email'], $data['name'])
-                    ->subject($data['subject']);
-
-                // If receiver is set, send to the receiver as well
-                if ($receiverEmail) {
-                    $m->to($receiverEmail);  // Add the receiver as an additional recipient
+        try {
+            Mail::send(
+                'emails.mail-template-1',
+                $data,
+                function ($m) use ($data) {
+                    $m->to($data['email'], $data['name'])
+                        ->subject($data['subject']);
+                    $m->from(env('MAIL_USERNAME', 'info@ict4personswithdisabilities.org'), $data['subject']);
                 }
-
-                $m->from(env('MAIL_USERNAME', 'info@ict4personswithdisabilities.org'), $data['subject']);
-            }
-        );
-    } catch (\Throwable $th) {
-        throw $th;
+            );
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+        return 'success';
     }
-    return 'success';
-}
-
 }
