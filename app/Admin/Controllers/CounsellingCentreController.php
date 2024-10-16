@@ -31,83 +31,95 @@ class CounsellingCentreController extends AdminController
      * @return Grid
      */
     protected function grid()
-    {
-        $grid = new Grid(new CounsellingCentre());
+{
+    $grid = new Grid(new CounsellingCentre());
 
-        $user = auth('admin')->user();
+    $user = auth('admin')->user();
 
-        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
-            $counselling_centres = $actions->row;
-            if ($counselling_centres->administrator_id !== $user->id) {
-                $actions->disableEdit();
-                $actions->disableDelete();
-            }
-        });
-        if (!Admin::user()->inRoles(['administrator', 'nudipu'])) {
-            $grid->disableCreateButton();
-            $grid->actions(function ($actions) {
-                $actions->disableDelete();
-                $actions->disableEdit();
-            });
+    $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+        $counselling_centres = $actions->row;
+        if ($counselling_centres->administrator_id !== $user->id) {
+            $actions->disableEdit();
+            $actions->disableDelete();
         }
+    });
 
-
-        $grid->filter(function ($f) {
-            // Remove the default id filter
-            $f->disableIdFilter();
-            $f->between('created_at', 'Filter by registered')->date();
+    if (!Admin::user()->inRoles(['administrator', 'nudipu'])) {
+        $grid->disableCreateButton();
+        $grid->actions(function ($actions) {
+            $actions->disableDelete();
+            $actions->disableEdit();
         });
-
-        $grid->disableFilter();
-        $grid->disableBatchActions();
-        $grid->quickSearch('name')->placeholder('Search by name');
-        $grid->model()->orderBy('id', 'desc');
-
-        $grid->column('created_at', __('Regisetered'))->display(
-            function ($x) {
-                return Utils::my_date($x);
-            }
-        )->sortable();
-        $grid->column('name', __('Name'))->sortable();
-
-
-
-        $grid->column('skills', __('Skills'));
-        $grid->column('fees_range', __('Fees range'))->hide();
-
-
-
-        $grid->column('district_id', __('District'))
-            ->display(
-                function ($x) {
-                    $dis = Location::find($x);
-                    if ($dis == null) {
-                        return '-';
-                    }
-                    return $dis->name;
-                }
-            )->sortable();
-
-        $grid->column('subcounty_id', __('Subcounty'))
-            ->display(
-                function ($x) {
-                    $dis = Location::find($x);
-                    if ($dis == null) {
-                        return '-';
-                    }
-                    return $dis->name;
-                }
-            )->sortable()->hide();
-
-        $grid->column('address', __('Address'));
-        $grid->column('parish', __('Parish'))->hide();
-        $grid->column('village', __('Village'))->hide();
-        $grid->column('phone_number', __('Phone number'));
-        $grid->column('email', __('Email'));
-        $grid->column('website', __('Website'))->hide();
-
-        return $grid;
     }
+
+    $grid->model()->orderBy('id', 'desc');
+
+    $grid->disableBatchActions();
+
+    // Filters
+    $grid->filter(function ($filter) {
+        $filter->disableIdFilter();
+
+        // Filter by name
+        $filter->like('name', 'Name');
+
+        // Filter by district
+        $filter->equal('district_id', 'Filter by District')
+                ->select(District::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+        // Filter by email 
+        $filter->like('email', 'Email');
+
+        //Filter by phone number
+        $filter->like('phone_number', 'Phone number');
+
+        // Filter by skills
+        $filter->like('skills', 'Skills');
+        
+        
+    });
+
+    $grid->quickSearch('name')->placeholder('Search by name');
+
+    $grid->column('created_at', __('Registered'))->display(function ($x) {
+        return Utils::my_date($x);
+    })->sortable();
+
+    $grid->column('name', __('Name'))->sortable();
+
+    $grid->column('skills', __('Skills'));
+    $grid->column('fees_range', __('Fees range'))->hide();
+
+    $grid->column('district_id', __('District'))
+        ->display(function ($x) {
+            $dis = Location::find($x);
+            if ($dis == null) {
+                return '-';
+            }
+            return $dis->name;
+        })
+        ->sortable();
+
+    $grid->column('subcounty_id', __('Subcounty'))
+        ->display(function ($x) {
+            $dis = Location::find($x);
+            if ($dis == null) {
+                return '-';
+            }
+            return $dis->name;
+        })
+        ->sortable()
+        ->hide();
+
+    $grid->column('address', __('Address'));
+    $grid->column('parish', __('Parish'))->hide();
+    $grid->column('village', __('Village'))->hide();
+    $grid->column('phone_number', __('Phone number'));
+    $grid->column('email', __('Email'));
+    $grid->column('website', __('Website'))->hide();
+
+    return $grid;
+}
+
 
     /**
      * Make a show builder.
