@@ -16,6 +16,8 @@ use App\Http\Controllers\API\ProductServiceAPIController;
 use App\Http\Controllers\API\ServiceProviderAPIController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\ApiResurceController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +49,17 @@ Route::resource('products', ProductServiceAPIController::class);
 Route::apiResource('disabilities', DisabilitiesController::class);
 Route::apiResource('districts', DistrictAPIController::class);
 Route::apiResource('people-batch-collection', BatchDataController::class);
+
+
+// Ogiki Moses Odera
+
+// Route::post('send-email', [ResetPasswordController::class, 'sendEmail']);
+//Route::post('reset-password', [ResetPasswordController::class, 'reset']);
+
+// Route::get('form-password', [ResetPasswordController::class, 'showResetForm']);
+// Route::post('reset-password', [ResetPasswordController::class, 'reset']);
+
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 
 // Route::POST("people", [ApiResurceController::class, "person_create"]);
 // Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);
