@@ -25,66 +25,72 @@ class JobController extends AdminController
      * @return Grid
      */
     protected function grid()
-    {
-        $grid = new Grid(new Job());
+{
+    $grid = new Grid(new Job());
 
-        $user = Admin::user();
-        if ($user->inRoles(['basic', 'pwd'])) {
-            $grid->actions(function (Grid\Displayers\Actions $actions) {
-                $actions->disableEdit();
-                $actions->disableDelete();
-            });
-            $grid->disableCreateButton();
-        }
-
-
-        $grid->filter(function ($filter) {
-            $filter->disableIdFilter();
-
-            $filter->equal('type','Job Type')->select(Job::pluck('type', 'type'));
-            $filter->equal('location','Location')->select(Job::pluck('location', 'location'));
-            $filter->equal('hiring_firm','Hiring Firm')->select(Job::pluck('hiring_firm', 'hiring_firm'));
-            $filter->equal('minimum_academic_qualification','Minimum Academic Qualification')->select(Job::pluck('minimum_academic_qualification', 'minimum_academic_qualification'));
-            $filter->equal('required_experience','Years Of Experience')->select(Job::pluck('required_experience', 'required_experience'));
-            $filter->date('deadline', 'Filter By Deadline')->date();
-           
+    $user = Admin::user();
+    if ($user->inRoles(['basic', 'pwd'])) {
+        $grid->actions(function (Grid\Displayers\Actions $actions) {
+            $actions->disableEdit();
+            $actions->disableDelete();
         });
-
-        $grid->quickSearch('title', 'location', 'type', 'minimum_academic_qualification', 'required_experience', 'hiring_firm', 'deadline')->placeholder('Search...');
-
-
-        $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
-            $job = $actions->row;
-            if ($job->user_id !== $user->id) {
-                $actions->disableEdit();
-                $actions->disableDelete();
-            }
-        });
-
-
-        $grid->model()->orderBy('created_at', 'desc');
-        $grid->disableBatchActions();
-        $grid->column('created_at', __('Published at'))->display(function ($x) {
-            return Utils::my_date($x);
-        })->sortable();
-        $grid->column('user_id', __('Publisher'))->display(function ($user_id) {
-            return \App\Models\User::find($user_id)->name;
-        });
-        $grid->column('title', __('Title'));
-        $grid->column('location', __('Location'));
-        $grid->column('type', __('Type'));
-        $grid->column('minimum_academic_qualification', __('Minimum academic qualification'));
-        $grid->column('required_experience', __('Required experience'));
-        $grid->column('hiring_firm', __('Hiring firm'));
-        $grid->column('deadline', __('Deadline'));
-        $grid->column('days_remaining', 'Days Remaining');
-        $grid->column('status', __('Status'))->label([
-            'Active' => 'success',
-            'Expired' => 'danger',
-        ]);;
-
-        return $grid;
+        $grid->disableCreateButton();
     }
+
+    // Filters for the grid
+    $grid->filter(function ($filter) {
+        $filter->disableIdFilter();
+        $filter->equal('type', 'Job Type')->select(Job::pluck('type', 'type'));
+        $filter->equal('location', 'Location')->select(Job::pluck('location', 'location'));
+        $filter->equal('hiring_firm', 'Hiring Firm')->select(Job::pluck('hiring_firm', 'hiring_firm'));
+        $filter->equal('minimum_academic_qualification', 'Minimum Academic Qualification')->select(Job::pluck('minimum_academic_qualification', 'minimum_academic_qualification'));
+        $filter->equal('required_experience', 'Years Of Experience')->select(Job::pluck('required_experience', 'required_experience'));
+        $filter->date('deadline', 'Filter By Deadline')->date();
+    });
+
+    $grid->quickSearch('title', 'location', 'type', 'minimum_academic_qualification', 'required_experience', 'hiring_firm', 'deadline')->placeholder('Search...');
+
+    $grid->actions(function (Grid\Displayers\Actions $actions) use ($user) {
+        $job = $actions->row;
+        if ($job->user_id !== $user->id) {
+            $actions->disableEdit();
+            $actions->disableDelete();
+        }
+    });
+
+    $grid->model()->orderBy('created_at', 'desc');
+    $grid->disableBatchActions();
+
+    $grid->column('created_at', __('Published at'))->display(function ($x) {
+        return Utils::my_date($x);
+    })->sortable();
+    
+    $grid->column('user_id', __('Publisher'))->display(function ($user_id) {
+        return \App\Models\User::find($user_id)->name;
+    });
+    
+    $grid->column('title', __('Title'));
+    $grid->column('location', __('Location'));
+    $grid->column('type', __('Type'));
+    $grid->column('minimum_academic_qualification', __('Minimum academic qualification'));
+    $grid->column('required_experience', __('Required experience'));
+    $grid->column('hiring_firm', __('Hiring firm'));
+    $grid->column('deadline', __('Deadline'));
+
+    $grid->column('status', __('Status'))->display(function () {
+        // Determine the status
+        $status = now()->greaterThan($this->deadline) ? 'Expired' : 'Active';
+    
+        // Set color based on the status
+        $color = $status === 'Expired' ? 'red' : 'green';
+    
+        // Return HTML with inline styling for color
+        return "<span style='color: white; background-color: {$color}; padding: 5px 10px; border-radius: 5px;'>{$status}</span>";
+    })->sortable();
+    
+
+    return $grid;
+}
 
     /**
      * Make a show builder.
