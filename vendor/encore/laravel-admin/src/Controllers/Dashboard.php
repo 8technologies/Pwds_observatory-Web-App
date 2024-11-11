@@ -113,17 +113,14 @@ class Dashboard
     }
 
     //PWDs Disability Category Count per district
-    public static function getDisabilityCount()
+    public static function getDisabilityCount(Request $request)
     {
-        $people = Person::with('disabilities', 'district')->get(); // Eager load people disabilities
+        $people = Person::with('disabilities', 'district')->get();
         $disabilityCounts = [];
         $districtDisabilityCounts = [];
-
+    
         foreach ($people as $person) {
-            //District loaded has a name
             $districtName = $person->district->name ?? 'Unknown';
-
-            // Initialize district in the array if not already present
             if (!array_key_exists($districtName, $districtDisabilityCounts)) {
                 $districtDisabilityCounts[$districtName] = [];
             }
@@ -132,16 +129,30 @@ class Dashboard
                     $disabilityCounts[$disability->name] = 0;
                 }
                 $disabilityCounts[$disability->name]++;
-
+    
                 if (!isset($districtDisabilityCounts[$districtName][$disability->name])) {
                     $districtDisabilityCounts[$districtName][$disability->name] = 0;
                 }
                 $districtDisabilityCounts[$districtName][$disability->name]++;
             }
         }
+    
         arsort($disabilityCounts);
         arsort($districtDisabilityCounts);
-
+    
+        // Filter for top 5 disabilities if requested
+        if ($request->query('filter') === '5') {
+            $disabilityCounts = array_slice($disabilityCounts, 0, 5, true);
+            foreach ($districtDisabilityCounts as $districtName => $counts) {
+                $districtDisabilityCounts[$districtName] = array_slice($counts, 0, 5, true);
+            }
+        } elseif ($request->query('filter') === '2') { // Filter for top 2 disabilities
+            $disabilityCounts = array_slice($disabilityCounts, 0, 2, true);
+            foreach ($districtDisabilityCounts as $districtName => $counts) {
+                $districtDisabilityCounts[$districtName] = array_slice($counts, 0, 2, true);
+            }
+        }
+    
         return view('dashboard.disability-category-count', compact('disabilityCounts', 'districtDisabilityCounts'));
     }
 

@@ -9,6 +9,13 @@
                 @endforeach
             </select>
         </label>
+        <label for="disabilityCountFilter">
+            <select name="disabilityCountFilter" id="disabilityCountFilter" onchange="UpdateCategory()" class="form-select">
+                <option value="all">All Disabilities</option>
+                <option value="5">Top 5 Disabilities</option>
+                <option value="2">Top 2 Disabilities</option> 
+            </select>
+        </label>
         <div class="chart-container">
             <canvas id="disabilityCountChart"></canvas>
         </div>
@@ -60,16 +67,33 @@
     });
 
     function UpdateCategory() {
-        var selectedDistrictCategory = document.getElementById('districtSelector').value;
-        if (selectedDistrictCategory === 'all') {
-            disabilityChart.data.labels = Object.keys(disabilityData);
-            disabilityChart.data.datasets[0].data = Object.values(disabilityData);
-        } else {
-            const districtData = @json($districtDisabilityCounts);
-            const districtDisabilityData = districtData[selectedDistrictCategory];
-            disabilityChart.data.labels = Object.keys(districtDisabilityData);
-            disabilityChart.data.datasets[0].data = Object.values(districtDisabilityData);
-        }
-        disabilityChart.update();
+    var selectedDistrictCategory = document.getElementById('districtSelector').value;
+    var disabilityFilter = document.getElementById('disabilityCountFilter').value;
+    
+    let filteredData;
+    if (selectedDistrictCategory === 'all') {
+        filteredData = disabilityData;
+    } else {
+        const districtData = @json($districtDisabilityCounts);
+        filteredData = districtData[selectedDistrictCategory];
     }
+
+    // Apply filter for top 5 or top 2 if selected
+    let labels = Object.keys(filteredData);
+    let data = Object.values(filteredData);
+    if (disabilityFilter === '5') {
+        labels = labels.slice(0, 5);
+        data = data.slice(0, 5);
+    } else if (disabilityFilter === '2') {
+        labels = labels.slice(0, 2);
+        data = data.slice(0, 2);
+    }
+
+    // Update the chart
+    disabilityChart.data.labels = labels;
+    disabilityChart.data.datasets[0].data = data;
+    disabilityChart.update();
+}
+
+
 </script>

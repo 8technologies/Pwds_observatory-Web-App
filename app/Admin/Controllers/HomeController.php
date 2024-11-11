@@ -102,7 +102,8 @@ class HomeController extends Controller
             });
 
             $row->column(4, function (Column $column) {
-                $column->append(Dashboard::getDisabilityCount());
+                $disabilityCountHtml = Dashboard::getDisabilityCount(request())->render();
+                $column->append($disabilityCountHtml);
             });
         });
 
