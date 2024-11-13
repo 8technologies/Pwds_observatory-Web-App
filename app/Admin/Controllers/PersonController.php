@@ -508,6 +508,10 @@ class PersonController extends AdminController
             '); */
         $form->divider('Aspirations');
         $form->quill('aspirations', __('Aspirations'));
+        $form->text('profiler', __('Profiler'))
+                    ->placeholder('Enter the name of the profiler')
+                    ->help('Enter the name of the profiler')
+                    ->rules('required');
 
         // if (!$user->inRoles(['district-union', 'opd'])) {
         //     $form->html('
