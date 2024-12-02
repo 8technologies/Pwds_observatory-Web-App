@@ -393,7 +393,7 @@ class PersonController extends AdminController
 
         $u = Admin::user();
         if($u->inRoles(['administrator','nudipu'])){
-            $form->select('district_id', __('District Attached (Current District of Residence)'))->options(District::pluck('name', 'id'))->placeholder('Select District')->rules("required");
+            $form->select('district_id', __('District Attached (Current District of Residence)'))->options(District::pluck('name', 'id'))->placeholder('Select District')->rules("required")->required();
         }else{
             $org = Organisation::find($u->organisation_id);
             if($u->isRole('opd')){
@@ -404,7 +404,7 @@ class PersonController extends AdminController
         //if age < 18, then marital status must be disabled
         $form->select('marital_status', __('Marital Status'))->options(
             ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
-        )->rules('required');
+        )->rules('required')->required();
         $form->text('ethnicity', __('Ethnicity'))->help('Your Tribe');
         $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic', 'Born Again Christian' => 'Born Again Christian', 'Other Christian Faith' => 'Other Christian Faith', 'Islam' => 'Islam']);
 
