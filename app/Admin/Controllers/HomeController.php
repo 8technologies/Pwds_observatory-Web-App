@@ -53,7 +53,7 @@ class HomeController extends Controller
                     'is_dark' => false,
                     'title' => 'Number Of NOPDs',
                     'font_size' => '1.5em',
-                    'number' => Organisation::where('relationship_type', '=', 'opd')->count(),
+                    'number' => number_format(Organisation::where('relationship_type', '=', 'opd')->count()),
                     'sub_title' => 'nopd',
                     'link' => admin_url('opds'),
                 ]));
@@ -62,7 +62,7 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Service providers',
-                    'number' => ServiceProvider::count(),
+                    'number' => number_format(ServiceProvider::count()),
                     'sub_title' => 'service providers',
                     'link' => admin_url('service-providers'),
                 ]));
@@ -72,7 +72,7 @@ class HomeController extends Controller
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
-                    'number' => Person::count(),
+                    'number' => number_format(Person::count()),
                     'sub_title' => 'pwd',
                     'link' => admin_url('people'),
                 ]));
