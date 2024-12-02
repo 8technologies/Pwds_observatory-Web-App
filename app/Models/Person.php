@@ -83,6 +83,7 @@ class Person extends Model
     public function district()
     {
         return $this->belongsTo(District::class, 'district_id');
+
     }
 
     public function districtOfOrigin()
@@ -162,6 +163,7 @@ class Person extends Model
                 if ($organisation == null) {
                     // To Handle the case where no organization is found
                     return redirect()->back()->withErrors(['error' => 'No organization associated with this user.']);
+                    
                 }
 
 

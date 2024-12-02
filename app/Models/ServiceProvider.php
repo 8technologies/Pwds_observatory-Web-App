@@ -44,7 +44,7 @@ class ServiceProvider extends Model
     //Many to many for districts and service providers
     public function districts_of_operations()
     {
-        return $this->belongsToMany(District::class)->withTimestamps();
+        return $this->belongsToMany(District::class, 'district_service_provider')->withTimestamps();
     }
 
     public function contact_persons()
@@ -58,7 +58,7 @@ class ServiceProvider extends Model
 
     public function disability_categories()
     {
-        return $this->belongsToMany(Disability::class)->withTimestamps();
+        return $this->belongsToMany(Disability::class, 'disability_service_provider')->withTimestamps();
     }
     public function administrator()
     {

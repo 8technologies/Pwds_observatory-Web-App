@@ -80,6 +80,19 @@ class DataImportController extends AdminController
                 return "<a target='_blank' href='{$url}' class='btn btn-success'>Import</a>";
             });
 
+            // Add the Download Template button and JavaScript
+        $grid->tools(function ($tools) {
+            $tools->append('<a href="#" id="download-template" class="btn btn-primary"><i class="fa fa-download"></i> Download Excel Template</a>');
+            $tools->append('<script>
+                document.getElementById("download-template").addEventListener("click", function(event) {
+                    event.preventDefault();
+                    window.location.href = "' . route('data-import.template') . '";
+                });
+            </script>');
+        });
+            
+            
+
        
 
         return $grid;
@@ -131,6 +144,7 @@ class DataImportController extends AdminController
         //accepts only excel files
         $form->file('file', __('File'))
             ->rules('required|mimes:xlsx,xls')
+
             ->uniqueName();
         
         $form->select('district', __('District'))

@@ -21,6 +21,7 @@ use App\Models\Utils;
 use Illuminate\Support\Facades\Mail;
 use App\Admin\Controllers\Report_1Controller;
 use App\Admin\Controllers\Report_2Controller;
+use App\Http\Controllers\TemplateExportController;
 
 Route::get('du-admin-password-reset', function () {
     $du_id = $_GET['du_id'];
@@ -169,3 +170,12 @@ Route::get('admin/reports/generate-pdf/{id}', [Report_2Controller::class, 'gener
 Route::get('/admin/import-people', [ImportPeopleController::class, 'showForm']);
 Route::get('import-people-process', [ImportPeopleController::class, 'import_people_process']);
 Route::post('/admin/import-people', [ImportPeopleController::class, 'import']);
+
+
+
+// Route::get('data-import/template', function () {
+//     return response()->download(public_path('templates/Pwd_Profiling_EightTech.xlsx'));
+// })->name('data-import.template');
+
+Route::get('data-import/template', [TemplateExportController::class, 'downloadTemplate'])->name('data-import.template');
+

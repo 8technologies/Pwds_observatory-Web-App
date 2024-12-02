@@ -26,6 +26,7 @@ class District extends Model
     public function people()
     {
         return $this->hasMany(Person::class, 'district_of_origin');
+        
     }
 
     /**
