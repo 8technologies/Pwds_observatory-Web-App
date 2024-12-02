@@ -22,7 +22,7 @@ class Person extends Model
         'is_same_address',
     ];
 
-   
+
 
     protected $fillable = [
         'name',
@@ -80,15 +80,40 @@ class Person extends Model
         return $this->belongsToMany(Disability::class);
     }
 
+    //belongs to district
     public function district()
     {
-        return $this->belongsTo(District::class, 'district_id');
-
+        return $this->belongsTo(District::class);
     }
 
     public function districtOfOrigin()
     {
         return $this->belongsTo(District::class, 'district_of_origin');
+    }
+    /* 
+    //getter for district_of_origin
+    public function getDistrictOfOriginAttribute()
+    {
+        $d = District::find($this->district_of_origin);
+        if ($d == null) {
+            return 'Not mentioned.';
+        }
+        return $d->name;
+    } */
+
+    //getter for district_id 
+    public function getDistrictIdAttribute($district_id)
+    {
+        if ($district_id == null || $district_id == 0 || $district_id == '') {
+            $originDistrict = District::find($this->district_of_origin);
+            if ($originDistrict != null) {
+                $sql = "update people set district_id = ? where id = ?";
+                DB::update($sql, [$originDistrict->id, $this->id]);
+                $district_id = $originDistrict->id;
+                return $district_id;
+            }
+        }
+        return $district_id;
     }
 
     public function districtOfResidence()
@@ -156,14 +181,13 @@ class Person extends Model
             }
 
             $user = auth()->user();
-            if($user != null){   
+            if ($user != null) {
                 $organisation = Organisation::find($user->organisation_id);
 
-               //Ogiki Moses Odera 
+                //Ogiki Moses Odera 
                 if ($organisation == null) {
                     // To Handle the case where no organization is found
                     return redirect()->back()->withErrors(['error' => 'No organization associated with this user.']);
-                    
                 }
 
 
@@ -174,15 +198,30 @@ class Person extends Model
                 if ($organisation->relationship_type == 'du') {
                     $d = District::find($organisation->district_id);
                     //Ogiki Moses Odera Changed from == to != to allow for the district to be set
-                    if($d != null){
-                    $person->district_id = $organisation->district_id;
-                }
-                $person->is_approved = 1;
+                    if ($d != null) {
+                        $person->district_id = $organisation->district_id;
+                    }
+                    $person->is_approved = 1;
                 }
             }
 
             $person->district_of_residence = $person->district_id;
             $person->categories_pricessed = 'No';
+
+            if ($person->district_id == null || $person->district_id == 0 || $person->district_id == '') {
+                if ($person->district_of_origin) {
+                    $district = District::find($person->district_of_origin);
+                    if ($district != null) {
+                        $person->district_id = $person->district_of_origin;
+                    }
+                }
+            }
+            if ($person->district_of_origin == null || $person->district_of_origin == 0 || $person->district_of_origin == '') {
+                $district = District::find($person->district_id);
+                if ($district != null) {
+                    $person->district_of_origin = $person->district_id;
+                }
+            }
         });
 
         static::saving(function ($person) {
@@ -228,6 +267,20 @@ class Person extends Model
                 $person->employment_status = 'Unemployed';
             }
 
+            if ($person->district_id == null || $person->district_id == 0 || $person->district_id == '') {
+                if ($person->district_of_origin) {
+                    $district = District::find($person->district_of_origin);
+                    if ($district != null) {
+                        $person->district_id = $person->district_of_origin;
+                    }
+                }
+            }
+            if ($person->district_of_origin == null || $person->district_of_origin == 0 || $person->district_of_origin == '') {
+                $district = District::find($person->district_id);
+                if ($district != null) {
+                    $person->district_of_origin = $person->district_id;
+                }
+            }
             // $user = Admin::user();
             // $organisation = Organisation::find($user->organisation_id);
             // if (!$organisation) {

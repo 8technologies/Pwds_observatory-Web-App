@@ -388,8 +388,19 @@ class PersonController extends AdminController
         })->help("NIN, Passport Number, Driving Permit Number");
         $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
 
-        $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County')->rules('required');
-        $form->text('village', __('Village'))->placeholder('Enter village')->rules('required');
+        $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County of Origin')->rules('required');
+        $form->text('village', __('Village'))->placeholder('Enter village of Origin')->rules('required');
+
+        $u = Admin::user();
+        if($u->inRoles(['administrator','nudipu'])){
+            $form->select('district_id', __('District Attached (Current District of Residence)'))->options(District::pluck('name', 'id'))->placeholder('Select District')->rules("required");
+        }else{
+            $org = Organisation::find($u->organisation_id);
+            if($u->isRole('opd')){
+                $form->hidden('opd_id')->value($u->organisation_id);
+            }
+        }
+
         //if age < 18, then marital status must be disabled
         $form->select('marital_status', __('Marital Status'))->options(
             ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
