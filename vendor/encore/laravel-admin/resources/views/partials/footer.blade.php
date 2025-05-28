@@ -15,8 +15,8 @@
     </div>
     <!-- Default to the left -->
     <p class="nav d-block    text-md-start pb-2 pb-lg-0 mb-0">
-        Hand-made with ❤️ by
-        <b><a class="nav-link d-inline-block p-0 text-primary" href="https://twitter.com/8TechConsults"
-            target="_blank" rel="noopener">8Technologies 🥰</a></b>
+        Pr
+        <b><a class="nav-link d-inline-block p-0 text-primary" href="https://8technologies.net/"
+            target="_blank" rel="noopener">EightTech Consults Ltd</a></b>
     </p>
 </footer>
