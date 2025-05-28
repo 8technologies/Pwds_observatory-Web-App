@@ -183,9 +183,11 @@ class JobController extends AdminController
                 'None' => 'None - (Not educated at all)',
                 'Below primary' => 'Below primary - (Did not complete P.7)',
                 'Primary' => 'Primary - (Completed P.7)',
-                'Secondary' => 'Secondary - (Completed S.4)',
-                'A-Level' => 'Advanced level - (Completed S.6)',
+                'UCE' => 'O Level- (Completed S.4)',
+                'UACE' => 'A Level - (Completed S.6)',
+                'Diploma-Certificate' => 'Diploma - (Certificate)',
                 'Bachelor' => 'Bachelor - (Degree)',
+                'Post-Graduate' => 'Post-Graduate',
                 'Masters' => 'Masters',
                 'PhD' => 'PhD',
             ])->rules('required');

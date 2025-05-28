@@ -11,7 +11,7 @@ use App\Models\User;
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini">{!! 'Observatory' !!}</span>
         <!-- logo for regular state and mobile devices -->
-        <span class="logo-lg">{!! 'Observatory' !!}</span>
+        <span class="logo-lg" style="font-weight: bold; color: #ffffff;">{!! 'Observatory' !!}</span>
     </a>
 
     <!-- Header Navbar -->
