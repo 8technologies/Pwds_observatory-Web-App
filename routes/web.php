@@ -24,7 +24,7 @@ use App\Admin\Controllers\Report_2Controller;
 use App\Http\Controllers\TemplateExportController;
 use App\Http\Controllers\USSDController;
 
-Route::match(['get', 'post'], '/ussd', [USSDController::class, 'index'])->name("ussd");
+Route::match(['get', 'post'], '/ussd', [USSDController::class, 'index'])->name("ussd"); // USSD route
 
 Route::get('du-admin-password-reset', function () {
     $du_id = $_GET['du_id'];
