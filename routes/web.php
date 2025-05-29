@@ -22,10 +22,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Admin\Controllers\Report_1Controller;
 use App\Admin\Controllers\Report_2Controller;
 use App\Http\Controllers\TemplateExportController;
+use App\Http\Controllers\USSDController;
 
-Route::get('test', function () {
-    die("Test route is working.");
-});
+Route::match(['get', 'post'], '/ussd', [USSDController::class, 'index'])->name("ussd");
+
 Route::get('du-admin-password-reset', function () {
     $du_id = $_GET['du_id'];
     $d  = Organisation::find($du_id);
