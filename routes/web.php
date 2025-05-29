@@ -23,6 +23,9 @@ use App\Admin\Controllers\Report_1Controller;
 use App\Admin\Controllers\Report_2Controller;
 use App\Http\Controllers\TemplateExportController;
 
+Route::get('test', function () {
+    die("Test route is working.");
+});
 Route::get('du-admin-password-reset', function () {
     $du_id = $_GET['du_id'];
     $d  = Organisation::find($du_id);
@@ -178,4 +181,3 @@ Route::post('/admin/import-people', [ImportPeopleController::class, 'import']);
 // })->name('data-import.template');
 
 Route::get('data-import/template', [TemplateExportController::class, 'downloadTemplate'])->name('data-import.template');
-
