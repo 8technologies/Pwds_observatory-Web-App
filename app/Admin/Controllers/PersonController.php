@@ -121,7 +121,7 @@ class PersonController extends AdminController
 
         $grid->exporter(new PersonsExcelExporter());
         // $grid->import(new ImportPeople());
-        
+
 
 
 
@@ -233,9 +233,6 @@ class PersonController extends AdminController
         // });
 
 
-        //phone_number
-        $grid->column('phone_number', __('Phone Number'))->sortable();
-
 
         $grid->column('categories_pricessed', __('Processed'))
             ->using(['Yes' => 'Yes', 'No' => 'No'])
@@ -247,6 +244,12 @@ class PersonController extends AdminController
                 'Yes' => 'Yes',
                 'No' => 'No',
             ])->hide();
+
+
+        //phone_number
+        $grid->column('phone_number', __('Phone Number'))->sortable();
+        //next_of_kin_phone_number
+        $grid->column('next_of_kins.next_of_kin_phone_number', __('Next of Kin Phone Number'))->sortable();
         return $grid;
     }
 
@@ -375,7 +378,7 @@ class PersonController extends AdminController
             ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
         $form->date('dob', __('Date of Birth'))->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY');
         $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
-        $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
+        $form->text('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
         $form->email('email', __('Email'))->placeholder('Email');
         $form->divider();
         $form->radio('id_type', __('ID Type'))->options([
