@@ -46,6 +46,24 @@ class PersonController extends AdminController
 
         $grid = new Grid(new Person());
 
+        $grid->model()->select([
+        'id',
+        'name',
+        'other_names', 
+        'phone_number', // Make sure this is included
+        'id_number',
+        'sex',
+        'is_formal_education',
+        'age',
+        'dob',
+        'district_id',
+        'profiler',
+        'categories',
+        'created_at',
+        
+       ]);
+
+
         $grid->filter(function ($f) {
             // Remove the default id filter
             $f->disableIdFilter();
