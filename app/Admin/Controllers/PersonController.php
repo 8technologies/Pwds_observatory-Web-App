@@ -34,7 +34,7 @@ class PersonController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Persons with disabilities';
+    protected $title = 'Persons with disabilities.';
 
     /**
      * Make a grid builder.
@@ -82,9 +82,9 @@ class PersonController extends AdminController
             $filter->equal('disabilities.name', 'Disability Name')
                 ->select(Disability::pluck('name', 'name'));
 
-            $filter->between('age','Age');
-            $filter->equal('is_formal_education','Filter By Formal Education')
-                 ->select([
+            $filter->between('age', 'Age');
+            $filter->equal('is_formal_education', 'Filter By Formal Education')
+                ->select([
 
                     'PHD' => 'PHD',
                     'Masters' => 'Master\'s Degree',
@@ -95,7 +95,7 @@ class PersonController extends AdminController
                     'Secondary-UCE' => 'Secondary - UCE',
                     'Primary' => 'Primary - PLE',
 
-                 ]);
+                ]);
         });
 
         $grid->quickSearch('name')->placeholder('Search by name');
@@ -105,7 +105,7 @@ class PersonController extends AdminController
         //     // Add your custom button
         //     $tools->append('<a class="btn btn-success" href="/admin/custom-action"><i class="fa fa-cog"></i> Upload</a>');
         // });
-        
+
 
         $user = Admin::user();
         $organisation = Organisation::find(Admin::user()->organisation_id);
@@ -120,11 +120,12 @@ class PersonController extends AdminController
 
 
         $grid->exporter(new PersonsExcelExporter());
-       // $grid->import(new ImportPeople());
-        
+        // $grid->import(new ImportPeople());
         
 
-         $grid->disableBatchActions();
+
+
+        $grid->disableBatchActions();
 
         // $grid->column('id', __('Id'))->sortable();
         $grid->column('created_at', __('Registered'))->display(
@@ -135,11 +136,11 @@ class PersonController extends AdminController
         // $grid->column('name', __('Name'))->sortable();   
         // $grid->column('other_names', __('Other Names'))->sortable();
         $grid->column('full_name', __('Full Name'))
-        ->display(function () {
-            return $this->name . ' ' . $this->other_names;
-        })
-        ->sortable();
-        
+            ->display(function () {
+                return $this->name . ' ' . $this->other_names;
+            })
+            ->sortable();
+
         $grid->column('sex', __('Gender'))->sortable();
         $grid->column('education_level', __('Education'))->display(
             function ($education_level) {
@@ -230,8 +231,10 @@ class PersonController extends AdminController
         //         return "<span class='badge badge-danger'>No</span>";
         //     }
         // });
-        
-        
+
+
+        //phone_number
+        $grid->column('phone_number', __('Phone Number'))->sortable();
 
 
         $grid->column('categories_pricessed', __('Processed'))
@@ -353,7 +356,7 @@ class PersonController extends AdminController
         //     $tools->append('<a class="btn btn-sm btn-success" href="/admin/import-people"> Upload File</a>');
         // });
 
-        
+
 
         $form->footer(function ($footer) {
             $footer->disableReset();
@@ -392,11 +395,11 @@ class PersonController extends AdminController
         $form->text('village', __('Village'))->placeholder('Enter village of Origin')->rules('required');
 
         $u = Admin::user();
-        if($u->inRoles(['administrator','nudipu'])){
+        if ($u->inRoles(['administrator', 'nudipu'])) {
             $form->select('district_id', __('District Attached (Current District of Residence)'))->options(District::pluck('name', 'id'))->placeholder('Select District')->rules("required")->required();
-        }else{
+        } else {
             $org = Organisation::find($u->organisation_id);
-            if($u->isRole('opd')){
+            if ($u->isRole('opd')) {
                 $form->hidden('opd_id')->value($u->organisation_id);
             }
         }
@@ -520,9 +523,9 @@ class PersonController extends AdminController
         $form->divider('Aspirations');
         $form->quill('aspirations', __('Aspirations'));
         $form->text('profiler', __('Profiler'))
-                    ->placeholder('Enter the name of the profiler')
-                    ->help('Enter the name of the profiler')
-                    ->rules('required');
+            ->placeholder('Enter the name of the profiler')
+            ->help('Enter the name of the profiler')
+            ->rules('required');
 
         // if (!$user->inRoles(['district-union', 'opd'])) {
         //     $form->html('
