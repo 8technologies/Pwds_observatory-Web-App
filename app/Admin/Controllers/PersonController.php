@@ -360,25 +360,27 @@ class PersonController extends AdminController
     {
         $form = new Form(new Person());
 
-        //Ogiki Moses Odera
-        // $form->tools(function (Form\Tools $tools) {
-        //     // Attach the ImportPeople action
-        //     $tools->append(new ImportPeople());
-        // });
+        // ——— Accessible form title for screen readers ——————————————————
+        $form->html('<h2 id="pwd-form-title" class="sr-only">Create New Person with Disability</h2>');
+        Admin::script(<<<'JS'
+        document.addEventListener('DOMContentLoaded', function() {
+            var frm = document.querySelector('form.form-horizontal');
+            if (frm) {
+                frm.setAttribute('role', 'form');
+                frm.setAttribute('aria-labelledby', 'pwd-form-title');
+            }
+            // Mark all required inputs for ARIA
+            document.querySelectorAll('form.form-horizontal [required]').forEach(function(input) {
+                input.setAttribute('aria-required', 'true');
+            });
+        });
+        JS
+        );
 
-        //button 
-        // $form->tools(function (Form\Tools $tools) {
-        //     $tools->append('<a class="btn btn-sm btn-success" href="/admin/import-people"> Upload File</a>');
-        // });
-
-        
-
+        // Existing form fields and configuration remain unchanged
         $form->footer(function ($footer) {
             $footer->disableReset();
             $footer->disableViewCheck();
-            // $footer->disableEditingCheck();
-            // $footer->disableCreatingCheck();
-            // $footer->disableSubmit();
         });
         $form->divider('Bio Data');
         $form->image('photo', __('Photo'))->uniqueName();
