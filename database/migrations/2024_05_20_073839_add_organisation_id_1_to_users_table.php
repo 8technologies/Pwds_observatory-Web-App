@@ -16,7 +16,10 @@ class AddOrganisationId1ToUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->foreignIdFor(Organisation::class);
+
+            if (!Schema::hasColumn('users', 'organisation_id')) {
+                $table->foreignIdFor(Organisation::class);
+            }
         });
     }
 

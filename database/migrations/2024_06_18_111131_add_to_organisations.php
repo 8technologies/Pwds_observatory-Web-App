@@ -15,7 +15,9 @@ class AddToOrganisations extends Migration
     {
         Schema::table('organisations', function (Blueprint $table) {
             //add website 
-            $table->string('website')->nullable(); 
+            if (!Schema::hasColumn('organisations', 'website')) {
+                $table->string('website')->nullable();
+            }
         });
     }
 

@@ -15,7 +15,9 @@ class AddRegionId1ToDistrictsTable extends Migration
     public function up()
     {
         Schema::table('districts', function (Blueprint $table) {
+            if (!Schema::hasColumn('districts', 'region_id')) {
             $table->foreignIdFor(Region::class);
+            }
         });
     }
 

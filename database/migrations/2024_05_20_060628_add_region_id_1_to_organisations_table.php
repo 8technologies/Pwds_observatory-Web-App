@@ -16,7 +16,10 @@ class AddRegionId1ToOrganisationsTable extends Migration
     {
         Schema::table('organisations', function (Blueprint $table) {
             //
-            $table->foreignIdFor(Region::class);
+             if (!Schema::hasColumn('organisations', 'region_id')) {
+               $table->foreignIdFor(Region::class);
+            }
+
         });
     }
 
