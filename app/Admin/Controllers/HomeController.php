@@ -41,9 +41,9 @@ class HomeController extends Controller
             $row->column(3, function (Column $column) {
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
-                    'title' => 'Number Of DUs',
+                    'title' => 'Number Of District Unions',
                     'number' => Organisation::where('relationship_type', '=', 'du')->count(),
-                    'sub_title' => 'dus',
+                    'sub_title' => 'district unions',
                     'link' => admin_url('district-unions'),
                     'font_size' => '1.5em'
                 ]));
@@ -51,10 +51,10 @@ class HomeController extends Controller
             $row->column(3, function (Column $column) {
                 $column->append(view('widgets.box-5', [
                     'is_dark' => false,
-                    'title' => 'Number Of NOPDs',
+                    'title' => 'Number Of National Organizations For Persons with Disabilities',
                     'font_size' => '1.5em',
                     'number' => number_format(Organisation::where('relationship_type', '=', 'opd')->count()),
-                    'sub_title' => 'nopd',
+                    'sub_title' => 'national organizations for persons with disabilities',
                     'link' => admin_url('opds'),
                 ]));
             });
@@ -73,7 +73,7 @@ class HomeController extends Controller
                     'is_dark' => false,
                     'title' => 'Persons with Disability',
                     'number' => number_format(Person::count()),
-                    'sub_title' => 'pwd',
+                    'sub_title' => 'persons with disabilities',
                     'link' => admin_url('people'),
                 ]));
             });

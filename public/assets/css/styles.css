@@ -96,5 +96,22 @@
 }
 
 
+/* Ogiki Moses  */
 
+
+/* public/assets/css/styles.css */
+.line-clamp {
+  display: block;
+  max-height: 3.2rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 1.6rem;
+}
+
+
+/* Improve contrast of the dashboard description under the title */
+.content-header h1 small {
+  color: #6b6b6b !important;
+}
 
