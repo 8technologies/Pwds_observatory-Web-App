@@ -11,7 +11,7 @@
     <div class="container vh-100 d-flex justify-content-center align-items-center">
         <div class="card">
             <div class="card-body">
-                <p style="font-size: 20px;">Activation Email as been sent on your email.</p>
+                <p style="font-size: 20px;">Activation Email has been sent on your email.</p>
                 <p style="font-size: 20px;">You can go and activate your account.</p>
             </div>
         </div>
