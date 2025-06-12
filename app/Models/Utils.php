@@ -979,7 +979,14 @@ DELETE FROM people WHERE id > 8954
                     $m->to($receiverEmail);  // Add the receiver as an additional recipient
                 }
 
-                $m->from(env('MAIL_USERNAME', 'info@ict4personswithdisabilities.org'), $data['subject']);
+                //$m->from(env('MAIL_USERNAME', 'info@ict4personswithdisabilities.org'), $data['subject']);
+
+                //The above makes the sender name equal to the subject.
+                // It’s better to pull from your mail.from config:
+                $m->from(
+                        config('mail.from.address'),
+                        config('mail.from.name')
+                    );
             }
         );
     } catch (\Throwable $th) {
