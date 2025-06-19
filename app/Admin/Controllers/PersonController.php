@@ -404,13 +404,13 @@ class PersonController extends AdminController
         );
 
         $form->email('email', __('Email'))
-         ->placeholder('Email')
+         ->placeholder('Email (optional)')
          ->creationRules(
-             ['required','email','unique:people,email'],
+             ['nullable','email','unique:people,email'],
              ['unique' => 'The email address is already taken']
          )
          ->updateRules(
-             ['required','email',"unique:people,email,{{id}},id"],
+             ['nullable','email',"unique:people,email,{{id}},id"],
              ['unique' => 'The email address is already taken']
          );
         $form->divider();
