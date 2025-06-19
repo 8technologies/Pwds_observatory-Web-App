@@ -390,20 +390,51 @@ class PersonController extends AdminController
             ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
         $form->date('dob', __('Date of Birth'))->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY');
         $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
-        $form->mobile('phone_number', __('Phone Number'))->placeholder('Phone Number')->rules('required');
-        $form->email('email', __('Email'))->placeholder('Email');
+        $form->mobile('phone_number', __('Phone Number'))
+        ->placeholder('Phone Number')
+        // on create, require uniqueness in the people table…
+        ->creationRules(
+            ['required', 'unique:people,phone_number'],
+            ['unique' => 'Phone number already exists']
+        )
+        // on update, ignore the current record’s id
+        ->updateRules(
+            ['required', 'unique:people,phone_number,{{id}},id'],
+            ['unique' => 'Phone number already exists']
+        );
+
+        $form->email('email', __('Email'))
+         ->placeholder('Email')
+         ->creationRules(
+             ['required','email','unique:people,email'],
+             ['unique' => 'The email address is already taken']
+         )
+         ->updateRules(
+             ['required','email',"unique:people,email,{{id}},id"],
+             ['unique' => 'The email address is already taken']
+         );
         $form->divider();
-        $form->radio('id_type', __('ID Type'))->options([
-            'NIN Number' => 'NIN Number',
-            'Driving Permit' => 'Driving Permit',
-            'Passport Number' => 'Passport Number'
-        ])->when('NIN Number', function (Form $form) {
-            $form->text('id_number', 'NIN Number')->placeholder('NIN Number');
-        })->when('Driving Permit', function (Form $form) {
-            $form->text('id_number', 'Driving Permit Number')->placeholder('Driving Permit Number');
-        })->when('Passport Number', function (Form $form) {
-            $form->text('id_number', 'Passport Number')->placeholder('Passport Number');
-        })->help("NIN, Passport Number, Driving Permit Number");
+        // 1) First the ID Type radios
+$form->radio('id_type', __('ID Type'))
+     ->options([
+         'NIN Number'      => 'NIN Number',
+         'Driving Permit'  => 'Driving Permit',
+         'Passport Number' => 'Passport Number',
+     ])
+     ->rules('required');
+
+// 2) Then the single id_number field
+$form->text('id_number', __('Identification Number'))
+     ->placeholder('Enter the identification number')
+     ->creationRules(
+         ['required','unique:people,id_number'],
+         ['unique' => 'The identification number is already used']
+     )
+     ->updateRules(
+         ['required',"unique:people,id_number,{{id}},id"],
+         ['unique' => 'The identification number is already used']
+     );
+
         $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
 
         $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County of Origin')->rules('required');
@@ -666,6 +697,22 @@ class PersonController extends AdminController
             });
             EOT
         );
+
+        //Ogiki Moses
+        Admin::script(<<<'JS'
+            $(function(){
+                function updateIdLabel() {
+                    var type = $('input[name="id_type"]:checked').val() || 'Identification Number';
+                    $('label[for="id_number"]').text(type);
+                }
+                // on page load
+                updateIdLabel();
+                // whenever user picks a different ID Type
+                $('input[name="id_type"]').on('change', updateIdLabel);
+            });
+        JS
+        );
+
 
         return $form;
     }
