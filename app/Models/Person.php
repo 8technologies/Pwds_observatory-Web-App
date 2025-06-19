@@ -29,7 +29,7 @@ class Person extends Model
         'other_names',
         'age',
         'address',
-        'phone_number',
+        '_numphoneber',
         'email',
         'phone_number_2',
         'dob',
