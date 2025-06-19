@@ -26,9 +26,12 @@ use Encore\Admin\Controllers\Dashboard;
 use Encore\Admin\Facades\Admin;
 // use GuzzleHttp\Psr7\Request;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class PersonController extends AdminController
 {
+     
     /**
      * Title for current resource.
      *
@@ -356,6 +359,7 @@ class PersonController extends AdminController
      *
      * @return Form
      */
+   
     protected function form()
     {
         $form = new Form(new Person());
@@ -606,7 +610,72 @@ $form->text('id_number', __('Identification Number'))
         // $form->hidden('district_id');
         // $form->hidden('opd_id');
         // $form->hidden('is_approved');
-        return $form;
+
+
+        //Extra Checks 
+        // Duplicate check: same name, other_names, gender & age
+        // $form->saving(function (Form $form) {
+        //     // normalize inputs
+        //     $name       = ucfirst(strtolower($form->input('name')));
+        //     $otherNames = ucfirst(strtolower($form->input('other_names')));
+        //     $sex        = $form->input('sex');
+        //     $age        = $form->input('age');
+
+        //     // build query
+        //     $query = Person::where('name',        $name)
+        //                 ->where('other_names', $otherNames)
+        //                 ->where('sex',         $sex)
+        //                 ->where('age',         $age);
+
+        //     // if editing, exclude self
+        //     if ($id = $form->model()->id) {
+        //         $query->where('id', '!=', $id);
+        //     }
+
+        //     // if any match found, block save
+        //     if ($query->exists()) {
+        //         throw new \Exception(
+        //             'Another person with the same name, other names, gender and age is already registered.'
+        //         );
+        //     }
+        // });
+
+        $form->saving(function (Form $form) {
+        $name       = ucfirst(strtolower($form->input('name')));
+        $otherNames = ucfirst(strtolower($form->input('other_names')));
+        $sex        = $form->input('sex');
+        $age        = $form->input('age');
+
+        $query = Person::where('name',        $name)
+                       ->where('other_names', $otherNames)
+                       ->where('sex',         $sex)
+                       ->where('age',         $age);
+
+        if ($id = $form->model()->id) {
+            $query->where('id', '!=', $id);
+        }
+
+        if ($query->exists()) {
+            // Build a “blank” validator so we can attach a custom error
+            $validator = Validator::make([], []);
+            // Build a multi-line message
+                $message = implode("\n", [
+                    'A person named “' . $name . ' ' . $otherNames . '”',
+                    ',', 
+                    'Gender: ' . ucfirst($sex) ,
+                    'And  '.' ',
+                    'Age: ' . $age . ' ',
+                    'already exists. Please edit that record instead.'
+                ]);
+
+                // Attach the error to the 'name' field
+                $validator->errors()->add('name', $message);
+            // Throw as a validation exception — Laravel-Admin will catch this
+            // and display it as a nice red banner + field error, then keep you
+            // on the form with all your input intact.
+            throw new ValidationException($validator);
+        }
+    });
 
         // Check if district union is doing the registration and send credentials else do not send
         if (auth("admin")->user()->inRoles(['district-union', 'opd'])) {
