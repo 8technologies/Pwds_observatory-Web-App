@@ -1,3 +1,59 @@
+
+<style>
+  /* Only target this card */
+  #card-element {
+    border: 2px solid #C9E4C5;       /* Pale mint green */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+    margin-bottom: 2rem;
+    background: #FAFCFA;            /* Very light mint */
+  }
+
+  #card-element .card-body {
+    padding: 1.5rem;
+  }
+
+  /* Soft header bar */
+  #card-element h5 {
+    background: #E6F4EA;             /* Light mint */
+    color: #2F5533;                  /* Darker forest green */
+    margin: -1.5rem -1.5rem 1rem;
+    padding: 0.75rem 1.25rem;
+    border-bottom: 2px solid #B8DCC8;
+    font-weight: 600;
+  }
+
+  /* Gentle form‐select styling, scoped */
+  #card-element .form-select {
+    max-width: 200px;
+    margin-right: 1rem;
+    display: inline-block;
+    background: #FCFEFC;
+    border: 1px solid #D1E8D3;
+    color: #2F5533;
+  }
+
+  /* Pastel box around chart */
+  #card-element .chart-container {
+    border: 1px solid #C9E4C5;
+    border-radius: 4px;
+    background: #F4FCF7;
+    padding: 1rem;
+    height: 300px;
+    margin-top: 1rem;
+  }
+
+  /* Make only this canvas fill its container */
+  #card-element canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>
+
+
+
+
 <div class="card text-center" id="card-element">
     <div class="card-body" id="body-element">
         <h5 class="card-text text-center">Count Of Persons With Disabilities by Disability Category</h5>
@@ -12,7 +68,7 @@
         <label for="disabilityCountFilter">
             <select name="disabilityCountFilter" id="disabilityCountFilter" onchange="UpdateCategory()" class="form-select">
                 <option value="all">All Disabilities</option>
-                <option value="5">Top 5 Disabilities</option>
+                 <option value="5" selected>Top 5 Disabilities</option>
                 <option value="2">Top 2 Disabilities</option> 
             </select>
         </label>
@@ -95,5 +151,5 @@
     disabilityChart.update();
 }
 
-
+ UpdateCategory();
 </script>
