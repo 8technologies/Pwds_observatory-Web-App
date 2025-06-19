@@ -404,13 +404,13 @@ class PersonController extends AdminController
         );
 
         $form->email('email', __('Email'))
-         ->placeholder('Email')
+         ->placeholder('Email (optional)')
          ->creationRules(
-             ['required','email','unique:people,email'],
+             ['nullable','email','unique:people,email'],
              ['unique' => 'The email address is already taken']
          )
          ->updateRules(
-             ['required','email',"unique:people,email,{{id}},id"],
+             ['nullable','email',"unique:people,email,{{id}},id"],
              ['unique' => 'The email address is already taken']
          );
         $form->divider();
@@ -421,17 +421,17 @@ $form->radio('id_type', __('ID Type'))
          'Driving Permit'  => 'Driving Permit',
          'Passport Number' => 'Passport Number',
      ])
-     ->rules('required');
+     ->rules('nullable');
 
 // 2) Then the single id_number field
 $form->text('id_number', __('Identification Number'))
      ->placeholder('Enter the identification number')
      ->creationRules(
-         ['required','unique:people,id_number'],
+         ['nullable','unique:people,id_number'],
          ['unique' => 'The identification number is already used']
      )
      ->updateRules(
-         ['required',"unique:people,id_number,{{id}},id"],
+         ['nullable',"unique:people,id_number,{{id}},id"],
          ['unique' => 'The identification number is already used']
      );
 
