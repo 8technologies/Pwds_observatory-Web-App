@@ -585,10 +585,10 @@ $form->text('id_number', __('Identification Number'))
 
         if (Admin::user()->inRoles(['district-union', 'opd'])) {
             $form->tab('Profiler Name', function ($form) {
-                $form->text('profiler', __('Profiler'))
-                    ->placeholder('Enter your name as a profiler')
-                    ->help('Enter your name as a profiler')
-                    ->rules('required');
+                // $form->text('profiler', __('Profiler'))
+                //     ->placeholder('Enter your name as a profiler')
+                //     ->help('Enter your name as a profiler')
+                //     ->rules('required');
 
 
                 if (Admin::user()->isRole('opd')) {

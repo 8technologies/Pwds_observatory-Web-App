@@ -93,6 +93,12 @@ class DistrictUnionController extends AdminController
 
 
 
+          $grid->column('Send Message')->display(function () {
+                // points to your ChatController@index
+                $chatUrl = admin_url('chat?receiver_id=' . $this->id);
+                return "<a href='{$chatUrl}' class='btn btn-xs btn-success'>Send Message</a>";
+            });
+       
 
         // $grid->column('contact_persons', __('Contact persons'));
 

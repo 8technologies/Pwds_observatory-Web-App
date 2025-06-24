@@ -1,5 +1,6 @@
 <?php
 
+use App\Admin\Controllers\ChatController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\MainController;
 use App\Http\Middleware\Authenticate;
@@ -190,3 +191,9 @@ Route::post('/admin/import-people', [ImportPeopleController::class, 'import']);
 // })->name('data-import.template');
 
 Route::get('data-import/template', [TemplateExportController::class, 'downloadTemplate'])->name('data-import.template');
+
+Route::prefix(config('admin.route.prefix'))   // usually 'admin'
+     ->middleware(config('admin.route.middleware'))  // usually ['web', 'admin']
+     ->group(function () {
+         Route::get('chat', [ChatController::class, 'index']);
+     });
