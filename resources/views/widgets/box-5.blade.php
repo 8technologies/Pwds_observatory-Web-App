@@ -155,7 +155,7 @@ $ariaLabel = "{$title}: {$number} {$sub_title}.";
         <p class="h3 text-bold mb-2 mb-md-3 {{ $text }}"
            style="
                display: -webkit-box;
-               -webkit-line-clamp: 2;
+               /* -webkit-line-clamp: 2; */
                -webkit-box-orient: vertical;
                overflow: hidden;
                text-overflow: ellipsis;

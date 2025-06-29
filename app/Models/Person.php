@@ -25,11 +25,12 @@ class Person extends Model
 
 
     protected $fillable = [
+        'user_id',   
         'name',
         'other_names',
         'age',
         'address',
-        '_numphoneber',
+        'phone_number',
         'email',
         'phone_number_2',
         'dob',
@@ -62,7 +63,8 @@ class Person extends Model
         'sub_county',
         'village',
         'employment_status',
-        'profiler'
+        'profiler',
+        'is_verified',
     ];
 
     protected $casts = [

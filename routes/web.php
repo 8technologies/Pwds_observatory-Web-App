@@ -197,3 +197,8 @@ Route::prefix(config('admin.route.prefix'))   // usually 'admin'
      ->group(function () {
          Route::get('chat', [ChatController::class, 'index']);
      });
+
+Route::get('migrate', function () { 
+    Artisan::call('migrate', ['--force' => true]); 
+    return Artisan::output();
+});

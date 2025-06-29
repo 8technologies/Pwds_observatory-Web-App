@@ -293,3 +293,817 @@ $ariaLabel = "{$title}: {$number} {$sub_title}.";
  UpdateCategory();
 </script>
 
+//Original register blade
+
+@extends('layouts.base-layout')
+{{-- account-details --}}
+@section('base-content')
+    <?php
+    $header_data['header_style'] = 2;
+    
+    ?>
+
+    <body>
+        <main class="page-wrapper">
+
+            @include('layouts.header', $header_data)
+
+            <!-- Page content -->
+            <section class="position-relative h-100 pt-5 pb-4">
+
+                <!-- Sign up form -->
+                <div class="container d-flex flex-wrap justify-content-center justify-content-xl-start h-100 pt-5">
+
+                    <div class="w-100 align-self-end pt-1 pt-md-4 pb-4" style="max-width: 526px;">
+                        <h1 class="text-center text-xl-start">Register</h1>
+
+                        <p class="lead fs-sm text-dark mt-3 border border-primary p-3 bg-secondary rounded">
+                            Dear respected visitor, thank you for your interest in the ICT for Persons With Disabilities. We
+                            are seeking to create an national database for for Persons With Disabilities to enhance ways of
+                            reaching out and supporting.
+                            Please fill out this form to help us get to know you better.
+                        </p>
+                        <p class="text-center text-xl-start pb-3 mb-3">Already registred an account? <a href="login">Login
+                                in here</a></p>
+                        <form class="needs-validation" method="POST" action="{{ url('account-activation') }}" novalidate>
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    @include('components.input-text', [
+                                        'name' => 'name',
+                                        'label' => 'Full name',
+                                    ])
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    @include('components.input-text', [
+                                        'name' => 'email',
+                                        'type' => 'email',
+                                        'label' => 'Email address',
+                                    ])
+                                </div>
+                                <div class="col-12 mb-3">
+
+                                    @include('components.input-text', [
+                                        'name' => 'password',
+                                        'type' => 'password',
+                                        'label' => 'Password',
+                                    ])
+
+                                </div>
+                                <div class="col-12 mb-4">
+
+                                    @include('components.input-text', [
+                                        'name' => 'password_1',
+                                        'type' => 'password',
+                                        'label' => 'Confirm password',
+                                    ])
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign up</button>
+                        </form>
+                    </div>
+
+
+                    <div class="w-100 align-self-end pt-0 parallax mx-auto d-none d-md-block" style="max-width: 600px;">
+                        <!-- Parallax gfx -->
+                        <div class="parallax-layer" data-depth="0.1">
+                            <img src="assets/img/landing/online-courses/hero/layer01.png" alt="Layer">
+                        </div>
+                        <div class="parallax-layer" data-depth="0.13">
+                            <img src="assets/img/landing/online-courses/hero/layer02.png" alt="Layer">
+                        </div>
+                        <div class="parallax-layer zindex-5" data-depth="-0.12">
+                            <img src="assets/img/landing/online-courses/hero/layer03.png" alt="Layer">
+                        </div>
+                        <div class="parallax-layer zindex-3" data-depth="0.27">
+                            <img src="assets/img/landing/online-courses/hero/layer04.png" alt="Layer">
+                        </div>
+                        <div class="parallax-layer zindex-1" data-depth="-0.18">
+                            <img src="assets/img/landing/online-courses/hero/layer05.png" alt="Layer">
+                        </div>
+                        <div class="parallax-layer zindex-1" data-depth="0.1">
+                            <img src="assets/img/landing/online-courses/hero/layer06.png" alt="Layer">
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </section>
+        </main>
+    @endsection
+
+
+//AccountController
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Facades\Admin;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+//use Illuminate\Support\Facades\Hash;
+
+class AccountController extends BaseController
+{
+
+    public function register()
+    {
+        if (Auth::guard()->check()) {
+            return redirect("/dashboard");
+        }
+        return view('register');
+    }
+    public function login(Request $request)
+    {
+        // $password = '1234';
+        // $hashedPassword = Hash::make($password);
+        // dd($hashedPassword);
+        // die();
+        if (Auth::guard()->check()) {
+            // User is already logged in
+            $user = Auth::user();
+            if ($user->isRole('district-union')) {
+                return redirect("/du-dashboard");
+            } elseif ($user->isRole('opd')) {
+                return redirect("/opd-dashboard");
+            } elseif ($user->isRole('administrator') || $user->isRole('NUDIPU')) {
+                return redirect("/dashboard");
+            } elseif ($user->isRole('pwd') || $user->isRole('basic')) {
+                return redirect("/pwd-dashboard");
+            }
+        }
+        return view('login');
+    }
+
+    public function activateAccount(Request $request)
+    {
+        $existingUser = User::where('email', $request->email)->first();
+
+        if ($existingUser) {
+            // Return an error view or message if the email is already in use
+            return 'The email address is already in use.';
+        }
+        //Else creat new account.
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->username = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        $activation_token = Str::random(60);  // Generate a random token
+        $user->activation_token = $activation_token; // Assuming you have this column in your users table
+        $user->save();
+
+        $user->sendActivationEmail($activation_token);
+
+        return view('emails.approval_notification');
+    }
+
+    public function activate(Request $request)
+    {
+        $email = $request->query('email');
+        $token = $request->query('token');
+
+        $user = User::where('email', $email)->where('activation_token', $token)->first();
+
+        if ($user) {
+            $user->activation_token = null; // Clear the activation token
+            // $user->email_verified_at = now();
+            $user->approved = 1; // Mark email as verified
+            $user->save();
+
+            return view('activation-success'); // Or redirect to a login page with a success message
+        } else {
+            return view('activation-failed'); // Or redirect to an error page
+        }
+    }
+
+
+    public function account_details()
+    {
+        $_SESSION['form'] = Auth::user();
+        return view('account-details');
+    }
+
+    public function dashboard()
+    {
+        return view('account-dashboard');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
+    }
+
+    public function login_post(Request $r)
+    {
+
+
+        if (Validator::make($_POST, [
+            'email' => 'required|email',
+        ])->fails()) {
+            return back()
+                ->withErrors(['email' => 'Enter a valid email address.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'password' => 'required|min:2'
+        ])->fails()) {
+            return back()
+                ->withErrors(['password' => 'Enter password with more than 3 chracters.'])
+                ->withInput();
+        }
+
+
+
+
+
+        if (Auth::attempt([
+            'username' => $r->email,
+            'password' => $r->password,
+        ], true)) {
+            return redirect('dashboard');
+            die();
+        }
+
+        return back()
+            ->withErrors(['password' => 'Wrong email or password.'])
+            ->withInput();
+    }
+
+    public function account_details_post(Request $r)
+    {
+
+        if (Validator::make($_POST, [
+            'username' => 'required|email',
+        ])->fails()) {
+            return back()
+                ->withErrors(['email' => 'Enter a valid email address.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'name' => 'required|min:2'
+        ])->fails()) {
+            return back()
+                ->withErrors(['name' => 'Name is required.'])
+                ->withInput();
+        }
+
+
+
+
+
+        return back()
+            ->withErrors(['password' => 'Wrong email or password.'])
+            ->withInput();
+    }
+
+
+    public function register_post(Request $r)
+    {
+
+
+        if (Validator::make($_POST, [
+            'name' => 'required|string|min:4'
+        ])->fails()) {
+            return back()
+                ->withErrors(['name' => 'Enter your valid name.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'email' => 'required|email',
+        ])->fails()) {
+            return back()
+                ->withErrors(['email' => 'Enter a valid email address.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'password' => 'required|min:2'
+        ])->fails()) {
+            return back()
+                ->withErrors(['password' => 'Enter password with more than 3 chracters.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'password_1' => 'required|min:2'
+        ])->fails()) {
+            return back()
+                ->withErrors(['password_1' => 'Enter password with more than 3 chracters.'])
+                ->withInput();
+        }
+
+        if ($r->password != $r->password_1) {
+            return back()
+                ->withErrors(['password_1' => 'Confirmation password did not match.'])
+                ->withInput();
+        }
+
+        $u = Administrator::where([
+            'email' => $_POST['email']
+        ])->orwhere([
+            'username' => $_POST['email']
+        ])->first();
+
+
+        if ($u != null) {
+            $u->password = password_hash($r->password, PASSWORD_DEFAULT);
+            $u->save();
+        } else {
+            $admin = new Administrator();
+            $admin->username = $r->email;
+            $admin->name = $r->name;
+            //$admin->avatar = 'user.png';
+            $admin->password = password_hash($r->password, PASSWORD_DEFAULT);
+
+            if (!$admin->save()) {
+                return back()
+                    ->withErrors(['email' => 'Failed to create account. Try again.'])
+                    ->withInput();
+            }
+        }
+
+
+
+        if (Auth::attempt([
+            'username' => $r->email,
+            'password' => $r->password,
+        ], true)) {
+            return redirect('dashboard');
+            die();
+        }
+        return redirect('login');
+    }
+}
+
+
+
+
+//Combined Register.blade.php
+
+@extends('layouts.base-layout')
+@section('base-content')
+<?php $header_data['header_style'] = 2; ?>
+
+<body>
+<main class="page-wrapper">
+  @include('layouts.header', $header_data)
+
+  <section class="position-relative h-100 pt-5 pb-4">
+    <div class="container d-flex flex-wrap justify-content-center justify-content-xl-start h-100 pt-5">
+
+      {{-- Left: Form --}}
+      <div class="w-100 align-self-end pt-1 pt-md-4 pb-4" style="max-width: 526px;">
+        <h1 class="text-center text-xl-start">Register</h1>
+        <p class="lead fs-sm text-dark mt-3 border border-primary p-3 bg-secondary rounded">
+          Dear respected visitor, thank you for your interest in the ICT for Persons With Disabilities. We
+          are seeking to create a national database for Persons With Disabilities to enhance ways of
+          reaching out and supporting. Please fill out this form to help us get to know you better.
+        </p>
+        <p class="text-center text-xl-start pb-3 mb-3">
+          Already registered? <a href="login">Login here</a>
+        </p>
+
+        @php 
+          // Default to 'pwd' (Person with Disability)
+          $oldRole = old('role', 'pwd'); 
+        @endphp
+
+        <form class="needs-validation" method="POST" action="{{ url('/register') }}" novalidate>
+          @csrf
+
+          {{-- 1) ROLE SELECTOR --}}
+          <div class="mb-4">
+            <label class="form-label">I am a:</label><br>
+            <label class="me-3">
+              <input type="radio" name="role" value="pwd"  {{ $oldRole=='pwd'?'checked':'' }}> Person with Disability
+            </label>
+            <label class="me-3">
+              <input type="radio" name="role" value="opd"  {{ $oldRole=='opd'?'checked':'' }}> OPD
+            </label>
+            <label>
+              <input type="radio" name="role" value="du"   {{ $oldRole=='du' ?'checked':'' }}> District Union
+            </label>
+            @error('role') <div class="text-danger">{{ $message }}</div> @enderror
+          </div>
+
+          {{-- 2) PWD FIELDS --}}
+          <div class="role-section" id="pwd" style="display:none;">
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                @include('components.input-text',['name'=>'name','label'=>'Full name'])
+              </div>
+              <div class="col-sm-6 mb-3">
+                @include('components.input-text',['name'=>'email','type'=>'email','label'=>'Email address'])
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                @include('components.input-text',['name'=>'phone','label'=>'Phone number'])
+              </div>
+              <div class="col-sm-6 mb-3">
+                <label>District</label>
+                <select name="district" class="form-control">
+                  <option value="">Select…</option>
+                  @foreach($districts as $id => $d) 
+                    <option value="{{ $id }}" {{ old('district')==$id ? 'selected':'' }}>{{ $d }}</option>
+                  @endforeach
+                </select>
+                @error('district')<div class="text-danger">{{ $message }}</div>@enderror
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-6 mb-3">
+                <label>Disability</label>
+                <select name="disability" class="form-control">
+                  <option value="">Select…</option>
+                  @foreach($disabilities as $id => $dis)
+                    <option value="{{ $id }}" {{ old('disability')==$id?'selected':'' }}>{{ $dis }}</option>
+                  @endforeach
+                </select>
+                @error('disability')<div class="text-danger">{{ $message }}</div>@enderror
+              </div>
+              <div class="col-sm-6 mb-3">
+                <label>Gender</label><br>
+                <label><input type="radio" name="gender" value="male"   {{ old('gender')=='male'?'checked':'' }}> Male</label>
+                <label class="ms-2"><input type="radio" name="gender" value="female" {{ old('gender')=='female'?'checked':'' }}> Female</label>
+                <label class="ms-2"><input type="radio" name="gender" value="other"  {{ old('gender')=='other'?'checked':'' }}> Other</label>
+                @error('gender')<div class="text-danger">{{ $message }}</div>@enderror
+              </div>
+            </div>
+            <div class="mb-3">
+              @include('components.input-text',['name'=>'village','label'=>'Village'])
+            </div>
+          </div>
+
+          {{-- 3) OPD FIELDS --}}
+          <div class="role-section" id="opd" style="display:none;">
+            <div class="mb-3">
+              @include('components.input-text',['name'=>'org_name','label'=>'Organization Name'])
+            </div>
+            <div class="mb-3">
+              <label>District</label>
+              <select name="district" class="form-control">
+                <option value="">Select…</option>
+                @foreach($districts as $id => $d)
+                  <option value="{{ $id }}" {{ old('district')==$id?'selected':'' }}>{{ $d }}</option>
+                @endforeach
+              </select>
+              @error('district')<div class="text-danger">{{ $message }}</div>@enderror
+            </div>
+          </div>
+
+          {{-- 4) DU FIELDS --}}
+          <div class="role-section" id="du" style="display:none;">
+            <div class="mb-3">
+              @include('components.input-text',['name'=>'org_name','label'=>'District Union Name'])
+            </div>
+            <div class="mb-3">
+              <label>District</label>
+              <select name="district" class="form-control">
+                <option value="">Select…</option>
+                @foreach($districts as $id => $d)
+                  <option value="{{ $id }}" {{ old('district')==$id?'selected':'' }}>{{ $d }}</option>
+                @endforeach
+              </select>
+              @error('district')<div class="text-danger">{{ $message }}</div>@enderror
+            </div>
+          </div>
+
+          {{-- 5) PASSWORD --}}
+          <div class="row">
+            <div class="col-12 mb-3">
+              @include('components.input-text',['name'=>'password','type'=>'password','label'=>'Password'])
+            </div>
+            <div class="col-12 mb-3">
+              @include('components.input-text',['name'=>'password_confirmation','type'=>'password','label'=>'Confirm password'])
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign up</button>
+        </form>
+      </div>
+
+      {{-- Right: Fixed Parallax Graphic --}}
+      <div class="w-100 align-self-end pt-0 parallax mx-auto d-none d-md-block"
+           style="max-width: 600px; position: sticky; top: 100px;">
+        <div class="parallax-layer" data-depth="0.1">
+          <img src="assets/img/landing/online-courses/hero/layer01.png" alt="Layer">
+        </div>
+        <div class="parallax-layer" data-depth="0.13">
+          <img src="assets/img/landing/online-courses/hero/layer02.png" alt="Layer">
+        </div>
+        <div class="parallax-layer zindex-5" data-depth="-0.12">
+          <img src="assets/img/landing/online-courses/hero/layer03.png" alt="Layer">
+        </div>
+        <div class="parallax-layer zindex-3" data-depth="0.27">
+          <img src="assets/img/landing/online-courses/hero/layer04.png" alt="Layer">
+        </div>
+        <div class="parallax-layer zindex-1" data-depth="-0.18">
+          <img src="assets/img/landing/online-courses/hero/layer05.png" alt="Layer">
+        </div>
+        <div class="parallax-layer zindex-1" data-depth="0.1">
+          <img src="assets/img/landing/online-courses/hero/layer06.png" alt="Layer">
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<script>
+// Toggle visibility of role‐specific sections
+document.querySelectorAll('input[name="role"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    document.querySelectorAll('.role-section').forEach(div => div.style.display = 'none');
+    const sel = document.getElementById(radio.value);
+    if (sel) sel.style.display = 'block';
+  });
+});
+// On page load, show the default or old selection
+const oldRole = "{{ $oldRole }}";
+if (oldRole) {
+  const r = document.querySelector(`input[name="role"][value="${oldRole}"]`);
+  if (r) r.dispatchEvent(new Event('change'));
+}
+</script>
+@endsection
+
+
+
+//Combined AccountController.php
+
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\User;
+use Encore\Admin\Auth\Database\Administrator;
+use Encore\Admin\Facades\Admin;
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Foundation\Bus\DispatchesJobs;
+use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+
+//use Illuminate\Support\Facades\Hash;
+
+class AccountController extends BaseController
+{
+
+    public function register()
+    {
+        if (Auth::guard()->check()) {
+            return redirect("/dashboard");
+        }
+        
+        $districts    = \App\Models\District::pluck('name','id');
+        $disabilities = \App\Models\Disability::pluck('name','id');
+        return view('register', compact('districts','disabilities'));
+    }
+    public function login(Request $request)
+    {
+        // $password = '1234';
+        // $hashedPassword = Hash::make($password);
+        // dd($hashedPassword);
+        // die();
+        if (Auth::guard()->check()) {
+            // User is already logged in
+            $user = Auth::user();
+            if ($user->isRole('district-union')) {
+                return redirect("/du-dashboard");
+            } elseif ($user->isRole('opd')) {
+                return redirect("/opd-dashboard");
+            } elseif ($user->isRole('administrator') || $user->isRole('NUDIPU')) {
+                return redirect("/dashboard");
+            } elseif ($user->isRole('pwd') || $user->isRole('basic')) {
+                return redirect("/pwd-dashboard");
+            }
+        }
+        return view('login');
+    }
+
+    public function activateAccount(Request $request)
+    {
+        $existingUser = User::where('email', $request->email)->first();
+
+        if ($existingUser) {
+            // Return an error view or message if the email is already in use
+            return 'The email address is already in use.';
+        }
+        //Else creat new account.
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->username = $request->email;
+        $user->password = bcrypt($request->password);
+        $user->save();
+
+        $activation_token = Str::random(60);  // Generate a random token
+        $user->activation_token = $activation_token; // Assuming you have this column in your users table
+        $user->save();
+
+        $user->sendActivationEmail($activation_token);
+
+        return view('emails.approval_notification');
+    }
+
+    public function activate(Request $request)
+    {
+        $email = $request->query('email');
+        $token = $request->query('token');
+
+        $user = User::where('email', $email)->where('activation_token', $token)->first();
+
+        if ($user) {
+            $user->activation_token = null; // Clear the activation token
+            // $user->email_verified_at = now();
+            $user->approved = 1; // Mark email as verified
+            $user->save();
+
+            return view('activation-success'); // Or redirect to a login page with a success message
+        } else {
+            return view('activation-failed'); // Or redirect to an error page
+        }
+    }
+
+
+    public function account_details()
+    {
+        $_SESSION['form'] = Auth::user();
+        return view('account-details');
+    }
+
+    public function dashboard()
+    {
+        return view('account-dashboard');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
+    }
+
+    public function login_post(Request $r)
+    {
+
+
+        if (Validator::make($_POST, [
+            'email' => 'required|email',
+        ])->fails()) {
+            return back()
+                ->withErrors(['email' => 'Enter a valid email address.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'password' => 'required|min:2'
+        ])->fails()) {
+            return back()
+                ->withErrors(['password' => 'Enter password with more than 3 chracters.'])
+                ->withInput();
+        }
+
+
+
+
+
+        if (Auth::attempt([
+            'username' => $r->email,
+            'password' => $r->password,
+        ], true)) {
+            return redirect('dashboard');
+            die();
+        }
+
+        return back()
+            ->withErrors(['password' => 'Wrong email or password.'])
+            ->withInput();
+    }
+
+    public function account_details_post(Request $r)
+    {
+
+        if (Validator::make($_POST, [
+            'username' => 'required|email',
+        ])->fails()) {
+            return back()
+                ->withErrors(['email' => 'Enter a valid email address.'])
+                ->withInput();
+        }
+
+        if (Validator::make($_POST, [
+            'name' => 'required|min:2'
+        ])->fails()) {
+            return back()
+                ->withErrors(['name' => 'Name is required.'])
+                ->withInput();
+        }
+
+
+
+
+
+        return back()
+            ->withErrors(['password' => 'Wrong email or password.'])
+            ->withInput();
+    }
+
+
+    public function register_post(Request $r)
+{
+    // base validation
+    $v = Validator::make($r->all(), [
+        'role'                  => ['required', Rule::in(['pwd','opd','du'])],
+        'email'                 => 'required|email|unique:users,email',
+        'password'              => 'required|min:4|confirmed',
+    ]);
+
+    // role‐specific
+    if ($r->role === 'pwd') {
+        $v->sometimes('name',      'required|string|min:3', fn() => true);
+        $v->sometimes('phone',     'required|string',       fn() => true);
+        $v->sometimes('district',  'required|exists:districts,id', fn() => true);
+        $v->sometimes('disability','required|exists:disabilities,id', fn() => true);
+        $v->sometimes('gender',    'required|in:male,female,other', fn() => true);
+        $v->sometimes('village',   'required|string',       fn() => true);
+    } else {
+        // opd or du
+        $v->sometimes('org_name', 'required|string|min:3', fn() => in_array($r->role, ['opd','du']));
+        $v->sometimes('district', 'required|exists:districts,id', fn() => in_array($r->role, ['opd','du']));
+    }
+
+    if ($v->fails()) {
+        return back()->withErrors($v)->withInput();
+    }
+
+    // create user
+    $user = User::create([
+        'name'     => $r->role=='pwd' ? $r->name : $r->org_name,
+        'email'    => $r->email,
+        'password' => bcrypt($r->password),
+        'approved' => 0,
+    ]);
+    $user->assignRole($r->role=='pwd' ? 'pwd' : ($r->role=='opd'?'opd':'district-union'));
+
+    // if OPD/DU: create Organisation
+    if (in_array($r->role,['opd','du'])) {
+        \App\Models\Organisation::create([
+            'name'              => $r->org_name,
+            'district_id'       => $r->district,
+            'user_id'           => $user->id,
+            'relationship_type' => $r->role,
+        ]);
+    }
+
+    // if PWD: attach profile
+    if ($r->role === 'pwd') {
+        $user->profile()->create([
+            'phone'         => $r->phone,
+            'district_id'   => $r->district,
+            'disability_id' => $r->disability,
+            'gender'        => $r->gender,
+            'village'       => $r->village,
+            'status'        => 'pending',
+        ]);
+    }
+
+    // send activation/approval email…
+    $user->sendActivationEmail(Str::random(60));
+
+    return redirect('login')
+           ->with('success','Registration submitted. Please await verification.');
+}
+
+}
+
+
+
+
+
+
+
+SELECT *
+FROM `people`
+WHERE `email` = 'nyene@gmail.com'
+LIMIT 1;
