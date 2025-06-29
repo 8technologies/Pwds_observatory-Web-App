@@ -28,6 +28,7 @@ use Encore\Admin\Facades\Admin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Validation\Rule;
 
 class PersonController extends AdminController
 {
@@ -63,6 +64,8 @@ class PersonController extends AdminController
         'profiler',
         'categories',
         'created_at',
+        'is_verified',
+        
         
        ]);
 
@@ -244,6 +247,22 @@ class PersonController extends AdminController
             ->sortable()
             ->filter('%like%');
 
+            $grid->column('phone_number', __('Phone Number'))
+            ->display(function ($num) {
+                return $num ?: '-';
+            })
+            ->sortable()
+            ->filter('like')->hide();
+
+            // // only show “Verified” to District-Union users
+            if ($user->isRole('district-union')) {
+                $grid->column('is_verified', 'Verified')
+                    ->using([0 => 'No', 1 => 'Yes'])
+                    ->label([0 => 'danger', 1 => 'success'])
+                    ->sortable()
+                    ->filter([0 => 'No', 1 => 'Yes']);
+            }
+
         // $grid->column('is_approved', __('Approval'))->display(function ($x) {
         //     if ($x == 1) {
         //         return "<span class='badge badge-success'>Yes</span>";
@@ -394,19 +413,30 @@ class PersonController extends AdminController
             ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
         $form->date('dob', __('Date of Birth'))->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY');
         $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
-        $form->mobile('phone_number', __('Phone Number'))
-        ->placeholder('Phone Number')
-        // on create, require uniqueness in the people table…
-        ->creationRules(
-            ['required', 'unique:people,phone_number'],
-            ['unique' => 'Phone number already exists']
-        )
-        // on update, ignore the current record’s id
-        ->updateRules(
-            ['required', 'unique:people,phone_number,{{id}},id'],
-            ['unique' => 'Phone number already exists']
-        );
+       $form->text('phone_number', __('Phone Number'))
+        ->placeholder('e.g. 0762045035')
+        // prevent typing more than 10 digits
+        ->attribute('maxlength', 10)
+        // hint to mobile browsers / numeric pads
+        ->attribute('inputmode', 'numeric')
+        // optional HTML5 pattern to prevent submission in some browsers
+        ->attribute('pattern', '0[0-9]{9}')
+        ->rules(function (Form $form) {
+            $id = $form->model()->id;
+            $unique = $id
+                ? Rule::unique('people', 'phone_number')->ignore($id)
+                : Rule::unique('people', 'phone_number');
 
+            return [
+                'required',
+                'regex:/^0\d{9}$/',  // exactly 10 digits, starting 0
+                $unique,
+            ];
+        }, [
+            'required' => 'Phone number is required.',
+            'regex'    => 'Phone number must be 10 digits starting with 0 (e.g. 0762045035).',
+            'unique'   => 'This phone number is already registered.',
+        ]);
         $form->email('email', __('Email'))
          ->placeholder('Email (optional)')
          ->creationRules(
@@ -553,6 +583,7 @@ $form->text('id_number', __('Identification Number'))
         }
 
 
+       
         $form->divider('Next Of Kin');
         $form->html("Click the button below to add next of Kin");
         $form->hasMany('next_of_kins', ' Add New Next of Kin', function (Form\NestedForm $form) {
@@ -577,6 +608,36 @@ $form->text('id_number', __('Identification Number'))
                     ->help('Enter the name of the profiler')
                     ->rules('required');
 
+
+      if ($user->isRole('district-union')) {
+    // Editable switch for DUs
+    $form->switch('is_verified', 'Verified')->states([
+        'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
+        'off' => ['value' => 0, 'text' => 'No',  'color' => 'danger'],
+            ]);
+        } else {
+            // Non-DUs see a dynamic read-only badge
+            $form->ignore(['is_verified']);
+            $form->html(function (Form $form) {
+                $v     = $form->model()->is_verified;
+                $class = $v ? 'bg-success' : 'bg-danger';
+                $text  = $v ? 'Yes'         : 'No';
+                return "<span class='badge {$class}'>{$text}</span>";
+            }, 'Verified');
+        }
+
+
+    // Email PWD on DU approval
+    $form->saved(function (Form $form) {
+        if ($form->isEditing()) {
+            $orig = $form->model()->getOriginal('is_verified');
+            $now  = $form->model()->is_verified;
+            if ($orig == 0 && $now == 1) {
+                Mail::to($form->model()->email)
+                    ->send(new \App\Mail\PwdVerified($form->model()));
+            }
+        }
+    });
         // if (!$user->inRoles(['district-union', 'opd'])) {
         //     $form->html('
         // <button type="submit" class="btn btn-primary float-right">Submit</button>');
@@ -585,10 +646,10 @@ $form->text('id_number', __('Identification Number'))
 
         if (Admin::user()->inRoles(['district-union', 'opd'])) {
             $form->tab('Profiler Name', function ($form) {
-                $form->text('profiler', __('Profiler'))
-                    ->placeholder('Enter your name as a profiler')
-                    ->help('Enter your name as a profiler')
-                    ->rules('required');
+                // $form->text('profiler', __('Profiler'))
+                //     ->placeholder('Enter your name as a profiler')
+                //     ->help('Enter your name as a profiler')
+                //     ->rules('required');
 
 
                 if (Admin::user()->isRole('opd')) {
@@ -725,8 +786,10 @@ $form->text('id_number', __('Identification Number'))
                 }
                 try {
                     // Manually invoke the addPerson method to check for duplicates
-                    $person = new Person($form->model()->toArray());
-                    $person->addPerson();
+                    if ($form->isCreating()) {
+                        $person = new Person($form->model()->toArray());
+                        $person->addPerson(request());
+                    }
                 } catch (\Exception $e) {
                     // Catch the exception and display an error message
                     admin_toastr($e->getMessage(), 'error');
@@ -746,7 +809,14 @@ $form->text('id_number', __('Identification Number'))
                         if ($form->email != null) {
                             Mail::to($form->email)->send(new PwdCreated($form->email, $user_password));
                         } else {
-                            Mail::to($form->pwd_email)->send(new MailNextOfKin("$form->name $form->other_names", $form->next_of_kin_email, $user_password));
+                           if (! empty($form->next_of_kin_email)) {
+                                Mail::to($form->next_of_kin_email)
+                                    ->send(new MailNextOfKin(
+                                        "{$form->name} {$form->other_names}", // full name
+                                        $form->next_of_kin_email,            // guaranteed string
+                                        session('password')                  // or $user_password
+                                    ));
+                            }
                         }
                     }
                 }
@@ -781,6 +851,10 @@ $form->text('id_number', __('Identification Number'))
             });
         JS
         );
+
+
+
+        
 
 
         return $form;

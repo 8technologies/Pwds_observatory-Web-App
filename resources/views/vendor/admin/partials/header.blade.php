@@ -29,6 +29,16 @@ use App\Models\User;
             <ul class="nav navbar-nav ">
 
                 {!! Admin::getNavbar()->render() !!}
+
+                <!-- Chat Toggle Icon -->
+                <li class="nav-item">
+               <a class="nav-link" href="{{ admin_url('chat') }}">
+                    <i class="bi bi-chat-text-fill"></i>
+                    <span class="navbar-badge badge text-bg-danger">4</span>
+                </a>
+                
+                </li>
+               
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
@@ -83,5 +93,6 @@ use App\Models\User;
                 {{-- </li> --}}
             </ul>
         </div>
+
     </nav>
 </header>

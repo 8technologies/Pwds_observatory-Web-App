@@ -3,253 +3,200 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Encore\Admin\Auth\Database\Administrator;
-use Encore\Admin\Facades\Admin;
+use App\Models\Person;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
-//use Illuminate\Support\Facades\Hash;
 
 class AccountController extends BaseController
 {
-
+    /**
+     * GET /register
+     * Show the PWD signup form with districts & disabilities.
+     */
     public function register()
     {
-        if (Auth::guard()->check()) {
-            return redirect("/dashboard");
+        if (Auth::check()) {
+            return redirect('/dashboard');
         }
-        return view('register');
+
+        $districts    = \App\Models\District::pluck('name','id');
+        $disabilities = \App\Models\Disability::pluck('name','id');
+
+        return view('register', compact('districts','disabilities'));
     }
-    public function login(Request $request)
+
+    /**
+     * POST /account-activation
+     * Handle PWD registration.
+     */
+ public function activateAccount(Request $request)
     {
-        // $password = '1234';
-        // $hashedPassword = Hash::make($password);
-        // dd($hashedPassword);
-        // die();
-        if (Auth::guard()->check()) {
-            // User is already logged in
+        // 1) Base validation (phone_number must be exactly 10 digits, starting 0)
+        $validator = Validator::make($request->all(), [
+            'name'           => 'required|string|max:255',
+            'email'          => 'required|email|unique:users,email',
+            'password'       => 'required|confirmed|min:4',
+                'phone_number' => [
+                'required',
+                'regex:/^0\d{9}$/',                  // 10 digits, starting 0
+                Rule::unique('people', 'phone_number')
+            ],
+            'district'       => 'required|exists:districts,id',
+            'disability'     => 'required|exists:disabilities,id',
+            'sex'         => ['required', Rule::in(['Male','Female'])],
+            'village'        => 'required|string|max:255',
+            'dob'            => 'required|date|before:today',
+        ], [
+          'phone_number.regex'  => 'Phone Number must be 10 digits starting with 0 (e.g. 0762045035).',
+          'phone_number.unique' => 'This phone number is already registered.',  
+        ]);
+
+       
+
+        // 3) Grab the clean data
+        $data = $validator->validated();
+
+
+
+        // Compute age
+        $age = Carbon::parse($data['dob'])->age;
+
+        // 4) Create the User
+        $user = new User;
+        $user->name             = $data['name'];
+        $user->username         = $data['email'];
+        $user->email            = $data['email'];
+        $user->password         = Hash::make($data['password']);
+        $user->approved         = 0;
+        $user->activation_token = Str::random(60);
+        $user->save();
+        $user->assignRole('pwd');
+
+        // 5) Create the Person
+        $person = Person::create([
+            'user_id'       => $user->id,
+            'name'          => $data['name'],
+            'email'         => $data['email'],
+            'phone_number' => $data['phone_number'],
+            'district_id'   => $data['district'],
+            'disability'    => $data['disability'],
+            'sex'           => $data['sex'],
+            'village'       => $data['village'],
+            'dob'           => $data['dob'],
+            'age'           => $age,
+            'profiler'      => 'Self Profiled',
+            'is_verified'   => 0,
+        ]);
+
+        $person->disabilities()->attach($data['disability']);
+
+        // 6) Send activation email
+        $user->sendActivationEmail($user->activation_token);
+
+        return redirect('login')
+               ->with('success', 'Thanks For Profiling Yourself! Provide your email and Password to Login to your Dashboard.');
+    }
+
+    /** GET /activate?email=…&token=… */
+    public function activate(Request $request)
+    {
+        $user = User::where('email', $request->email)
+                    ->where('activation_token', $request->token)
+                    ->first();
+
+        if (! $user) {
+            return view('activation-failed');
+        }
+
+        $user->activation_token = null;
+        $user->approved         = 1;
+        $user->save();
+
+        return view('activation-success');
+    }
+    /**
+     * GET /login
+     */
+    public function login()
+    {
+        //dd("Yoo");
+        if (Auth::check()) {
+           //dd('Yooo');
             $user = Auth::user();
             if ($user->isRole('district-union')) {
-                return redirect("/du-dashboard");
+                return redirect('/du-dashboard');
             } elseif ($user->isRole('opd')) {
-                return redirect("/opd-dashboard");
-            } elseif ($user->isRole('administrator') || $user->isRole('NUDIPU')) {
-                return redirect("/dashboard");
-            } elseif ($user->isRole('pwd') || $user->isRole('basic')) {
-                return redirect("/pwd-dashboard");
+                return redirect('/opd-dashboard');
+            } elseif ($user->isRole('administrator') || $user->isRole('nudipu')) {
+                return redirect('/dashboard');
+            } else {
+                return redirect('/pwd-dashboard');
             }
         }
         return view('login');
     }
 
-    public function activateAccount(Request $request)
+    /**
+     * POST /login
+     */
+    public function login_post(Request $r)
     {
-        $existingUser = User::where('email', $request->email)->first();
+        dd('Yoo');
+        $credentials = $r->validate([
+            'email'    => 'required|email',
+            'password' => 'required|min:4',
+        ]);
 
-        if ($existingUser) {
-            // Return an error view or message if the email is already in use
-            return 'The email address is already in use.';
+        if (Auth::attempt([
+            'username' => $credentials['email'],
+            'password' => $credentials['password'],
+        ], true)) {
+            return redirect('dashboard');
         }
-        //Else creat new account.
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->username = $request->email;
-        $user->password = bcrypt($request->password);
-        $user->save();
 
-        $activation_token = Str::random(60);  // Generate a random token
-        $user->activation_token = $activation_token; // Assuming you have this column in your users table
-        $user->save();
-
-        $user->sendActivationEmail($activation_token);
-
-        return view('emails.approval_notification');
+        return back()
+            ->withErrors(['password' => 'Wrong email or password.'])
+            ->withInput();
     }
 
-    public function activate(Request $request)
-    {
-        $email = $request->query('email');
-        $token = $request->query('token');
-
-        $user = User::where('email', $email)->where('activation_token', $token)->first();
-
-        if ($user) {
-            $user->activation_token = null; // Clear the activation token
-            // $user->email_verified_at = now();
-            $user->approved = 1; // Mark email as verified
-            $user->save();
-
-            return view('activation-success'); // Or redirect to a login page with a success message
-        } else {
-            return view('activation-failed'); // Or redirect to an error page
-        }
-    }
-
-
+    /** GET /account-details */
     public function account_details()
     {
-        $_SESSION['form'] = Auth::user();
-        return view('account-details');
+        return view('account-details', ['user' => Auth::user()]);
     }
 
+    /** POST /account-details */
+    public function account_details_post(Request $r)
+    {
+        $data = $r->validate([
+            'name'     => 'required|string|min:2',
+            'username' => 'required|email',
+        ]);
+
+        $user = Auth::user();
+        $user->name     = $data['name'];
+        $user->username = $data['username'];
+        $user->save();
+
+        return back()->with('success','Profile updated.');
+    }
+
+    /** GET /dashboard */
     public function dashboard()
     {
         return view('account-dashboard');
     }
 
+    /** GET /logout */
     public function logout()
     {
         Auth::logout();
         return redirect('/');
-    }
-
-    public function login_post(Request $r)
-    {
-
-
-        if (Validator::make($_POST, [
-            'email' => 'required|email',
-        ])->fails()) {
-            return back()
-                ->withErrors(['email' => 'Enter a valid email address.'])
-                ->withInput();
-        }
-
-        if (Validator::make($_POST, [
-            'password' => 'required|min:2'
-        ])->fails()) {
-            return back()
-                ->withErrors(['password' => 'Enter password with more than 3 chracters.'])
-                ->withInput();
-        }
-
-
-
-
-
-        if (Auth::attempt([
-            'username' => $r->email,
-            'password' => $r->password,
-        ], true)) {
-            return redirect('dashboard');
-            die();
-        }
-
-        return back()
-            ->withErrors(['password' => 'Wrong email or password.'])
-            ->withInput();
-    }
-
-    public function account_details_post(Request $r)
-    {
-
-        if (Validator::make($_POST, [
-            'username' => 'required|email',
-        ])->fails()) {
-            return back()
-                ->withErrors(['email' => 'Enter a valid email address.'])
-                ->withInput();
-        }
-
-        if (Validator::make($_POST, [
-            'name' => 'required|min:2'
-        ])->fails()) {
-            return back()
-                ->withErrors(['name' => 'Name is required.'])
-                ->withInput();
-        }
-
-
-
-
-
-        return back()
-            ->withErrors(['password' => 'Wrong email or password.'])
-            ->withInput();
-    }
-
-
-    public function register_post(Request $r)
-    {
-
-
-        if (Validator::make($_POST, [
-            'name' => 'required|string|min:4'
-        ])->fails()) {
-            return back()
-                ->withErrors(['name' => 'Enter your valid name.'])
-                ->withInput();
-        }
-
-        if (Validator::make($_POST, [
-            'email' => 'required|email',
-        ])->fails()) {
-            return back()
-                ->withErrors(['email' => 'Enter a valid email address.'])
-                ->withInput();
-        }
-
-        if (Validator::make($_POST, [
-            'password' => 'required|min:2'
-        ])->fails()) {
-            return back()
-                ->withErrors(['password' => 'Enter password with more than 3 chracters.'])
-                ->withInput();
-        }
-
-        if (Validator::make($_POST, [
-            'password_1' => 'required|min:2'
-        ])->fails()) {
-            return back()
-                ->withErrors(['password_1' => 'Enter password with more than 3 chracters.'])
-                ->withInput();
-        }
-
-        if ($r->password != $r->password_1) {
-            return back()
-                ->withErrors(['password_1' => 'Confirmation password did not match.'])
-                ->withInput();
-        }
-
-        $u = Administrator::where([
-            'email' => $_POST['email']
-        ])->orwhere([
-            'username' => $_POST['email']
-        ])->first();
-
-
-        if ($u != null) {
-            $u->password = password_hash($r->password, PASSWORD_DEFAULT);
-            $u->save();
-        } else {
-            $admin = new Administrator();
-            $admin->username = $r->email;
-            $admin->name = $r->name;
-            //$admin->avatar = 'user.png';
-            $admin->password = password_hash($r->password, PASSWORD_DEFAULT);
-
-            if (!$admin->save()) {
-                return back()
-                    ->withErrors(['email' => 'Failed to create account. Try again.'])
-                    ->withInput();
-            }
-        }
-
-
-
-        if (Auth::attempt([
-            'username' => $r->email,
-            'password' => $r->password,
-        ], true)) {
-            return redirect('dashboard');
-            die();
-        }
-        return redirect('login');
     }
 }

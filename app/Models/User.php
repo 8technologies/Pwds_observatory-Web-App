@@ -38,8 +38,13 @@ class User extends Administrator implements JWTSubject, AuthenticatableContract,
     }
 
     protected $fillable = [
-        'email', 'password', 'token'
+        'email', 'password', 'token','username'
     ];
+
+    public function profile()
+    {
+        return $this->hasOne(Person::class, 'user_id');
+    }
 
     protected $guarded = [];
 

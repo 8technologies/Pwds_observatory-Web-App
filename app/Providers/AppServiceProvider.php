@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Encore\Admin\Facades\Admin;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -25,6 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
         Builder::macro('whereLike', function ($attributes, string $searchTerm) {
             $this->where(function (Builder $query) use ($attributes, $searchTerm) {
                 foreach (Arr::wrap($attributes) as $attribute) {
@@ -46,5 +48,8 @@ class AppServiceProvider extends ServiceProvider
         
             return $this;
         });
+
+        // Bootstrap Addition 
+         Admin::css('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css');
     }
 }
