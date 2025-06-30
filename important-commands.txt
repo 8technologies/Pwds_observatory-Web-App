@@ -1120,7 +1120,7 @@ LIMIT 1;
 
 SELECT *
 FROM `users`
-WHERE `email` = 'nyene@gmail.com'
+WHERE `email` = 'ogikimosesodera@gmail.com'
 LIMIT 1;
 
 
