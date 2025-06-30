@@ -474,6 +474,8 @@ class AccountController extends BaseController
         $user->sendActivationEmail($activation_token);
 
         return view('emails.approval_notification');
+
+        
     }
 
     public function activate(Request $request)
