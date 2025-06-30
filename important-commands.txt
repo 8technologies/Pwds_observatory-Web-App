@@ -127,6 +127,13 @@ disabilities
  php artisan make:migration add_column_district_union_to_table_name --table=data_imports
 
 
+Ogiki Moses
+How to migrate to online database 
+
+Route::get('migrate', function () { 
+    Artisan::call('migrate', ['--force' => true]); 
+    return Artisan::output();
+});
 
 // OLD CODES STYLES
 //resources\views\widgets\box-5.blade.php
