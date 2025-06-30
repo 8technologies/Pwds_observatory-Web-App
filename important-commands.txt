@@ -474,6 +474,8 @@ class AccountController extends BaseController
         $user->sendActivationEmail($activation_token);
 
         return view('emails.approval_notification');
+
+
     }
 
     public function activate(Request $request)
@@ -1113,6 +1115,12 @@ class AccountController extends BaseController
 SELECT *
 FROM `people`
 WHERE `email` = 'nyene@gmail.com'
+LIMIT 1;
+
+
+SELECT *
+FROM `users`
+WHERE `email` = 'ogikimosesodera@gmail.com'
 LIMIT 1;
 
 
