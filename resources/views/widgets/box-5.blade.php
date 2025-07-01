@@ -1,177 +1,84 @@
-{{-- @php
-    $title     = $title     ?? 'Title';
-    $style     = $style     ?? 'primary';
-    $number    = $number    ?? '0.00';
-    $sub_title = $sub_title ?? 'Sub-titles';
-    $link      = $link      ?? 'javascript:;';
-    $is_dark   = isset($is_dark) ? (bool)$is_dark : true;
-
-    $bgClass = $is_dark ? 'bg-light' : 'bg-white';
-    $textDark = 'text-dark';
-    $textAccent = match($style) {
-      'danger'  => 'text-danger',
-      'warning' => 'text-warning',
-      'info'    => 'text-info',
-      default   => 'text-primary',
-    };
-    $accentColor = match($style) {
-      'danger'  => '#dc3545',
-      'warning' => '#ffc107',
-      'info'    => '#17a2b8',
-      default   => '#28a745',
-    };
-
-    $ariaLabel = "{$title}: {$number} {$sub_title}.";
-@endphp
-
+{{-- in your layout/app.css (or <head>) --}}
 <style>
- .cards-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;  /* the only spacing between cards */
-    margin: 0;    /* no extra outer margin */
-    }
-  .cards-wrapper .card-analytics {
-    margin: 0;    /* fully controlled by the gap above */
-    }
-  .card-analytics {
-    /* spacing between cards */
-    margin: 0.5rem;
 
-    /* fixed square size */
-    --card-size: 18rem;
-    position: relative;
-    width: var(--card-size);
-    height: var(--card-size);
+   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
 
-    border-radius: .5rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    overflow: hidden;
-
+    body {
+    font-family: 'Montserrat', sans-serif;
+     
+  }
+  .card-modern {
+    border: none;
+    border-left: 5px solid transparent;    /* ← 5px left border */
+    border-radius: 10px;                     /* ← smaller radius */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition:
+      box-shadow 0.3s ease,
+      transform   0.3s ease,
+      border-left-color 0.3s ease;
+    overflow: hidden;  /* keep the radius */
+  }
+  /* Title (h4) */
+  .card-modern .card-title {
+    font-size: 1.75rem;       /* bootstrap h4 default */
+    font-weight: 600;         /* semi-bold */
+    line-height: 24px;        /* exactly 16px */
+    margin: 0;
+    font-family: "Raleway", sans-serif;
+  }
+  .card-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+  }
+ 
+  /* padding & spacing helpers */
+  .card-modern .card-body {
+    padding: 2rem 2rem ;    /* uniform padding */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-
-    padding: 1rem;
-    transition: transform .2s, box-shadow .2s;
+    gap: 0.8rem;     /* consistent vertical spacing */
+    text-transform: capitalize;
   }
-  .card-analytics:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-  }
-  .card-analytics::after {
-    content: "";
-    position: absolute;
-    top: 0; right: 0;
-    width: 6px;
-    height: 100%;
-    background: var(--accent);
-  }
-
-  /* larger title */
-  .card-analytics .title {
-    font-weight: 600;
-    line-height: 1.2;
-    font-size: 1.4rem;      /* ↑ was 1.1rem */
-    margin-bottom: .5rem;
-  }
-  /* larger number */
-  .card-analytics .number {
-    font-size: 3rem;        /* ↑ was 2.5rem */
-    font-weight: 700;
-    text-align: right;
-    margin: 0;
-  }
-  /* slightly bigger subtitle */
-  .card-analytics .subtitle {
-    font-size: 1rem;        /* ↑ was .9rem */
-    opacity: .75;
-    margin-top: .5rem;
-  }
+  /* left‐border colors for variants */
+  .card-variant-primary { border-left-color: var(--bs-primary); }
+  .card-variant-danger  { border-left-color: var(--bs-danger);  }
 </style>
 
-<div class="cards-wrapper">
-<a href="{{ $link }}"
-   class="card-analytics {{ $bgClass }} {{ $textDark }}"
-   style="--accent: {{ $accentColor }};"
-   aria-label="{{ $ariaLabel }}">
-    <div>
-      <p class="title {{ $textAccent }}">
-        <span style="
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        ">{{ $title }}</span>
-      </p>
-    </div>
-
-    <div>
-      <p class="number {{ $textAccent }}">
-        {{ $number }}
-      </p>
-      <p class="subtitle {{ $textDark }}">
-        {{ $sub_title }}
-      </p>
-    </div>
-</a>
-</div> --}}
-
-
-
+{{-- in your Blade component --}}
 <?php
+  $title     = $title     ?? 'Title';
+  $style     = $style     ?? 'success';        // success → primary
+  $number    = $number    ?? '0.00';
+  $sub_title = $sub_title ?? 'Sub-titles';
+  $link      = $link      ?? 'javascript:;';
 
-$title     = $title     ?? 'Title';
-$style     = $style     ?? 'success';
-$number    = $number    ?? '0.00';
-$sub_title = $sub_title ?? 'Sub-titles';
-$link      = $link      ?? 'javascript:;';
+  $is_dark = isset($is_dark) ? (bool)$is_dark : true;
+  $variant = $style === 'danger' ? 'danger' : 'primary';
 
-$is_dark = isset($is_dark) ? (bool)$is_dark : true;
+  $bg     = $is_dark ? "bg-{$variant}"    : '';
+  $text   = $is_dark ? 'text-white'        : "text-{$variant}";
+  $text2  = $is_dark ? 'text-white'        : 'text-dark';
 
-$bg     = $is_dark ? 'bg-primary' : '';
-$text   = $is_dark ? 'text-white' : 'text-primary';
-$text2  = $is_dark ? 'text-white' : 'text-dark';
-$border = $is_dark ? 'border-primary' : 'border-primary';
-
-if ($style === 'danger') {
-    $text   = 'text-white';
-    $bg     = 'bg-danger';
-    $text2  = 'text-white';
-    $border = 'border-danger';
-}
-
-$ariaLabel = "{$title}: {$number} {$sub_title}.";
-
+  $ariaLabel = "{$title}: {$number} {$sub_title}.";
 ?>
-
 <a href="{{ $link }}"
-   class="card {{ $bg }} {{ $border }} mb-4 mb-md-5"
+   class="card card-modern card-variant-{{ $variant }} {{ $bg }} mb-4 mb-md-5"
    aria-label="{{ $ariaLabel }}">
-    <div class="card-body py-0">
+    <div class="card-body">
 
-        {{-- Title with 2-line clamp --}}
-        <p class="h3 text-bold mb-2 mb-md-3 {{ $text }}"
-           style="
-               display: -webkit-box;
-               /* -webkit-line-clamp: 2; */
-               -webkit-box-orient: vertical;
-               overflow: hidden;
-               text-overflow: ellipsis;
-               line-height: 1.4em;
-               max-height: 2.8em;
-           ">
+        {{-- Title --}}
+        <p class="h4 {{ $text }} m-0 card-title">
             {{ $title }}
         </p>
 
         {{-- Number --}}
-        <p class="m-0 text-right {{ $text2 }} h3" style="line-height: 3.2rem;">
+        <p class="h3 text-right {{ $text2 }} m-0">
             {{ $number }}
         </p>
 
         {{-- Subtitle --}}
-        <p class="mt-4 {{ $text2 }}">
+        <p class="{{ $text2 }} m-0">
             {{ $sub_title }}
         </p>
     </div>
