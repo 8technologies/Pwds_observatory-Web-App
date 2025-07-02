@@ -652,11 +652,13 @@ $form->text('id_number', __('Identification Number'))
                 //     ->rules('required');
 
 
-                if (Admin::user()->isRole('opd')) {
-                    $current_user = auth("admin")->user();
-                    $organisation = Organisation::find($current_user->organisation_id);
-                    $form->select('district_id', __('Select Profiled District'))->options($organisation->districtsOfOperation->pluck('name', 'id'))->placeholder('Select Profiled District')->rules("required");
-                }
+               if (Admin::user()->isRole('opd')) {
+                        $org = Organisation::find(Admin::user()->organisation_id);
+                        $form->select('district_id', __('Select Profiled District'))
+                            ->options(District::orderBy('name','asc')->pluck('name','id'))
+                            ->default($org->district_id)    // pre-select their “home” district
+                            ->rules('required');
+                    }
                 $form->divider();
                 //Add submit button
                 // $form->html('
