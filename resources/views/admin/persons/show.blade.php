@@ -68,44 +68,56 @@
         </div>
 
         <div class="col-9 col-md-4">
-            <h3 class="text-uppercase h4 p-0 m-0"><b> NEXT OF KIN</b></h3>
-            <hr class="my-1 my-md-3">
+        <h3 class="text-uppercase h4 p-0 m-0"><b>NEXT OF KIN</b></h3>
+        <hr class="my-1 my-md-3">
+
+        @forelse($pwd->next_of_kins as $kin)
+            @include('components.detail-item', [
+            't' => 'Names',
+            's' => $kin->next_of_kin_last_name . ' ' . $kin->next_of_kin_other_names,
+            ])
 
             @include('components.detail-item', [
-                't' => 'names',
-                's' => $pwd->next_of_kin_last_names . ' ' . $pwd->next_of_kin_other_names,
-            ])
-            @include('components.detail-item', [
-                't' => 'id number',
-                's' => $pwd->next_of_kin_id_number,
-            ])
-            @include('components.detail-item', [
-                't' => 'gender',
-                's' => $pwd->next_of_kin_gender,
-            ])
-            @include('components.detail-item', [
-                't' => 'relationship',
-                's' => $pwd->next_of_kin_relationship,
+            't' => 'ID Number',
+            's' => $kin->next_of_kin_id_number,
             ])
 
-            @if ($pwd->next_of_kin_email == null)
-                @include('components.detail-item', [
-                    't' => 'email',
-                    's' => $pwd->next_of_kin_email,
-                ])
+            @include('components.detail-item', [
+            't' => 'Gender',
+            's' => $kin->next_of_kin_gender,
+            ])
+
+            @include('components.detail-item', [
+            't' => 'Relationship',
+            's' => $kin->next_of_kin_relationship,
+            ])
+
+            @if($kin->next_of_kin_email)
+            @include('components.detail-item', [
+                't' => 'Email',
+                's' => $kin->next_of_kin_email,
+            ])
             @endif
+
             @include('components.detail-item', [
-                't' => 'phone number',
-                's' => $pwd->next_of_kin_phone_number . ' ' . $pwd->next_of_kin_alternative_phone_number,
+            't' => 'Phone Number',
+            's' => $kin->next_of_kin_phone_number
+                . ($kin->next_of_kin_alternative_phone_number
+                    ? ' / '.$kin->next_of_kin_alternative_phone_number
+                    : ''),
             ])
+
             @include('components.detail-item', [
-                't' => 'address',
-                's' => $pwd->next_of_kin_address,
+            't' => 'Address',
+            's' => $kin->next_of_kin_address,
             ])
 
-
-
+            <hr>
+        @empty
+            <p class="text-muted"><em>No next of kin recorded.</em></p>
+        @endforelse
         </div>
+
 
     </div>
 
