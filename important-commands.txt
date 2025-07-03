@@ -115,6 +115,15 @@ disabilities
 
 
 
+//Ogiki Moses Odera
+php artisan make:seed DuAgentRoleAndPermissionSeeder
+php artisan db:seed --class=DuAgentRoleAndPermissionSeeder
+php artisan admin:make AgentController --model=App\Models\User
+$router->resource('du-agents', AgentController::class);
+
+php artisan make:mail DuAgentCreated --markdown=emails.du_agent_created
+
+
  // Ogiki Moses Odera 
 
 
@@ -134,6 +143,20 @@ Route::get('migrate', function () {
     Artisan::call('migrate', ['--force' => true]); 
     return Artisan::output();
 });
+
+How to seed to online database 
+
+Route::get('/secret-run-seeder', function() {
+    Artisan::call('db:seed', [
+      '--class' => 'DuAgentRoleAndPermissionSeeder',
+      '--force' => true, // if in production
+    ]);
+    return 'Seeder executed.';
+})->middleware('auth:admin');
+
+
+
+
 
 // OLD CODES STYLES
 //resources\views\widgets\box-5.blade.php

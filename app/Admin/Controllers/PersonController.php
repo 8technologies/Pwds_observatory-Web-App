@@ -91,6 +91,15 @@ class PersonController extends AdminController
             $grid->disableCreateButton();
         }
 
+                    // DU-Agents may *create* and *view* only
+            if ($user->isRole('du-agent')) {
+                $grid->actions(function($actions){
+                    $actions->disableEdit();
+                    $actions->disableDelete();
+                });
+                // leave the “New” button enabled
+            }
+
 
         $grid->filter(function ($filter) {
             // Remove the default id filter
@@ -134,11 +143,24 @@ class PersonController extends AdminController
         $user = Admin::user();
         $organisation = Organisation::find(Admin::user()->organisation_id);
         if ($user->inRoles(['nudipu', 'administrator'])) {
-            $grid->model()->orderBy('created_at', 'desc');
+        $grid->model()->orderBy('created_at', 'desc');
+
         } elseif ($user->isRole('district-union')) {
-            $grid->model()->where('district_id', $organisation->district_id)->orderBy('created_at', 'desc');
-        } else if ($user->isRole('opd')) {
-            $grid->model()->where('opd_id', $organisation->id)->orderBy('created_at', 'desc');
+            // District‐Union sees only their own district
+            $grid->model()
+                ->where('district_id', $organisation->district_id)
+                ->orderBy('created_at', 'desc');
+
+        } elseif ($user->isRole('du-agent')) {
+            // **DU-Agent** gets the identical filter
+            $grid->model()
+                ->where('district_id', $organisation->district_id)
+                ->orderBy('created_at', 'desc');
+
+        } elseif ($user->isRole('opd')) {
+            $grid->model()
+                ->where('opd_id', $organisation->id)
+                ->orderBy('created_at', 'desc');
         }
 
 
@@ -383,19 +405,6 @@ class PersonController extends AdminController
     {
         $form = new Form(new Person());
 
-        //Ogiki Moses Odera
-        // $form->tools(function (Form\Tools $tools) {
-        //     // Attach the ImportPeople action
-        //     $tools->append(new ImportPeople());
-        // });
-
-        //button 
-        // $form->tools(function (Form\Tools $tools) {
-        //     $tools->append('<a class="btn btn-sm btn-success" href="/admin/import-people"> Upload File</a>');
-        // });
-
-        
-
         $form->footer(function ($footer) {
             $footer->disableReset();
             $footer->disableViewCheck();
@@ -436,7 +445,7 @@ class PersonController extends AdminController
             'required' => 'Phone number is required.',
             'regex'    => 'Phone number must be 10 digits starting with 0 (e.g. 0762045035).',
             'unique'   => 'This phone number is already registered.',
-        ]);
+        ])->rules('required');
         $form->email('email', __('Email'))
          ->placeholder('Email (optional)')
          ->creationRules(
@@ -449,39 +458,54 @@ class PersonController extends AdminController
          );
         $form->divider();
         // 1) First the ID Type radios
-$form->radio('id_type', __('ID Type'))
-     ->options([
-         'NIN Number'      => 'NIN Number',
-         'Driving Permit'  => 'Driving Permit',
-         'Passport Number' => 'Passport Number',
-     ])
-     ->rules('nullable');
+        $form->radio('id_type', __('ID Type'))
+            ->options([
+                'NIN Number'      => 'NIN Number',
+                'Driving Permit'  => 'Driving Permit',
+                'Passport Number' => 'Passport Number',
+            ])
+            ->rules('nullable');
 
-// 2) Then the single id_number field
-$form->text('id_number', __('Identification Number'))
-     ->placeholder('Enter the identification number')
-     ->creationRules(
-         ['nullable','unique:people,id_number'],
-         ['unique' => 'The identification number is already used']
-     )
-     ->updateRules(
-         ['nullable',"unique:people,id_number,{{id}},id"],
-         ['unique' => 'The identification number is already used']
-     );
+        // 2) Then the single id_number field
+        $form->text('id_number', __('Identification Number'))
+            ->placeholder('Enter the identification number')
+            ->creationRules(
+                ['nullable','unique:people,id_number'],
+                ['unique' => 'The identification number is already used']
+            )
+            ->updateRules(
+                ['nullable',"unique:people,id_number,{{id}},id"],
+                ['unique' => 'The identification number is already used']
+            );
 
         $form->select('district_of_origin', __('District of Origin'))->options(District::orderBy('name', 'asc')->get()->pluck('name', 'id'))->rules("required");
 
         $form->text('sub_county', __('Sub-County'))->placeholder('Enter Sub-County of Origin')->rules('required');
         $form->text('village', __('Village'))->placeholder('Enter village of Origin')->rules('required');
 
-        $u = Admin::user();
-        if($u->inRoles(['administrator','nudipu'])){
-            $form->select('district_id', __('District Attached (Current District of Residence)'))->options(District::pluck('name', 'id'))->placeholder('Select District')->rules("required")->required();
-        }else{
-            $org = Organisation::find($u->organisation_id);
-            if($u->isRole('opd')){
-                $form->hidden('opd_id')->value($u->organisation_id);
-            }
+        $user         = Admin::user();
+        $organisation = Organisation::find($user->organisation_id);
+
+        // District-Union & DU-Agent: show only their district, but make it unchangeable
+        if ($user->isRole('district-union') || $user->isRole('du-agent')) {
+            $form->select('district_id', __('District Attached'))
+                ->options([
+                    $organisation->district_id => optional($organisation->district)->name
+                ])
+                ->default($organisation->district_id)
+                ->rules('required')
+                ->readonly(); // makes the field uneditable
+        }
+        // OPD users: hidden opd_id as before
+        elseif ($user->isRole('opd')) {
+            $form->hidden('opd_id')->value($organisation->id);
+        }
+        // Everyone else: full dropdown
+        else {
+            $form->select('district_id', __('District Attached'))
+                ->options(District::pluck('name', 'id'))
+                ->placeholder('Select District')
+                ->rules('required');
         }
 
         //if age < 18, then marital status must be disabled
@@ -610,34 +634,34 @@ $form->text('id_number', __('Identification Number'))
 
 
       if ($user->isRole('district-union')) {
-    // Editable switch for DUs
-    $form->switch('is_verified', 'Verified')->states([
-        'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
-        'off' => ['value' => 0, 'text' => 'No',  'color' => 'danger'],
-            ]);
-        } else {
-            // Non-DUs see a dynamic read-only badge
-            $form->ignore(['is_verified']);
-            $form->html(function (Form $form) {
-                $v     = $form->model()->is_verified;
-                $class = $v ? 'bg-success' : 'bg-danger';
-                $text  = $v ? 'Yes'         : 'No';
-                return "<span class='badge {$class}'>{$text}</span>";
-            }, 'Verified');
-        }
+            // Editable switch for DUs
+            $form->switch('is_verified', 'Verified')->states([
+                'on'  => ['value' => 1, 'text' => 'Yes', 'color' => 'success'],
+                'off' => ['value' => 0, 'text' => 'No',  'color' => 'danger'],
+                    ]);
+                } else {
+                    // Non-DUs see a dynamic read-only badge
+                    $form->ignore(['is_verified']);
+                    $form->html(function (Form $form) {
+                        $v     = $form->model()->is_verified;
+                        $class = $v ? 'bg-success' : 'bg-danger';
+                        $text  = $v ? 'Yes'         : 'No';
+                        return "<span class='badge {$class}'>{$text}</span>";
+                    }, 'Verified');
+                }
 
 
-    // Email PWD on DU approval
-    $form->saved(function (Form $form) {
-        if ($form->isEditing()) {
-            $orig = $form->model()->getOriginal('is_verified');
-            $now  = $form->model()->is_verified;
-            if ($orig == 0 && $now == 1) {
-                Mail::to($form->model()->email)
-                    ->send(new \App\Mail\PwdVerified($form->model()));
-            }
-        }
-    });
+            // Email PWD on DU approval
+            $form->saved(function (Form $form) {
+                if ($form->isEditing()) {
+                    $orig = $form->model()->getOriginal('is_verified');
+                    $now  = $form->model()->is_verified;
+                    if ($orig == 0 && $now == 1) {
+                        Mail::to($form->model()->email)
+                            ->send(new \App\Mail\PwdVerified($form->model()));
+                    }
+                }
+            });
         // if (!$user->inRoles(['district-union', 'opd'])) {
         //     $form->html('
         // <button type="submit" class="btn btn-primary float-right">Submit</button>');
@@ -665,43 +689,6 @@ $form->text('id_number', __('Identification Number'))
                 //         <button type="submit" class="btn btn-primary float-right">Submit</button>');
             });
         }
-
-        // $form->divider();
-        // //Add submit button
-        // $form->html('
-        //         <button type="submit" class="btn btn-primary float-right">Submit</button>');
-        // $form->hidden('district_id');
-        // $form->hidden('opd_id');
-        // $form->hidden('is_approved');
-
-
-        //Extra Checks 
-        // Duplicate check: same name, other_names, gender & age
-        // $form->saving(function (Form $form) {
-        //     // normalize inputs
-        //     $name       = ucfirst(strtolower($form->input('name')));
-        //     $otherNames = ucfirst(strtolower($form->input('other_names')));
-        //     $sex        = $form->input('sex');
-        //     $age        = $form->input('age');
-
-        //     // build query
-        //     $query = Person::where('name',        $name)
-        //                 ->where('other_names', $otherNames)
-        //                 ->where('sex',         $sex)
-        //                 ->where('age',         $age);
-
-        //     // if editing, exclude self
-        //     if ($id = $form->model()->id) {
-        //         $query->where('id', '!=', $id);
-        //     }
-
-        //     // if any match found, block save
-        //     if ($query->exists()) {
-        //         throw new \Exception(
-        //             'Another person with the same name, other names, gender and age is already registered.'
-        //         );
-        //     }
-        // });
 
         $form->saving(function (Form $form) {
         $name       = ucfirst(strtolower($form->input('name')));

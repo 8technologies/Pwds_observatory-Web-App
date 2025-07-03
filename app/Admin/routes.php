@@ -1,5 +1,6 @@
 <?php
 
+use App\Admin\Controllers\AgentController;
 use App\Admin\Controllers\ImportPeopleController;
 use Illuminate\Routing\Router;
 use App\Admin\Controllers\ReportController;
@@ -62,6 +63,7 @@ Route::group([
     $router->resource('data-imports', DataImportController::class);
 
   
+    $router->resource('du-agents', 'AgentController');
 
 
 
