@@ -19,6 +19,7 @@ use Illuminate\Auth\Authenticatable as AuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Administrator implements JWTSubject, AuthenticatableContract, CanResetPasswordContract
 {
@@ -27,6 +28,15 @@ class User extends Administrator implements JWTSubject, AuthenticatableContract,
     use AuthenticableTrait, CanResetPassword;
 
 
+     public function setPasswordAttribute($value)
+    {
+        // If the value is already a Bcrypt hash, leave it
+        if (Hash::needsRehash($value)) {
+            $this->attributes['password'] = Hash::make($value);
+        } else {
+            $this->attributes['password'] = $value;
+        }
+    }
     //boot
     protected static function boot()
     {

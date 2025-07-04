@@ -30,6 +30,9 @@ class HomeController extends Controller
         if ($admin_role == 'district-union') {
             return redirect()->route('du-dashboard');
         }
+        if ($admin_role == 'du-agent') {
+            return redirect()->route('du-dashboard');
+        }
         if ($admin_role == 'opd') {
             return redirect()->route('opd-dashboard');
         }

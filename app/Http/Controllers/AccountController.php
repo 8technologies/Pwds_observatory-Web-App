@@ -131,6 +131,8 @@ class AccountController extends BaseController
             $user = Auth::user();
             if ($user->isRole('district-union')) {
                 return redirect('/du-dashboard');
+            } elseif ($user->isRole('du-agent')) {
+                return redirect('/du-dashboard');     
             } elseif ($user->isRole('opd')) {
                 return redirect('/opd-dashboard');
             } elseif ($user->isRole('administrator') || $user->isRole('nudipu')) {
