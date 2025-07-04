@@ -445,7 +445,7 @@ class PersonController extends AdminController
             'required' => 'Phone number is required.',
             'regex'    => 'Phone number must be 10 digits starting with 0 (e.g. 0762045035).',
             'unique'   => 'This phone number is already registered.',
-        ])->rules('required');
+        ]);
         $form->email('email', __('Email'))
          ->placeholder('Email (optional)')
          ->creationRules(
