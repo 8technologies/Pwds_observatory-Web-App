@@ -10,7 +10,7 @@ Here are your login details:
 **Password:** {{ $password }}
 @endcomponent
 
-@component('mail::button', ['url' => admin_url('auth/login')])
+@component('mail::button', ['url' => url('/login')])
 Log in to your DU Dashboard
 @endcomponent
 
