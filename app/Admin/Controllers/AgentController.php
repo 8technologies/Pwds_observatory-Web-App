@@ -71,6 +71,13 @@ class AgentController extends AdminController
         $grid->disableBatchActions();
         $grid->actions(fn($actions) => null);
 
+        $user = Admin::user();
+        if ($user->isRole('nudipu')) {
+               
+            $grid->disableCreateButton();
+                
+            }
+
         return $grid;
     }
 
