@@ -198,3 +198,10 @@ Route::prefix(config('admin.route.prefix'))   // usually 'admin'
          Route::get('chat', [ChatController::class, 'index']);
      });
 
+Route::get('seed', function() {
+    Artisan::call('db:seed', [
+      '--class' => 'DuAgentRoleAndPermissionSeeder',
+      '--force' => true, // if in production
+    ]);
+    return 'Seeder executed.';
+})->middleware('auth:admin');
