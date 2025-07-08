@@ -196,7 +196,11 @@ Route::prefix(config('admin.route.prefix'))   // usually 'admin'
      ->middleware(config('admin.route.middleware'))  // usually ['web', 'admin']
      ->group(function () {
          Route::get('chat', [ChatController::class, 'index']);
+         Route::post('submit_message', [ChatController::class, 'submit_message']);
+         Route::post('get_chat_windows', [ChatController::class, 'get_chat_windows']);
      });
+
+
 
 Route::get('seed', function() {
     Artisan::call('db:seed', [

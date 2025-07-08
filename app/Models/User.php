@@ -152,4 +152,15 @@ class User extends Administrator implements JWTSubject, AuthenticatableContract,
         ];
         Utils::mail_send($data);
     }
+
+    public function getProfilePic(){
+        if(!empty($this->profile_photo) && file_exists('/storage/images/'.$this->profile_photo))
+        {
+            return url('/storage/images/'.$this->profile_photo);
+        }else{
+            return url('/chat/logo/user.webp');
+        }
+    }
+
+    
 }

@@ -39,6 +39,15 @@ class Organisation extends Model
         'relationship_type',
     ];
 
+    public function getProfilePic(){
+        if(!empty($this->profile_photo) && file_exists('/storage/images/'.$this->profile_photo))
+        {
+            return url('/storage/images/'.$this->profile_photo);
+        }else{
+            return url('/chat/logo/user.webp');
+        }
+    }
+
     public function setAttachmentsAttribute($value)
     {
         $this->attributes['attachments'] = json_encode($value);

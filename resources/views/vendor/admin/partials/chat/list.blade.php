@@ -294,6 +294,7 @@
 </style>
 
 <div class="row clearfix">
+     
     <div class="col-lg-12">
         <div class="card chat-app">
             <div id="plist" class="people-list">
@@ -309,90 +310,101 @@
                     aria-label="Search"
                 />
                 </div>
+                {{-- <ul class="list-unstyled chat-list mt-2 mb-0">
+                    @include('vendor.admin.partials.chat._users')
+                </ul> --}}
+                 
                 <ul class="list-unstyled chat-list mt-2 mb-0">
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Vincent Porter</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
-                        </div>
-                    </li>
-                  
-                    
+                    @if(! empty($getChatUser) && count($getChatUser))
+                        @include('vendor.admin.partials.chat._users')
+                    @else
+                        <li class="text-muted">No chats yet…</li>
+                    @endif
                 </ul>
             </div>
-            <div class="chat">
-                <div class="chat-header clearfix">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                            </a>
-                            <div class="chat-about">
-                                <h6 class="m-b-0">Aiden Chavez</h6>
-                                <small>Last seen: 2 hours ago</small>
-                            </div>
-                            
-                        </div>
-                        {{-- <div class="col-lg-6 hidden-sm text-right">
-                            <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
-                        </div> --}}
-                    </div>
+            <div class="chat" id="getChatMessageAll">
+            @if(!empty($getReceiver))
+                @include('vendor.admin.partials.chat._message')
+            @else 
+            {{-- keep the same structure so .chat-history has height --}}
+                <div class="chat-header"></div>
+                <div class="chat-history d-flex align-items-center justify-content-center">
+                <div class="empty-chat text-center">
+                    <i class="fa fa-comment-dots fa-3x text-muted mb-3"></i>
+                    <h2 class="mb-0">Tap on a chat to start a conversation!</h2>
                 </div>
-                <div class="chat-history">
-                    <ul class="m-b-0">
-                        <li class="clearfix">
-                            <div class="message-data text-right">
-                                <span class="message-data-time">10:10 AM, Today</span>
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            </div>
-                            <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                        </li>
-                        <li class="clearfix">
-                            <div class="message-data">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                                <span class="message-data-time">10:12 AM, Today</span>
-                            </div>
-                            <div class="message my-message">Are we meeting today?</div>                                    
-                        </li>                               
-                    </ul>
-                </div>
-                <div class="chat-message d-flex align-items-center">
-                <form action="{{ url('submit_message') }}"
-                        id="submit_message"
-                        method="post"
-                        class="w-100 d-flex align-items-center"
-                        enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="receiver_id" value="">
-
-                    <!-- Image upload / attach button on the left -->
-                    <button type="button"
-                            class="btn btn-outline-primary mr-2"
-                            title="Attach Image">
-                    <i class="fa fa-image"></i>
-                    </button>
-
-                    <!-- Expanding textarea in the middle -->
-                    <textarea name="message"
-                            id="ClearMessage"
-                            class="form-control flex-grow-1"
-                            rows="1"
-                            placeholder="Type a message…"></textarea>
-
-                    <!-- Send button stays on the right -->
-                    <button type="submit"
-                            class="btn btn-success ml-2"
-                            title="Send">
-                    <i class="bi bi-send"></i>
-                    </button>
-                </form>
-                </div>
-
-            </div>
+                </div>           
+            @endif
+        </div>
         </div>
     </div>
 </div>
+
+
+<script>
+
+$('body').on('click', '.getChatWindows', function(e){
+    e.preventDefault();
+    var receiver_id = $(this).attr('id');
+    let orgId = $(this).data('org');   // <-- this is the organisation ID
+    $('.getChatWindows').removeClass('active');
+    $(this).addClass('active')
+    $.ajax({
+      type: 'POST',
+      url: "{{ admin_url('get_chat_windows') }}",
+      data: {
+
+        "receiver_id": receiver_id,
+        '_token': "{{ csrf_token() }}"
+      },
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+      },
+      success: function(data){
+        $('#ClearMessage'+receiver_id).hide();
+        $('#getChatMessageAll').html(data.success);
+        window.history.pushState("","","{{ admin_url('chat?receiver_id=')}}" + data.org_id);
+        scrolldown();
+        
+      },
+      error: function(xhr){
+        console.error('error', xhr.responseJSON);
+      },
+    });
+  });
+
+
+
+  $('body').on('submit', '#submit_message', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      type: 'POST',
+      url: "{{ admin_url('submit_message') }}",
+      data: new FormData(this),
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+      },
+      success: function(data){
+        // console.log('sent!', data);
+        // optionally append the new message to the list
+            $('#AppendMessage').append(data.success);
+            $('#ClearMessage').val('');
+            scrolldown();
+      },
+      error: function(xhr){
+        console.error('error', xhr.responseJSON);
+      },
+    });
+  });
+
+  function scrolldown(){
+    $('.chat-history').animate({scrollTop: $('.chat-history').prop("scrollHeight") + 3000000},500);
+  }
+
+  scrolldown();
+</script>
