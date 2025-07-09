@@ -140,4 +140,31 @@ class ChatController extends AdminController
                 ], 200);
             }
 
+
+
+    public function get_chat_search_user(Request $request){
+         
+        //dd($request->all());
+
+        
+        $senderId      = Auth::id();       
+        $receiver_id = request()->query('receiver_id');
+
+        $getChatUser = Chat::getChatUser($senderId);
+
+
+        $html = view('vendor.admin.partials.chat._users', [
+                    
+                    'getChatUser'     => $getChatUser,
+                    'receiver_id'  => $receiver_id,
+                   
+                ])->render();
+
+                return response()->json([
+                    'status'  => true,
+                    'success' => $html,
+                ], 200);
+    }        
+
+
 }

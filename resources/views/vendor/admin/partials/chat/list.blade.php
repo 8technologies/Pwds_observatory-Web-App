@@ -300,21 +300,30 @@
             <div id="plist" class="people-list">
                 <div class="input-group">
                 <!-- BS3 uses input-group-addon -->
-                <span class="input-group-addon">
+                <span class="input-group-addon" id="getSearchUser">
                     <i class="fa fa-search"></i>
                 </span>
                 <input
+                    id="getSearch"
                     type="text"
                     class="form-control"
                     placeholder="Search…"
                     aria-label="Search"
                 />
+                @php
+                    // the “current” org chat you’re in, from the query string
+                    $activeOrg = request()->query('receiver_id', '');
+                @endphp
+                <input type="hidden" id="getReceiverIDDynamic" value="{{ $activeOrg }}"/>
                 </div>
                 {{-- <ul class="list-unstyled chat-list mt-2 mb-0">
                     @include('vendor.admin.partials.chat._users')
                 </ul> --}}
-                 
-                <ul class="list-unstyled chat-list mt-2 mb-0">
+                 {{-- @php
+                    // the “current” org chat you’re in, from the query string
+                    $activeOrg = request()->query('receiver_id', '');
+                @endphp --}}
+                <ul class="list-unstyled chat-list mt-2 mb-0" id="getSearchUserDynamic">
                     @if(! empty($getChatUser) && count($getChatUser))
                         @include('vendor.admin.partials.chat._users')
                     @else
@@ -345,8 +354,9 @@
 
 $('body').on('click', '.getChatWindows', function(e){
     e.preventDefault();
-    var receiver_id = $(this).attr('id');
+    var receiver_id = $(this).attr('id');   
     let orgId = $(this).data('org');   // <-- this is the organisation ID
+    $('#getReceiverIDDynamic').val(receiver_id);
     $('.getChatWindows').removeClass('active');
     $(this).addClass('active')
     $.ajax({
@@ -373,6 +383,35 @@ $('body').on('click', '.getChatWindows', function(e){
       },
     });
   });
+
+//Search user
+$('body').on('click', '#getSearchUser', function(e){
+    var search = $('#getSearch').val();
+    //var activeOrg = request()->query('receiver_id');
+    var receiver_id = $('#getReceiverIDDynamic').val();
+     $.ajax({
+      type: 'POST',
+      url: "{{ admin_url('get_chat_search_user') }}",
+      data: {
+        "search": search,
+        "receiver_id": receiver_id,
+        '_token': "{{ csrf_token() }}"
+      },
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+      },
+      success: function(data){
+        
+          $('#getSearchUserDynamic').html(data.success);
+      },
+      error: function(xhr){
+        console.error('error', xhr.responseJSON);
+      },
+    });
+
+});
+//EndSearch user
 
 
 

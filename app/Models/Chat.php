@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 
 class Chat extends Model
 {
@@ -46,6 +47,15 @@ class Chat extends Model
                         chats.receiver_id ELSE chats.sender_id END) AS connect_user_id'))
                         ->join('users as sender','sender.id','=','chats.sender_id')
                         ->join('users as receiver','receiver.id','=','chats.receiver_id');
+
+        if(!empty(Request::get('search'))){
+            
+            $search = Request::get('search');
+            $getuserchat = $getuserchat->where(function($query) use($search){
+                     $query->where('sender.name','like','%'.$search.'%')
+                            ->orWhere('receiver.name','like','%'.$search.'%');
+            });
+        }
 
         $getuserchat = $getuserchat->whereIn('chats.id',function($query) use($senderId){
             $query->selectRaw('max(chats.id)')->from('chats')

@@ -1,5 +1,10 @@
+@php
+    // gets null if no ?receiver_id in the URL
+    $activeOrg = request()->query('receiver_id');
+@endphp
 @foreach($getChatUser as $user)
-<li class="clearfix getChatWindows" id="{{ $user['organisation_id'] }}">
+<li class="clearfix getChatWindows {{ (int)$activeOrg === $user['organisation_id'] ? 'active' : '' }}"
+      id="{{ $user['organisation_id'] }}">
     {{-- <a href="{{ admin_url('chat?receiver_id=' . $user['organisation_id']) }}"> --}}
         <img style="height: 45px;" src="{{ $user['profile_photo'] }}" alt="avatar">
         <div class="about">

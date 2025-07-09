@@ -198,6 +198,7 @@ Route::prefix(config('admin.route.prefix'))   // usually 'admin'
          Route::get('chat', [ChatController::class, 'index']);
          Route::post('submit_message', [ChatController::class, 'submit_message']);
          Route::post('get_chat_windows', [ChatController::class, 'get_chat_windows']);
+         Route::post('get_chat_search_user', [ChatController::class, 'get_chat_search_user']);
      });
 
 

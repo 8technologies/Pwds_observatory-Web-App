@@ -11,7 +11,7 @@
                         class="w-100 d-flex align-items-center"
                         enctype="multipart/form-data">
                     {{ csrf_field() }}
-                    <input type="text" name="receiver_id" value="{{ $getReceiver->id }}">
+                    <input type="hidden" name="receiver_id" value="{{ $getReceiver->id }}">
 
                     <!-- Image upload / attach button on the left -->
                     <button type="button"
