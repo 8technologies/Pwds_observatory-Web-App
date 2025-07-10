@@ -19,6 +19,7 @@ use Illuminate\Auth\Authenticatable as AuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Administrator implements JWTSubject, AuthenticatableContract, CanResetPasswordContract
@@ -161,6 +162,11 @@ class User extends Administrator implements JWTSubject, AuthenticatableContract,
             return url('/chat/logo/user.webp');
         }
     }
+
+   public function OnlineUser(){
+
+    return Cache::has('OnlineUser_'.$this->id);
+   }
 
     
 }

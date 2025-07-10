@@ -22,10 +22,14 @@
                 @endif
             </div>
             <div class="status">
-                <i class="fa fa-circle offline"></i>
-                {{ \Carbon\Carbon::parse($user['created_date'])
+                @if(!empty($user['is_online']))
+                <i class="fa fa-circle online"> Online</i>
+                @else 
+                <i class="fa fa-circle offline"> Offline</i>
+                @endif
+                {{-- {{ \Carbon\Carbon::parse($user['created_date'])
                     ->setTimezone('Africa/Kampala')
-                    ->diffForHumans() }}
+                    ->diffForHumans() }} --}}
             </div>
         </div>
  {{-- </a> --}}

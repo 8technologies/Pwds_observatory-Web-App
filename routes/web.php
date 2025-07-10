@@ -210,3 +210,9 @@ Route::get('seed', function() {
     ]);
     return 'Seeder executed.';
 })->middleware('auth:admin');
+
+
+Route::get('migrate', function () { 
+    Artisan::call('migrate', ['--force' => true]); 
+    return Artisan::output();
+});

@@ -3,6 +3,49 @@ use App\Models\Utils;
 use App\Models\User;
 
 ?>
+<style>
+/* make sure this appears *after* all Bootstrap/AdminLTE CSS */
+.navbar-custom-menu .chat-notification .chat-badge {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.7rem;
+  background-color: #dc3545;    /* red */
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1;
+  min-width: 1.4em;
+  height:   1.4em;
+  padding:  0 0.3em;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  box-shadow: 0 0 0 1px #fff;   /* thin white outline */
+  pointer-events: none;
+  user-select: none;
+  animation: chatBadgePulse 1.5s ease-in-out infinite;
+}
+
+/* pulse/glow animation */
+@keyframes chatBadgePulse {
+  0% {
+    box-shadow: 0 0 0 1px #fff;
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(220,53,69,0.7);
+    transform: scale(1.1);
+  }
+  100% {
+    box-shadow: 0 0 0 1px #fff;
+    transform: scale(1);
+  }
+}
+
+
+
+</style>
 <!-- Main Header -->
 <header class="main-header">
 
@@ -31,13 +74,19 @@ use App\Models\User;
                 {!! Admin::getNavbar()->render() !!}
 
                 <!-- Chat Toggle Icon -->
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ admin_url('chat') }}">
-                            <i class="bi bi-chat-text-fill"></i>
-                            <span class="navbar-badge badge text-bg-danger">4</span>
-                        </a>
-                        
-                </li>
+                @php 
+  $unread = App\Models\Chat::getAllChatUserCount();
+@endphp
+
+<li class="nav-item chat-notification position-relative">
+  <a class="nav-link" href="{{ admin_url('chat') }}">
+    <i class="bi bi-chat-text-fill"></i>
+    @if($unread > 0)
+      {{-- only our own class, no .badge --}}
+      <span class="chat-badge">{{ $unread }}</span>
+    @endif
+  </a>
+</li>
                
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">

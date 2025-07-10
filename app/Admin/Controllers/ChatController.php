@@ -7,6 +7,7 @@ use App\Models\User;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Layout\Content;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -22,7 +23,7 @@ class ChatController extends AdminController
           if (! $receiverParam) {
                 return $content
                     ->header('My Chats')
-                    ->description('Select a conversation')
+                    ->description('Conversations')
                     // pass getChatUser here too!
                     ->body(view('vendor.admin.partials.chat.list', [
                         'getChatUser' => $getChatUser,
@@ -65,7 +66,7 @@ class ChatController extends AdminController
         //dd($getChatUser);
 
         return $content
-            ->header('Chat with ' . $org->name)
+            ->header('My Chats')
             ->description('Conversations')
             ->body(view('vendor.admin.partials.chat.list', compact(
                 'receiverId','getReceiver','getchat','getChatUser'
@@ -77,13 +78,21 @@ class ChatController extends AdminController
 
     public function submit_message(Request $request){
 
-         //dd($request->all());
+        // dd($request->all());
 
         $chat = new Chat();
         $chat->sender_id = Auth::user()->id;
         $chat->receiver_id = $request->receiver_id;
         $chat->message = $request->message;
         $chat->created_date = now();
+        if(!empty($request->file('file_name'))){
+            
+            $file = $request->file('file_name');
+            $randomStr = Str::random(30);
+            $filename = $randomStr. '.' .$file->getClientOriginalExtension();
+            $file->move('uploads/chat/',$filename);
+            $chat->file = $filename;
+        }
         $chat->save();
         
 

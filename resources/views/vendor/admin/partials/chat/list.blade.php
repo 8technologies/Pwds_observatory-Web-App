@@ -221,6 +221,81 @@
     height: 0
 }
 
+/* hide the real file input */
+#file_name {
+  display: none;
+}
+
+/* container styling */
+.chat-message {
+  background-color: #fff;
+  border-top: 1px solid #e1e1e1;
+}
+
+/* attach & send buttons */
+.attach-btn,
+.send-btn {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: color .2s, transform .2s;
+}
+.attach-btn:hover,
+.send-btn:hover {
+  color: #343a40;
+  transform: scale(1.1);
+}
+
+/* the textarea */
+.message-input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: .5rem 1rem;
+  resize: none;
+  box-shadow: none;
+  transition: border-color .2s;
+}
+.message-input:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 .1rem rgba(0,123,255,.25);
+  outline: none;
+}
+
+/* remove extra form margins */
+.chat-message form {
+  margin: 0;
+  padding: 0;
+}
+
+/* ensure the label is relative so preview can float over it */
+.attach-btn {
+  position: relative;
+  font-size: 1.75rem;
+  margin-right: .5rem;
+}
+
+
+
+/* thumbnail style */
+.file-thumb {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  object-fit: cover;
+ 
+}
+
+/* where the filename / thumb will appear */
+.file-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
 @media only screen and (max-width: 767px) {
     .chat-list {
      height: 465px;
@@ -250,6 +325,8 @@
         overflow-x: auto
     }
 }
+
+
 
 @media only screen and (min-width: 768px) and (max-width: 992px) {
     .chat-app .chat-list {
@@ -323,12 +400,30 @@
                     // the “current” org chat you’re in, from the query string
                     $activeOrg = request()->query('receiver_id', '');
                 @endphp --}}
+                @php
+                  use App\Models\Organisation;
+                  // hard-code your “Nudipu” default – here it’s ID=1 per your DB dump
+                  $defaultOrg = Organisation::find(1);
+                @endphp
                 <ul class="list-unstyled chat-list mt-2 mb-0" id="getSearchUserDynamic">
                     @if(! empty($getChatUser) && count($getChatUser))
-                        @include('vendor.admin.partials.chat._users')
-                    @else
-                        <li class="text-muted">No chats yet…</li>
-                    @endif
+                    @include('vendor.admin.partials.chat._users')
+                  @else
+                    {{-- show default “Nudipu” entry --}}
+                    <li class="clearfix getChatWindows {{ request()->query('receiver_id') == $defaultOrg->id ? 'active' : '' }}"
+                        id="{{ $defaultOrg->id }}">
+                      <img style="height:45px"
+                          src="{{ $defaultOrg->getProfilePic() }}"
+                          alt="avatar">
+                      <div class="about">
+                        <div class="name">NUDIPU</div>
+                        <div class="status">
+                          <i class="fa fa-circle"></i>
+                          Talk to the admin
+                        </div>
+                      </div>
+                    </li>
+                  @endif
                 </ul>
             </div>
             <div class="chat" id="getChatMessageAll">
@@ -339,10 +434,13 @@
                 <div class="chat-header"></div>
                 <div class="chat-history d-flex align-items-center justify-content-center">
                 <div class="empty-chat text-center">
-                    <i class="fa fa-comment-dots fa-3x text-muted mb-3"></i>
-                    <h2 class="mb-0">Tap on a chat to start a conversation!</h2>
+                  <i class="fa fa-comment-dots fa-3x text-muted mb-3"></i>
+                  <h2 class="mb-0">
+                    Tap on a chat to start a conversation!<br>
+                    Or talk to nudipu by tapping on <strong>NUDIPU</strong>.
+                  </h2>
                 </div>
-                </div>           
+              </div>         
             @endif
         </div>
         </div>
@@ -433,6 +531,9 @@ $('body').on('click', '#getSearchUser', function(e){
         // optionally append the new message to the list
             $('#AppendMessage').append(data.success);
             $('#ClearMessage').val('');
+            $('#file_name').val('');
+            $('#getFileName').html('');
+            $('#filePreview').html('');
             scrolldown();
       },
       error: function(xhr){
@@ -446,4 +547,38 @@ $('body').on('click', '#getSearchUser', function(e){
   }
 
   scrolldown();
+
+    $('body').delegate('#OpenFile','click', function(e){
+        
+        $('#file_name').trigger('click');
+    });
+
+    $('body').delegate('#file_name','change', function(e){
+        
+        var filename = this.files[0].name;
+        $('#getFileName').html(filename);
+    });
+
+
+    document.getElementById('file_name').addEventListener('change', function(){
+    const preview = document.getElementById('filePreview');
+    preview.innerHTML = ''; // clear old
+
+    const file = this.files[0];
+    if (!file) return;
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'file-thumb';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // just show name for non-images
+      preview.textContent = file.name;
+    }
+  });
 </script>
