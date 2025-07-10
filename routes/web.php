@@ -196,7 +196,12 @@ Route::prefix(config('admin.route.prefix'))   // usually 'admin'
      ->middleware(config('admin.route.middleware'))  // usually ['web', 'admin']
      ->group(function () {
          Route::get('chat', [ChatController::class, 'index']);
+         Route::post('submit_message', [ChatController::class, 'submit_message']);
+         Route::post('get_chat_windows', [ChatController::class, 'get_chat_windows']);
+         Route::post('get_chat_search_user', [ChatController::class, 'get_chat_search_user']);
      });
+
+
 
 Route::get('seed', function() {
     Artisan::call('db:seed', [
@@ -205,3 +210,9 @@ Route::get('seed', function() {
     ]);
     return 'Seeder executed.';
 })->middleware('auth:admin');
+
+
+Route::get('migrate', function () { 
+    Artisan::call('migrate', ['--force' => true]); 
+    return Artisan::output();
+});

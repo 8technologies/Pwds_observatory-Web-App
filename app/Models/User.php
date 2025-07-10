@@ -19,6 +19,7 @@ use Illuminate\Auth\Authenticatable as AuthenticableTrait;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 class User extends Administrator implements JWTSubject, AuthenticatableContract, CanResetPasswordContract
@@ -152,4 +153,20 @@ class User extends Administrator implements JWTSubject, AuthenticatableContract,
         ];
         Utils::mail_send($data);
     }
+
+    public function getProfilePic(){
+        if(!empty($this->profile_photo) && file_exists('/storage/images/'.$this->profile_photo))
+        {
+            return url('/storage/images/'.$this->profile_photo);
+        }else{
+            return url('/chat/logo/user.webp');
+        }
+    }
+
+   public function OnlineUser(){
+
+    return Cache::has('OnlineUser_'.$this->id);
+   }
+
+    
 }

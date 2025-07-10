@@ -221,6 +221,81 @@
     height: 0
 }
 
+/* hide the real file input */
+#file_name {
+  display: none;
+}
+
+/* container styling */
+.chat-message {
+  background-color: #fff;
+  border-top: 1px solid #e1e1e1;
+}
+
+/* attach & send buttons */
+.attach-btn,
+.send-btn {
+  background: none;
+  border: none;
+  color: #6c757d;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: color .2s, transform .2s;
+}
+.attach-btn:hover,
+.send-btn:hover {
+  color: #343a40;
+  transform: scale(1.1);
+}
+
+/* the textarea */
+.message-input {
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 999px;
+  padding: .5rem 1rem;
+  resize: none;
+  box-shadow: none;
+  transition: border-color .2s;
+}
+.message-input:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 .1rem rgba(0,123,255,.25);
+  outline: none;
+}
+
+/* remove extra form margins */
+.chat-message form {
+  margin: 0;
+  padding: 0;
+}
+
+/* ensure the label is relative so preview can float over it */
+.attach-btn {
+  position: relative;
+  font-size: 1.75rem;
+  margin-right: .5rem;
+}
+
+
+
+/* thumbnail style */
+.file-thumb {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  object-fit: cover;
+ 
+}
+
+/* where the filename / thumb will appear */
+.file-preview {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
 @media only screen and (max-width: 767px) {
     .chat-list {
      height: 465px;
@@ -250,6 +325,8 @@
         overflow-x: auto
     }
 }
+
+
 
 @media only screen and (min-width: 768px) and (max-width: 992px) {
     .chat-app .chat-list {
@@ -294,105 +371,214 @@
 </style>
 
 <div class="row clearfix">
+     
     <div class="col-lg-12">
         <div class="card chat-app">
             <div id="plist" class="people-list">
                 <div class="input-group">
                 <!-- BS3 uses input-group-addon -->
-                <span class="input-group-addon">
+                <span class="input-group-addon" id="getSearchUser">
                     <i class="fa fa-search"></i>
                 </span>
                 <input
+                    id="getSearch"
                     type="text"
                     class="form-control"
                     placeholder="Search…"
                     aria-label="Search"
                 />
+                @php
+                    // the “current” org chat you’re in, from the query string
+                    $activeOrg = request()->query('receiver_id', '');
+                @endphp
+                <input type="hidden" id="getReceiverIDDynamic" value="{{ $activeOrg }}"/>
                 </div>
-                <ul class="list-unstyled chat-list mt-2 mb-0">
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Vincent Porter</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
+                {{-- <ul class="list-unstyled chat-list mt-2 mb-0">
+                    @include('vendor.admin.partials.chat._users')
+                </ul> --}}
+                 {{-- @php
+                    // the “current” org chat you’re in, from the query string
+                    $activeOrg = request()->query('receiver_id', '');
+                @endphp --}}
+                @php
+                  use App\Models\Organisation;
+                  // hard-code your “Nudipu” default – here it’s ID=1 per your DB dump
+                  $defaultOrg = Organisation::find(1);
+                @endphp
+                <ul class="list-unstyled chat-list mt-2 mb-0" id="getSearchUserDynamic">
+                    @if(! empty($getChatUser) && count($getChatUser))
+                    @include('vendor.admin.partials.chat._users')
+                  @else
+                    {{-- show default “Nudipu” entry --}}
+                    <li class="clearfix getChatWindows {{ request()->query('receiver_id') == $defaultOrg->id ? 'active' : '' }}"
+                        id="{{ $defaultOrg->id }}">
+                      <img style="height:45px"
+                          src="{{ $defaultOrg->getProfilePic() }}"
+                          alt="avatar">
+                      <div class="about">
+                        <div class="name">NUDIPU</div>
+                        <div class="status">
+                          <i class="fa fa-circle"></i>
+                          Talk to the admin
                         </div>
+                      </div>
                     </li>
-                  
-                    
+                  @endif
                 </ul>
             </div>
-            <div class="chat">
-                <div class="chat-header clearfix">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <a href="javascript:void(0);" data-toggle="modal" data-target="#view_info">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                            </a>
-                            <div class="chat-about">
-                                <h6 class="m-b-0">Aiden Chavez</h6>
-                                <small>Last seen: 2 hours ago</small>
-                            </div>
-                            
-                        </div>
-                        {{-- <div class="col-lg-6 hidden-sm text-right">
-                            <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
-                        </div> --}}
-                    </div>
+            <div class="chat" id="getChatMessageAll">
+            @if(!empty($getReceiver))
+                @include('vendor.admin.partials.chat._message')
+            @else 
+            {{-- keep the same structure so .chat-history has height --}}
+                <div class="chat-header"></div>
+                <div class="chat-history d-flex align-items-center justify-content-center">
+                <div class="empty-chat text-center">
+                  <i class="fa fa-comment-dots fa-3x text-muted mb-3"></i>
+                  <h2 class="mb-0">
+                    Tap on a chat to start a conversation!<br>
+                    Or talk to nudipu by tapping on <strong>NUDIPU</strong>.
+                  </h2>
                 </div>
-                <div class="chat-history">
-                    <ul class="m-b-0">
-                        <li class="clearfix">
-                            <div class="message-data text-right">
-                                <span class="message-data-time">10:10 AM, Today</span>
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                            </div>
-                            <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
-                        </li>
-                        <li class="clearfix">
-                            <div class="message-data">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                                <span class="message-data-time">10:12 AM, Today</span>
-                            </div>
-                            <div class="message my-message">Are we meeting today?</div>                                    
-                        </li>                               
-                    </ul>
-                </div>
-                <div class="chat-message d-flex align-items-center">
-                <form action="{{ url('submit_message') }}"
-                        id="submit_message"
-                        method="post"
-                        class="w-100 d-flex align-items-center"
-                        enctype="multipart/form-data">
-                    @csrf
-                    <input type="hidden" name="receiver_id" value="">
-
-                    <!-- Image upload / attach button on the left -->
-                    <button type="button"
-                            class="btn btn-outline-primary mr-2"
-                            title="Attach Image">
-                    <i class="fa fa-image"></i>
-                    </button>
-
-                    <!-- Expanding textarea in the middle -->
-                    <textarea name="message"
-                            id="ClearMessage"
-                            class="form-control flex-grow-1"
-                            rows="1"
-                            placeholder="Type a message…"></textarea>
-
-                    <!-- Send button stays on the right -->
-                    <button type="submit"
-                            class="btn btn-success ml-2"
-                            title="Send">
-                    <i class="bi bi-send"></i>
-                    </button>
-                </form>
-                </div>
-
-            </div>
+              </div>         
+            @endif
+        </div>
         </div>
     </div>
 </div>
+
+
+<script>
+
+$('body').on('click', '.getChatWindows', function(e){
+    e.preventDefault();
+    var receiver_id = $(this).attr('id');   
+    let orgId = $(this).data('org');   // <-- this is the organisation ID
+    $('#getReceiverIDDynamic').val(receiver_id);
+    $('.getChatWindows').removeClass('active');
+    $(this).addClass('active')
+    $.ajax({
+      type: 'POST',
+      url: "{{ admin_url('get_chat_windows') }}",
+      data: {
+
+        "receiver_id": receiver_id,
+        '_token': "{{ csrf_token() }}"
+      },
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+      },
+      success: function(data){
+        $('#ClearMessage'+receiver_id).hide();
+        $('#getChatMessageAll').html(data.success);
+        window.history.pushState("","","{{ admin_url('chat?receiver_id=')}}" + data.org_id);
+        scrolldown();
+        
+      },
+      error: function(xhr){
+        console.error('error', xhr.responseJSON);
+      },
+    });
+  });
+
+//Search user
+$('body').on('click', '#getSearchUser', function(e){
+    var search = $('#getSearch').val();
+    //var activeOrg = request()->query('receiver_id');
+    var receiver_id = $('#getReceiverIDDynamic').val();
+     $.ajax({
+      type: 'POST',
+      url: "{{ admin_url('get_chat_search_user') }}",
+      data: {
+        "search": search,
+        "receiver_id": receiver_id,
+        '_token': "{{ csrf_token() }}"
+      },
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+      },
+      success: function(data){
+        
+          $('#getSearchUserDynamic').html(data.success);
+      },
+      error: function(xhr){
+        console.error('error', xhr.responseJSON);
+      },
+    });
+
+});
+//EndSearch user
+
+
+
+  $('body').on('submit', '#submit_message', function(e){
+    e.preventDefault();
+
+    $.ajax({
+      type: 'POST',
+      url: "{{ admin_url('submit_message') }}",
+      data: new FormData(this),
+      processData: false,
+      contentType: false,
+      dataType: 'json',
+      headers: {
+        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+      },
+      success: function(data){
+        // console.log('sent!', data);
+        // optionally append the new message to the list
+            $('#AppendMessage').append(data.success);
+            $('#ClearMessage').val('');
+            $('#file_name').val('');
+            $('#getFileName').html('');
+            $('#filePreview').html('');
+            scrolldown();
+      },
+      error: function(xhr){
+        console.error('error', xhr.responseJSON);
+      },
+    });
+  });
+
+  function scrolldown(){
+    $('.chat-history').animate({scrollTop: $('.chat-history').prop("scrollHeight") + 3000000},500);
+  }
+
+  scrolldown();
+
+    $('body').delegate('#OpenFile','click', function(e){
+        
+        $('#file_name').trigger('click');
+    });
+
+    $('body').delegate('#file_name','change', function(e){
+        
+        var filename = this.files[0].name;
+        $('#getFileName').html(filename);
+    });
+
+
+    document.getElementById('file_name').addEventListener('change', function(){
+    const preview = document.getElementById('filePreview');
+    preview.innerHTML = ''; // clear old
+
+    const file = this.files[0];
+    if (!file) return;
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        img.className = 'file-thumb';
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // just show name for non-images
+      preview.textContent = file.name;
+    }
+  });
+</script>
