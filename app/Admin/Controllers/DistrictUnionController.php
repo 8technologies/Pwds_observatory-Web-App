@@ -93,18 +93,18 @@ class DistrictUnionController extends AdminController
 
 
 
-          $grid->column('Send Message')->display(function () {
-            // the org record has a user_id pointing at its admin user
-            $currentAdminId = auth('admin')->id();
+        //   $grid->column('Send Message')->display(function () {
+        //     // the org record has a user_id pointing at its admin user
+        //     $currentAdminId = auth('admin')->id();
 
-            // if it’s “you,” don’t render a button at all
-            if ($this->user_id == $currentAdminId) {
-                return ''; 
-            }
+        //     // if it’s “you,” don’t render a button at all
+        //     if ($this->user_id == $currentAdminId) {
+        //         return ''; 
+        //     }
 
-            $chatUrl = admin_url('chat?receiver_id=' . $this->id);
-            return "<a href='{$chatUrl}' class='btn btn-xs btn-success'>Send Message</a>";
-        });
+        //     $chatUrl = admin_url('chat?receiver_id=' . $this->id);
+        //     return "<a href='{$chatUrl}' class='btn btn-xs btn-success'>Send Message</a>";
+        // });
        
 
         // $grid->column('contact_persons', __('Contact persons'));

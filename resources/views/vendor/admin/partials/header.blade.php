@@ -74,19 +74,19 @@ use App\Models\User;
                 {!! Admin::getNavbar()->render() !!}
 
                 <!-- Chat Toggle Icon -->
-                @php 
-  $unread = App\Models\Chat::getAllChatUserCount();
-@endphp
+                {{-- @php 
+                $unread = App\Models\Chat::getAllChatUserCount();
+                    @endphp
 
-<li class="nav-item chat-notification position-relative">
-  <a class="nav-link" href="{{ admin_url('chat') }}">
-    <i class="bi bi-chat-text-fill"></i>
-    @if($unread > 0)
-      {{-- only our own class, no .badge --}}
-      <span class="chat-badge">{{ $unread }}</span>
-    @endif
-  </a>
-</li>
+                    <li class="nav-item chat-notification position-relative">
+                    <a class="nav-link" href="{{ admin_url('chat') }}">
+                        <i class="bi bi-chat-text-fill"></i>
+                        @if($unread > 0)
+                        
+                        <span class="chat-badge">{{ $unread }}</span>
+                        @endif
+                    </a>
+                    </li> --}}
                
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
