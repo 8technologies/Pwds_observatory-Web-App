@@ -72,6 +72,8 @@ if (!isset($header_style)) {
                 {{-- No details yet for this link --}}
                 {{-- <li><a href="#" class="dropdown-item">Training and capacity building </a></li> --}}
                 <li><a href="innovations" class="dropdown-item">Research and Innovation </a></li>
+
+                <li><a href="https://elearning.8learning.org/course/view.php?id=33" target="_blank" class="dropdown-item">Digital Skills</a></li>
                 {{-- No details yet for this link --}}
                 {{-- <li><a href="#" class="dropdown-item">Testimonials</a></li> --}}
             </ul>
