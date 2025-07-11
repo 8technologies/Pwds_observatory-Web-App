@@ -417,9 +417,33 @@ class PersonController extends AdminController
         $form->text('name', __('Surname'))->placeholder('Surname')->rules('required');
         $form->text('other_names', __('Other Names'))->placeholder('Other Names')->rules('required');
         $form->select('sex', __('Gender'))->options(['Male' => 'Male', 'Female' => 'Female'])->rules('required');
-        $form->multipleSelect('disabilities', __('Select disabilities'))
-            ->rules('required')
-            ->options(Disability::orderBy('name', 'asc')->get()->pluck('name', 'id'));
+        $docxIds = [
+        3,   // Deaf
+        4,   // Mental Disability
+        5,   // Intellectual Disability
+        6,   // Acquired Brain Injury
+        7,   // Physical Disability
+        8,   // Albinism
+        9,   // Dwarfism
+        10,  // Hard Of Hearing
+        11,  // Epilepsy
+        12,  // Cerebral (Celebral) Palsy
+        13,  // Hydrocephalus
+        29,  // Speech Impairment
+        54,  // Low vision
+        49,  // Partially blind
+        52,  // Totally blind
+    ];
+
+    $form->multipleSelect('disabilities', __('Select disabilities'))
+         ->rules('required')
+         ->options(
+             Disability::whereIn('id', $docxIds)
+                 // preserve *that* exact sequence
+                 ->orderByRaw('FIELD(id,' . implode(',', $docxIds) . ')')
+                 ->pluck('name', 'id')
+         );
+
         $form->date('dob', __('Date of Birth'))->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY');
         $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
        $form->text('phone_number', __('Phone Number'))
