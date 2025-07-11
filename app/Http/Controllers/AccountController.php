@@ -26,7 +26,29 @@ class AccountController extends BaseController
         }
 
         $districts    = \App\Models\District::pluck('name','id');
-        $disabilities = \App\Models\Disability::pluck('name','id');
+            $docxIds = [
+        3,   // Deaf
+        4,   // Mental Disability
+        5,   // Intellectual Disability
+        6,   // Acquired Brain Injury
+        7,   // Physical Disability
+        8,   // Albinism
+        9,   // Dwarfism
+        10,  // Hard Of Hearing
+        11,  // Epilepsy
+        12,  // Cerebral Palsy
+        13,  // Hydrocephalus
+        29,  // Speech Impairment
+        54,  // Low vision
+        49,  // Partially blind
+        52,  // Totally blind
+    ];
+
+    // 2) fetch just those, in exactly that order
+    $disabilities = \App\Models\Disability::whereIn('id', $docxIds)
+        ->orderByRaw('FIELD(id,' . implode(',', $docxIds) . ')')
+        ->pluck('name', 'id');
+
 
         return view('register', compact('districts','disabilities'));
     }
@@ -40,12 +62,12 @@ class AccountController extends BaseController
         // 1) Base validation (phone_number must be exactly 10 digits, starting 0)
         $validator = Validator::make($request->all(), [
             'name'           => 'required|string|max:255',
-            'email'          => 'required|email|unique:users,email',
+            'email'          => 'nullable|email|unique:users,email',
             'password'       => 'required|confirmed|min:4',
                 'phone_number' => [
                 'required',
                 'regex:/^0\d{9}$/',                  // 10 digits, starting 0
-                Rule::unique('people', 'phone_number')
+                
             ],
             'district'       => 'required|exists:districts,id',
             'disability'     => 'required|exists:disabilities,id',
@@ -54,7 +76,7 @@ class AccountController extends BaseController
             'dob'            => 'required|date|before:today',
         ], [
           'phone_number.regex'  => 'Phone Number must be 10 digits starting with 0 (e.g. 0762045035).',
-          'phone_number.unique' => 'This phone number is already registered.',  
+            
         ]);
 
        
@@ -70,7 +92,7 @@ class AccountController extends BaseController
         // 4) Create the User
         $user = new User;
         $user->name             = $data['name'];
-        $user->username         = $data['email'];
+        $user->username         = $data['name'];
         $user->email            = $data['email'];
         $user->password         = Hash::make($data['password']);
         $user->approved         = 0;
@@ -97,7 +119,9 @@ class AccountController extends BaseController
         $person->disabilities()->attach($data['disability']);
 
         // 6) Send activation email
+        if (! empty($user->email)) {
         $user->sendActivationEmail($user->activation_token);
+    }
 
         return redirect('login')
                ->with('success', 'Thanks For Profiling Yourself! Provide your email and Password to Login to your Dashboard.');

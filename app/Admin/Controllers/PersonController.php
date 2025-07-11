@@ -446,30 +446,40 @@ class PersonController extends AdminController
 
         $form->date('dob', __('Date of Birth'))->format('DD-MM-YYYY')->placeholder('DD-MM-YYYY');
         $form->number('age', __('Age'))->placeholder('Age')->rules('required')->min(0);
-       $form->text('phone_number', __('Phone Number'))
-        ->placeholder('e.g. 0762045035')
-        // prevent typing more than 10 digits
-        ->attribute('maxlength', 10)
-        // hint to mobile browsers / numeric pads
-        ->attribute('inputmode', 'numeric')
-        // optional HTML5 pattern to prevent submission in some browsers
-        ->attribute('pattern', '0[0-9]{9}')
-        ->rules(function (Form $form) {
-            $id = $form->model()->id;
-            $unique = $id
-                ? Rule::unique('people', 'phone_number')->ignore($id)
-                : Rule::unique('people', 'phone_number');
+    //    $form->text('phone_number', __('Phone Number'))
+    //     ->placeholder('e.g. 0762045035')
+    //     // prevent typing more than 10 digits
+    //     ->attribute('maxlength', 10)
+    //     // hint to mobile browsers / numeric pads
+    //     ->attribute('inputmode', 'numeric')
+    //     // optional HTML5 pattern to prevent submission in some browsers
+    //     ->attribute('pattern', '0[0-9]{9}')
+    //     ->rules(function (Form $form) {
+    //         $id = $form->model()->id;
+    //         $unique = $id
+    //             ? Rule::unique('people', 'phone_number')->ignore($id)
+    //             : Rule::unique('people', 'phone_number');
 
-            return [
-                'required',
-                'regex:/^0\d{9}$/',  // exactly 10 digits, starting 0
-                $unique,
-            ];
-        }, [
-            'required' => 'Phone number is required.',
-            'regex'    => 'Phone number must be 10 digits starting with 0 (e.g. 0762045035).',
-            'unique'   => 'This phone number is already registered.',
-        ]);
+    //         return [
+    //             'required',
+    //             'regex:/^0\d{9}$/',  // exactly 10 digits, starting 0
+    //             $unique,
+    //         ];
+    //     }, [
+    //         'required' => 'Phone number is required.',
+    //         'regex'    => 'Phone number must be 10 digits starting with 0 (e.g. 0762045035).',
+    //         'unique'   => 'This phone number is already registered.',
+    //     ]);
+        $form->text('phone_number', __('Phone Number'))
+            ->placeholder('e.g. 0762045035')
+            ->attribute('maxlength', 10)
+            ->attribute('inputmode', 'numeric')
+            ->attribute('pattern', '0[0-9]{9}')
+            ->rules('required|regex:/^0\d{9}$/', [
+                'required' => 'Phone number is required.',
+                'regex'    => 'Phone number must be 10 digits starting with 0 (e.g. 0762045035).',
+            ]);
+
         $form->email('email', __('Email'))
          ->placeholder('Email (optional)')
          ->creationRules(

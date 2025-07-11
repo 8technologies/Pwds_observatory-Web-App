@@ -26,7 +26,7 @@
               {{-- Full Name & Email --}}
               <div class="row">
                 <div class="col-sm-6 mb-3">
-                  @include('components.input-text',['name'=>'name','label'=>'Full Name'])
+                  @include('components.input-text',['name'=>'name','label'=>'Full Name <span style="color:red">*</span>'])
                 </div>
                 <div class="col-sm-6 mb-3">
                   @include('components.input-text',['name'=>'email','type'=>'email','label'=>'Email Address'])
@@ -36,20 +36,20 @@
               {{-- Password & Confirmation --}}
               <div class="row">
                 <div class="col-sm-6 mb-3">
-                  @include('components.input-text',['name'=>'password','type'=>'password','label'=>'Password'])
+                  @include('components.input-text',['name'=>'password','type'=>'password','label'=>'Password <span style="color:red">*</span>'])
                 </div>
                 <div class="col-sm-6 mb-3">
-                  @include('components.input-text',['name'=>'password_confirmation','type'=>'password','label'=>'Confirm Password'])
+                  @include('components.input-text',['name'=>'password_confirmation','type'=>'password','label'=>'Confirm Password <span style="color:red">*</span>'])
                 </div>
               </div>
 
               {{-- Phone & District --}}
               <div class="row">
                 <div class="col-sm-6 mb-3">
-                  @include('components.input-text',['name'=>'phone_number','label'=>'Phone Number'])
+                  @include('components.input-text',['name'=>'phone_number','label'=>'Phone Number <span style="color:red">*</span>'])
                 </div>
                 <div class="col-sm-6 mb-3">
-                  <label for="district" class="form-label">District</label>
+                  <label for="district" class="form-label">District <span style="color: red">*</span> </label>
                   <select name="district" id="district" class="form-select">
                     <option value="">Select…</option>
                     @foreach($districts as $id=>$d)
@@ -63,7 +63,7 @@
               {{-- Disability & Gender --}}
               <div class="row">
                 <div class="col-sm-6 mb-3">
-                  <label for="disability" class="form-label">Disability</label>
+                  <label for="disability" class="form-label">Disability <span style="color: red">*</span> </label>
                   <select name="disability" id="disability" class="form-select">
                     <option value="">Select…</option>
                     @foreach($disabilities as $id=>$name)
@@ -73,7 +73,7 @@
                   @error('disability')<div class="text-danger">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-sm-6 mb-3">
-                  <label class="form-label">Gender</label><br>
+                  <label class="form-label">Gender <span style="color: red">*</span> </label><br>
                   <label class="me-3">
                     <input type="radio" name="sex" value="Male"   {{ old('sex')=='Male'?'checked':'' }}> Male
                   </label>
@@ -86,7 +86,7 @@
 
               {{-- Village --}}
               <div class="mb-3">
-                @include('components.input-text',['name'=>'village','label'=>'Village'])
+                @include('components.input-text',['name'=>'village','label'=>'Village <span style="color:red">*</span>'])
               </div>
 
               {{-- Date of Birth --}}
@@ -94,7 +94,7 @@
                 @include('components.input-text',[
                   'name' => 'dob',
                   'type' => 'date',
-                  'label'=> 'Date of Birth',
+                  'label'=> 'Date of Birth <span style="color:red">*</span>',
                 ])
               </div>
 
