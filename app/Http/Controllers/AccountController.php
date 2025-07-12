@@ -119,9 +119,9 @@ class AccountController extends BaseController
         $person->disabilities()->attach($data['disability']);
 
         // 6) Send activation email
-        if (! empty($user->email)) {
+        
         $user->sendActivationEmail($user->activation_token);
-    }
+    
 
         return redirect('login')
                ->with('success', 'Thanks For Profiling Yourself! Provide your email and Password to Login to your Dashboard.');
