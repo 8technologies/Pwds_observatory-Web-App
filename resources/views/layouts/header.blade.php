@@ -58,47 +58,26 @@ if (!isset($header_style)) {
                 </li>
 
 
-<li class="nav-item dropdown">
-  <a
-    class="nav-link dropdown-toggle"
-    href="#"
-    id="servicesDropdown"
-    role="button"
-    data-bs-toggle="dropdown"
-    aria-haspopup="true"
-    aria-expanded="false"
-  >
-    Services
-    <span class="visually-hidden">Toggle Services menu</span>
-  </a>
-  <ul class="dropdown-menu" aria-labelledby="servicesDropdown">
-    <li>
-      <a href="{{ url('counseling-and-guidance') }}" class="dropdown-item">
-        Guidance and Counseling
-      </a>
-    </li>
-    <li>
-      <a href="{{ url('jobs') }}" class="dropdown-item">
-        Jobs and Opportunities
-      </a>
-    </li>
-    <li>
-      <a href="{{ url('innovations') }}" class="dropdown-item">
-        Research and Innovation
-      </a>
-    </li>
-    <li>
-      <a
-        href="https://elearning.8learning.org/course/view.php?id=33"
-        target="_blank"
-        class="dropdown-item"
-      >
-        Digital Skills
-      </a>
-    </li>
-  </ul>
-</li>
 
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Services</a>
+                    <ul class="dropdown-menu">
+                        {{-- No details yet for this link --}}
+                        {{-- <li><a href="#" class="dropdown-item">Persons with disabilites - national profiling</a> --}}
+                </li>
+                <li><a href="{{ url('counseling-and-guidance') }}" class="dropdown-item">Guidance and Counseling
+                    </a></li>
+                <li><a href="{{ url('jobs') }}" class="dropdown-item">Jobs and Opportunities </a>
+                </li>
+                {{-- No details yet for this link --}}
+                {{-- <li><a href="#" class="dropdown-item">Training and capacity building </a></li> --}}
+                <li><a href="innovations" class="dropdown-item">Research and Innovation </a></li>
+
+                <li><a href="https://elearning.8learning.org/course/view.php?id=33" target="_blank" class="dropdown-item">Digital Skills</a></li>
+                {{-- No details yet for this link --}}
+                {{-- <li><a href="#" class="dropdown-item">Testimonials</a></li> --}}
+            </ul>
+            </li>
             <li class="nav-item">
                 <a href="{{ url('news') }}" class="nav-link">News & Events</a>
             </li>
@@ -146,3 +125,37 @@ if (!isset($header_style)) {
     </div>
 </div>
 </header>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // find every dropdown in the navbar
+  document.querySelectorAll('.nav-item.dropdown').forEach(function(container) {
+    const toggle = container.querySelector('.dropdown-toggle');
+    const dd     = bootstrap.Dropdown.getOrCreateInstance(toggle);
+
+    // when any child (toggle or menu item) gets focus, open
+    container.addEventListener('focusin', function() {
+      dd.show();
+      toggle.setAttribute('aria-expanded', 'true');
+    });
+
+    // when focus leaves the whole container, close
+    container.addEventListener('focusout', function(e) {
+      // relatedTarget is the element receiving focus
+      if (!container.contains(e.relatedTarget)) {
+        dd.hide();
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // also mirror click (so aria stays in sync)
+    toggle.addEventListener('click', function() {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      toggle.setAttribute('aria-expanded', String(!expanded));
+    });
+  });
+});
+</script>
+
