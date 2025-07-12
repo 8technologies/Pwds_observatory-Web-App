@@ -29,7 +29,7 @@
                   @include('components.input-text',['name'=>'name','label'=>'Full Name <span style="color:red">*</span>'])
                 </div>
                 <div class="col-sm-6 mb-3">
-                  @include('components.input-text',['name'=>'email','type'=>'email','label'=>'Email Address'])
+                  @include('components.input-text',['name'=>'email','type'=>'email','label'=>'Email Address <span style="color:red">*</span>'])
                 </div>
               </div>
 
