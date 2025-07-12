@@ -62,7 +62,7 @@ class AccountController extends BaseController
         // 1) Base validation (phone_number must be exactly 10 digits, starting 0)
         $validator = Validator::make($request->all(), [
             'name'           => 'required|string|max:255',
-            'email'          => 'nullable|email|unique:users,email',
+            'email'          => 'required|email|unique:users,email',
             'password'       => 'required|confirmed|min:4',
                 'phone_number' => [
                 'required',
@@ -92,7 +92,7 @@ class AccountController extends BaseController
         // 4) Create the User
         $user = new User;
         $user->name             = $data['name'];
-        $user->username         = $data['name'];
+        $user->username         = $data['email'];
         $user->email            = $data['email'];
         $user->password         = Hash::make($data['password']);
         $user->approved         = 0;
@@ -105,7 +105,7 @@ class AccountController extends BaseController
             'user_id'       => $user->id,
             'name'          => $data['name'],
             'email'         => $data['email'],
-            'phone_number' => $data['phone_number'],
+            'phone_number'  => $data['phone_number'],
             'district_id'   => $data['district'],
             'disability'    => $data['disability'],
             'sex'           => $data['sex'],
@@ -119,9 +119,7 @@ class AccountController extends BaseController
         $person->disabilities()->attach($data['disability']);
 
         // 6) Send activation email
-        
         $user->sendActivationEmail($user->activation_token);
-    
 
         return redirect('login')
                ->with('success', 'Thanks For Profiling Yourself! Provide your email and Password to Login to your Dashboard.');
