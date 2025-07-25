@@ -42,6 +42,8 @@ class AccountController extends BaseController
         54,  // Low vision
         49,  // Partially blind
         52,  // Totally blind
+        14,  //Deafblind
+        30, //Spina Bifida
     ];
 
     // 2) fetch just those, in exactly that order
@@ -119,7 +121,7 @@ class AccountController extends BaseController
         $person->disabilities()->attach($data['disability']);
 
         // 6) Send activation email
-        $user->sendActivationEmail($user->activation_token);
+        //$user->sendActivationEmail($user->activation_token);
 
         return redirect('login')
                ->with('success', 'Thanks For Profiling Yourself! Provide your email and Password to Login to your Dashboard.');
