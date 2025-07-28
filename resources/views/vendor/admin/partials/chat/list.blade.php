@@ -402,16 +402,19 @@
                 @endphp --}}
                 @php
                   use App\Models\Organisation;
-                  // hard-code your “Nudipu” default – here it’s ID=1 per your DB dump
-                  $defaultOrg = Organisation::find(1);
+                  $defaultOrg     = Organisation::find(1);
+                  $currentAdminId = Auth::guard('admin')->id();
                 @endphp
                 <ul class="list-unstyled chat-list mt-2 mb-0" id="getSearchUserDynamic">
-                    @if(! empty($getChatUser) && count($getChatUser))
-                    @include('vendor.admin.partials.chat._users')
-                  @else
-                    {{-- show default “Nudipu” entry --}}
-                    <li class="clearfix getChatWindows {{ request()->query('receiver_id') == $defaultOrg->id ? 'active' : '' }}"
-                        id="{{ $defaultOrg->id }}">
+                @if(! empty($getChatUser) && count($getChatUser))
+                  @include('vendor.admin.partials.chat._users')
+                @else
+                  {{-- only show the default “Nudipu” if you are *not* that user --}}
+                  @if($currentAdminId !== $defaultOrg->user_id)
+                    <li
+                      class="clearfix getChatWindows {{ request()->query('receiver_id') == $defaultOrg->id ? 'active' : '' }}"
+                      id="{{ $defaultOrg->id }}"
+                    >
                       <img style="height:45px"
                           src="{{ $defaultOrg->getProfilePic() }}"
                           alt="avatar">
@@ -424,7 +427,9 @@
                       </div>
                     </li>
                   @endif
-                </ul>
+                @endif
+              </ul>
+
             </div>
             <div class="chat" id="getChatMessageAll">
             @if(!empty($getReceiver))
