@@ -127,8 +127,8 @@ class AccountController extends BaseController
 
             $person->disabilities()->attach($data['disability']);
 
-        // 6) Send activation email
-        $user->sendActivationEmail($user->activation_token);
+            // 6) Send activation email
+            $user->sendActivationEmail($user->activation_token);
 
             return redirect('login')
                    ->with('success', 'Registration successful! Please check your email to activate your account, then login with your credentials.');
