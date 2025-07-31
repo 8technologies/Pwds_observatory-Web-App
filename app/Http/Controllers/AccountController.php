@@ -42,6 +42,8 @@ class AccountController extends BaseController
         54,  // Low vision
         49,  // Partially blind
         52,  // Totally blind
+        14,  //Deafblind
+        30, //Spina Bifida
     ];
 
     // 2) fetch just those, in exactly that order
@@ -125,8 +127,8 @@ class AccountController extends BaseController
 
             $person->disabilities()->attach($data['disability']);
 
-            // 6) Send activation email
-            $user->sendActivationEmail($user->activation_token);
+        // 6) Send activation email
+        $user->sendActivationEmail($user->activation_token);
 
             return redirect('login')
                    ->with('success', 'Registration successful! Please check your email to activate your account, then login with your credentials.');

@@ -433,6 +433,8 @@ class PersonController extends AdminController
         54,  // Low vision
         49,  // Partially blind
         52,  // Totally blind
+        14,  //Deafblind
+        30, //Spina Bifida
     ];
 
     $form->multipleSelect('disabilities', __('Select disabilities'))

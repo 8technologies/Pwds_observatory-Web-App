@@ -74,7 +74,7 @@ use App\Models\User;
                 {!! Admin::getNavbar()->render() !!}
 
                 <!-- Chat Toggle Icon -->
-                {{-- @php 
+                @php 
                 $unread = App\Models\Chat::getAllChatUserCount();
                     @endphp
 
@@ -86,7 +86,7 @@ use App\Models\User;
                         <span class="chat-badge">{{ $unread }}</span>
                         @endif
                     </a>
-                    </li> --}}
+                    </li>
                
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
