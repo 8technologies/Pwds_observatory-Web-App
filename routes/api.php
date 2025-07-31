@@ -12,6 +12,7 @@ use App\Http\Controllers\API\JobApiController;
 use App\Http\Controllers\API\NewsPostApiController;
 use App\Http\Controllers\API\OPD;
 use App\Http\Controllers\API\PersonController;
+use App\Http\Controllers\API\PWDProfileController;
 use App\Http\Controllers\API\ProductServiceAPIController;
 use App\Http\Controllers\API\ServiceProviderAPIController;
 use App\Http\Controllers\ApiAuthController;
@@ -36,6 +37,7 @@ Route::POST("users/register", [ApiAuthController::class, "register"]);
 Route::POST("users/login", [ApiAuthController::class, "login"]);
 Route::POST('logout', [ApiAuthController::class, "logout"]);
 Route::resource('people', PersonController::class);
+Route::POST('people-v2', [PersonController::class, 'storeOrUpdate']);
 Route::resource('district-unions', District_UnionAPIController::class);
 Route::resource('opds', OPD::class);
 Route::resource('service-providers', ServiceProviderAPIController::class);
@@ -49,6 +51,18 @@ Route::resource('products', ProductServiceAPIController::class);
 Route::apiResource('disabilities', DisabilitiesController::class);
 Route::apiResource('districts', DistrictAPIController::class);
 Route::apiResource('people-batch-collection', BatchDataController::class);
+
+// PWD Profile API Routes
+Route::prefix('pwd-profiles')->group(function () {
+    Route::get('/', [PWDProfileController::class, 'index']);
+    Route::get('/statistics', [PWDProfileController::class, 'statistics']);
+    Route::get('/disabilities', [PWDProfileController::class, 'getDisabilities']);
+    Route::post('/bulk-sync', [PWDProfileController::class, 'bulkSync']);
+    Route::get('/{id}', [PWDProfileController::class, 'show']);
+    Route::post('/', [PWDProfileController::class, 'store']);
+    Route::put('/{id}', [PWDProfileController::class, 'update']);
+    Route::delete('/{id}', [PWDProfileController::class, 'destroy']);
+});
 
 
 // Ogiki Moses Odera
@@ -65,7 +79,7 @@ Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkE
 // Route::PUT("people/{id}", [ApiResurceController::class, "person_update"]);
 // Route::get("people", [ApiResurceController::class, "people"]);
 // Route::get("jobs", [ApiResurceController::class, "jobs"]);
-// Route::get('api/{model}', [ApiResurceController::class, 'index']);
+Route::get('api/{model}', [ApiResurceController::class, 'index']);
 // Route::get('groups', [ApiResurceController::class, 'groups']);
 // Route::get('associations', [ApiResurceController::class, 'associations']);
 // Route::get('institutions', [ApiResurceController::class, 'institutions']);

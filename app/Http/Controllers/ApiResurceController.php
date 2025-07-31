@@ -242,6 +242,9 @@ class ApiResurceController extends Controller
         if ($is_private) {
 
             $u = auth('api')->user();
+            if ($u == null) {
+                return $this->error('User account not found.');
+            }
             $administrator_id = $u->id;
 
             if ($u == null) {

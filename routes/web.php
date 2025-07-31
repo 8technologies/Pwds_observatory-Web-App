@@ -129,14 +129,14 @@ Route::get('/guest', [GuestController::class, 'index']);
 
 Route::get('/login', [AccountController::class, 'login'])->name('login')
     ->middleware(RedirectIfAuthenticated::class);
-Route::post('/account-activation', [AccountController::class, 'activateAccount'])->name('account-activation');
-Route::get('activate', [AccountController::class, 'activate'])->name('activate');
-
-Route::post('/register', [AccountController::class, 'register_post'])
-    ->middleware(RedirectIfAuthenticated::class);
-
 Route::post('/login', [AccountController::class, 'login_post'])
     ->middleware(RedirectIfAuthenticated::class);
+
+Route::get('/register', [AccountController::class, 'register'])->name('register')
+    ->middleware(RedirectIfAuthenticated::class);
+Route::post('/account-activation', [AccountController::class, 'activateAccount'])->name('account-activation')
+    ->middleware(RedirectIfAuthenticated::class);
+Route::get('activate', [AccountController::class, 'activate'])->name('activate');
 
 
 Route::get('/dashboard', [AccountController::class, 'dashboard'])
@@ -173,6 +173,9 @@ Route::get('/logout', [AccountController::class, 'logout']);
 Route::get('/gen', function () {
     die(Gen::find($_GET['id'])->do_get());
 })->name("gen");
+Route::get('/gen-form', function () {
+  die(Gen::find($_GET['id'])->make_forms());
+})->name("gen-form");
 
 
 

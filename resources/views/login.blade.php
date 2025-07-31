@@ -1,5 +1,12 @@
 <?php
-if (isset($_GET['my_email']) && isset($_GET['my_pass'])) {
+if (isset($_GET['my_                        <h1 class="text-center text-xl-start mb-2">Hello, Welcome Back!
+                        </h1>
+                        <p class="text-center text-xl-start pb-3 mb-4">
+                            Don't have an account yet? 
+                            <a href="{{ route('register') }}" class="text-primary fw-medium text-decoration-none">
+                                <i class="bi bi-person-plus me-1"></i>Self Registration For Persons With Disabilities
+                            </a>
+                        </p>il']) && isset($_GET['my_pass'])) {
     $_SESSION['form'] = (object) [
         'email' => $_GET['my_email'],
         'password' => $_GET['my_pass'],
@@ -27,42 +34,54 @@ if (isset($_GET['my_email']) && isset($_GET['my_pass'])) {
                         <h1 class="text-center text-xl-start">Hello, Welcome!
                         </h1>
                         <p class="text-center text-xl-start pb-3 mb-3">Don’t have an account yet? <a href="register">Self Registration For Persons With Disabilities</a></p>
-                        <form class="needs-validation" method="POST" action="{{ admin_url('auth/login') }}" novalidate>
-                        {{-- <form class="needs-validation" method="POST" action="{{ url('just/login') }}" novalidate> --}}
-                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                            <div class="row">
-
-
-                                <div class="col-12 mb-3">
-
-                                    @include('components.input-text', [
-                                        'name' => 'email',
-                                        'label' => 'Email',
-                                    ])
-
-                                </div>
-                                <div class="col-12 mb-4">
-
-                                    @include('components.input-text', [
-                                        'name' => 'password',
-                                        'type' => 'password',
-                                        'label' => 'Password',
-                                    ])
-                                </div>
+                        
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body p-4">
+                                <form class="needs-validation" method="POST" action="{{ admin_url('auth/login') }}" novalidate>
+                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                    
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            @include('components.input-text', [
+                                                'name' => 'email',
+                                                'label' => 'Email Address',
+                                                'placeholder' => 'Enter your email address'
+                                            ])
+                                        </div>
+                                        
+                                        <div class="col-12 mb-4">
+                                            @include('components.input-text', [
+                                                'name' => 'password',
+                                                'type' => 'password',
+                                                'label' => 'Password',
+                                                'placeholder' => 'Enter your password'
+                                            ])
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="d-flex justify-content-between align-items-center mb-4">
+                                        <div class="form-check">
+                                            <input type="checkbox" id="remember" class="form-check-input">
+                                            <label for="remember" class="form-check-label fs-sm">Remember me</label>
+                                        </div>
+                                        <a href="{{ route('password.request') }}" class="text-decoration-none fs-sm">
+                                            Forgot Password?
+                                        </a>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100 mb-3">
+                                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                                    </button>
+                                    
+                                    <div class="text-center">
+                                        <span class="text-muted fs-sm">New to PWD Observatory?</span>
+                                        <a href="{{ route('register') }}" class="text-primary fw-medium text-decoration-none ms-1">
+                                            Create Account
+                                        </a>
+                                    </div>
+                                </form>
                             </div>
-                            <div class="mb-4">
-                                <div class="form-check">
-                                    <input type="checkbox" id="terms" class="form-check-input">
-                                    <label for="terms" class="form-check-label fs-base">Remember me</label>
-                                </div>
-                            </div>
-                            <div class="mb-4">
-                                <button type="submit" class="btn btn-primary shadow-primary btn-lg w-100">Sign in</button>
-                            </div>
-                            <div class="mb-4">
-                                <a href="{{ route('password.request') }}" class="btn btn-link">Forgot Password?</a>
-                            </div>
-                        </form>
+                        </div>
 
                     </div>
 
@@ -93,4 +112,6 @@ if (isset($_GET['my_email']) && isset($_GET['my_pass'])) {
 
             </section>
         </main>
+
+        <script src="{{ asset('assets/js/auth-forms.js') }}"></script>
     @endsection

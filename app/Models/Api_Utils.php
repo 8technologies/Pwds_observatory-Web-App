@@ -14,7 +14,8 @@ class Api_Utils extends Model
         return response()->json([
             'data' => $data,
             'message' => $message,
-            'status' => $status
+            'status' => $status,
+            'code' => 1,
         ]);
     }
 
@@ -23,7 +24,8 @@ class Api_Utils extends Model
     {
         return response()->json([
             'message' => $message,
-            'status' => $status
+            'status' => $status,
+            'code' => 0,
         ]);
     }
 }
