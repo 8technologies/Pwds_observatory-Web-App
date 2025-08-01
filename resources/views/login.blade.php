@@ -1,23 +1,18 @@
-<?php
-if (isset($_GET['my_                        <h1 class="text-center text-xl-start mb-2">Hello, Welcome Back!
-                        </h1>
-                        <p class="text-center text-xl-start pb-3 mb-4">
-                            Don't have an account yet? 
-                            <a href="{{ route('register') }}" class="text-primary fw-medium text-decoration-none">
-                                <i class="bi bi-person-plus me-1"></i>Self Registration For Persons With Disabilities
-                            </a>
-                        </p>il']) && isset($_GET['my_pass'])) {
+@php
+if (isset($_GET['my_email']) && isset($_GET['my_pass'])) {
     $_SESSION['form'] = (object) [
         'email' => $_GET['my_email'],
         'password' => $_GET['my_pass'],
     ];
 }
-?>@extends('layouts.base-layout')
+@endphp
+
+@extends('layouts.base-layout')
 {{-- account-details --}}
 @section('base-content')
-    <?php
+    @php
     $header_data['header_style'] = 2;
-    ?>
+    @endphp
 
     <body>
         <main class="page-wrapper">
