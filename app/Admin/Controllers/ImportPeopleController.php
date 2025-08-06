@@ -74,14 +74,28 @@ class ImportPeopleController extends AdminController
                 }
             }
 
-            if ($phone != null && strlen($phone) > 3) {
-                $existing = Person::where('phone_number', $phone)->first();
-                if ($existing != null) {
-                    $total_failed++;
-                    $error_message .= "Phone number $phone for record $total_records already exists. <br>";
-                    continue;
-                }
+            // if ($phone != null && strlen($phone) > 3) {
+            //     $existing = Person::where('phone_number', $phone)->first();
+            //     if ($existing != null) {
+            //         $total_failed++;
+            //         $error_message .= "Phone number $phone for record $total_records already exists. <br>";
+            //         continue;
+            //     }
+            // }
+
+            $exists = Person::where('name',        $name)
+                ->where('other_names', $row[1])
+                ->where('sex',         $row[2])
+                ->where('age',         $row[4])
+                ->where('disability',  $row[3])
+                ->exists();
+
+            if ($exists) {
+                $total_failed++;
+                $error_message .= "The person with name {$name} {$row[1]} is already registered. <br>";
+                continue;
             }
+
 
             $person = new Person();
             $person->name = $name;
