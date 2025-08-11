@@ -75,7 +75,7 @@ Route::get('mail-test', function () {
         'body' => $body
     ];
 
-    Utils::mail_send($data);
+    Utils::mail_send($data);// Send the email using Utils::mail_send
 });
 
 
