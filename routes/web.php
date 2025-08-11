@@ -216,6 +216,7 @@ Route::get('seed', function() {
 
 
 Route::get('migrate', function () { 
+    echo 'Migrating database...<br>';
     Artisan::call('migrate', ['--force' => true]); 
     return Artisan::output();
 });
