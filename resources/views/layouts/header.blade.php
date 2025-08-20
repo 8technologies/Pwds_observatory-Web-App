@@ -69,6 +69,8 @@ if (!isset($header_style)) {
                     </a></li>
                 <li><a href="{{ url('jobs') }}" class="dropdown-item">Jobs and Opportunities </a>
                 </li>
+                <li><a href="{{ url('https://www.8jobspot.com/') }}" target="_blank" class="dropdown-item">Jobs Portal</a>
+                </li>
                 {{-- No details yet for this link --}}
                 {{-- <li><a href="#" class="dropdown-item">Training and capacity building </a></li> --}}
                 <li><a href="innovations" class="dropdown-item">Research and Innovation </a></li>
