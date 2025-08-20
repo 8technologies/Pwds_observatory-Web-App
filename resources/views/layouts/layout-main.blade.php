@@ -50,7 +50,7 @@
                 <!-- Item -->
                 <div class="swiper-slide py-3">
                     <a href="#" class="card card-body card-hover px-2 mx-2">
-                        <img src="assets/img/NUDIPU.png" class="d-block mx-auto my-2" width="154" alt="Brand">
+                        <img src="assets/img/nudipu.png" class="d-block mx-auto my-2" width="154" alt="Brand">
                     </a>
                 </div>
 
@@ -69,7 +69,7 @@
                 <!-- Item -->
                 <div class="swiper-slide py-3">
                     <a href="#" class="card card-body card-hover px-2 mx-2">
-                        <img src="assets/img/8TECH.png" class="d-block mx-auto my-2" width="154" alt="Brand">
+                        <img src="assets/img/8tech.png" class="d-block mx-auto my-2" width="154" alt="Brand">
                     </a>
                 </div>
 
