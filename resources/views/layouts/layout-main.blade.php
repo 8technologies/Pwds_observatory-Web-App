@@ -60,6 +60,11 @@
                         <img src="assets/img/UCC.png" class="d-block mx-auto my-2" width="154" alt="Brand">
                     </a>
                 </div>
+                <div class="swiper-slide py-3">
+                    <a href="#" class="card card-body card-hover px-2 mx-2">
+                        <img src="assets/img/UCUSAF.png" class="d-block mx-auto my-2" width="154" alt="Brand">
+                    </a>
+                </div>
 
                 <!-- Item -->
                 <div class="swiper-slide py-3">
