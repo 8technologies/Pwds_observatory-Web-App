@@ -29,7 +29,7 @@ class PersonsExcelExporter extends ExcelExporter implements WithMapping
         'dob' => 'Date Of Birth ',
         'district_id' => 'District of Residence',
         'profiler' => 'Profiler',
-        'categories' => 'Disability Category'
+        'disability' => 'Disability Category'
         
     ];
 
@@ -46,7 +46,7 @@ class PersonsExcelExporter extends ExcelExporter implements WithMapping
             $person->dob,
             $this->getDistrictName($person->district_id),
             $person->profiler,
-            $person->categories // Include the disability names
+            $person->disability
             
 
         ];

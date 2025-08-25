@@ -127,6 +127,7 @@ class PersonController extends AdminController
                     'Secondary-UACE' => 'Secondary - UACE',
                     'Secondary-UCE' => 'Secondary - UCE',
                     'Primary' => 'Primary - PLE',
+                    'Certificate' => 'Certificate',
 
                  ]);
         });
@@ -164,7 +165,7 @@ class PersonController extends AdminController
         }
 
 
-
+       // $grid->model()->with('categories:id,name');
         $grid->exporter(new PersonsExcelExporter());
        // $grid->import(new ImportPeople());
         
@@ -222,6 +223,7 @@ class PersonController extends AdminController
                     'Secondary-UACE' => 'Secondary - UACE',
                     'Secondary-UCE' => 'Secondary - UCE',
                     'Primary' => 'Primary - PLE',
+                    'Certificate' => 'Certificate',
                 ];
                 if (array_key_exists($is_formal_education, $levels)) {
                     return $levels[$is_formal_education];
@@ -431,7 +433,9 @@ class PersonController extends AdminController
         13,  // Hydrocephalus
         29,  // Speech Impairment
         54,  // Low vision
-        49,  // Partially blind
+        159, //Down Syndrome
+        1, //Autism
+        17, //Dyslexia
         52,  // Totally blind
         14,  //Deafblind
         30, //Spina Bifida
@@ -549,14 +553,14 @@ class PersonController extends AdminController
             ['Single' => 'Single', 'Married' => 'Married', 'Divorced' => 'Divorced', 'Widowed' => 'Widowed']
         )->rules('required')->required();
         $form->text('ethnicity', __('Ethnicity'))->help('Your Tribe');
-        $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic', 'Born Again Christian' => 'Born Again Christian', 'Other Christian Faith' => 'Other Christian Faith', 'Islam' => 'Islam']);
+        $form->select('religion', __('Religion'))->options(['Anglican' => 'Anglican', 'Catholic' => 'Catholic','Born Again Christian' => 'Born Again Christian','SDA' => 'SDA','Pentecostal' => 'Pentecostal','Jehovah Witness' => 'Jehovah Witness', 'Other Christian Faith' => 'Other Christian Faith', 'Islam' => 'Islam','Budhism' => 'Budhism']);
 
         $form->divider('Education');
         $form->select('education_level', __('Education'))->options(
             ['formal Education' => 'Formal Education', 'informal Education' => 'Informal Education', 'no Education' => 'No Education']
         )
             ->when('formal Education', function (Form $form) {
-                $form->select('is_formal_education', __('Formal Education'))->options(['PHD' => 'PHD', 'Masters' => 'Masters', 'Post-Graduate' => 'Post Graduate', 'Bachelors' => 'Bachelors', 'Diploma' => 'Ordinary Diploma', 'Secondary-UACE' => 'Secondary-UACE', 'Secondary-UCE' => 'Secondary-UCE', 'Primary' => 'Primary'])->rules('required')
+                $form->select('is_formal_education', __('Formal Education'))->options(['PHD' => 'PHD', 'Masters' => 'Masters', 'Post-Graduate' => 'Post Graduate', 'Bachelors' => 'Bachelors', 'Diploma' => 'Ordinary Diploma', 'Secondary-UACE' => 'Secondary-UACE', 'Secondary-UCE' => 'Secondary-UCE','Certificate' => 'Certificate','Primary' => 'Primary'])->rules('required')
                     ->when('PHD', function (Form $form) {
                         $form->text('indicate_class', 'Indicate class')->placeholder('Class');
                     })->when('Masters', function (Form $form) {
@@ -572,6 +576,8 @@ class PersonController extends AdminController
                     })->when('Secondary-UCE', function (Form $form) {
                         $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
                     })->when('Primary', function (Form $form) {
+                        $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
+                    })->when('Certificate', function (Form $form) {
                         $form->text('indicate_class', __('Indicate class'))->placeholder('Class');
                     });
                 $form->text('field_of_study', __('Field of Study'));
