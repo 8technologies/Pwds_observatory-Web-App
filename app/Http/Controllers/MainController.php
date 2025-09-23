@@ -73,9 +73,16 @@ class MainController extends BaseController
     $female_pwd = Person::where('sex', 'Female')->count();
     $male_pwd = Person::where('sex', 'Male')->count();
     $total = $female_pwd + $male_pwd;
+    if($total != 0){
 
-    $female_percentage = round($female_pwd / $total * 100);
-    $male_percentage = round($male_pwd / $total * 100);
+      $female_percentage = round($female_pwd / $total?? 1 * 100);
+      $male_percentage = round($male_pwd / $total?? 1 * 100);
+    }
+    else{
+      $female_percentage = 0;
+      $male_percentage = 0;
+    }
+
 
     //get top 5 districts with persons with disabilities
     $districts_count = DB::table('people')

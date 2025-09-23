@@ -23,6 +23,7 @@ Route::group([
     $router->resource('disabilities', DisabilityController::class);
     $router->resource('institutions', InstitutionController::class);
     $router->resource('counselling-centres', CounsellingCentreController::class);
+    $router->resource('knowledge-management', KnowledgeManagementController::class);
     $router->resource('jobs', JobController::class);
     $router->resource('job-applications', JobApplicationController::class);
 
@@ -64,9 +65,6 @@ Route::group([
 
   
     $router->resource('du-agents', 'AgentController');
-
-
-
 
 
 });
