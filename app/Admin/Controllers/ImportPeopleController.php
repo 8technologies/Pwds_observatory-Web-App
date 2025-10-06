@@ -15,154 +15,188 @@ use Encore\Admin\Layout\Content;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 
+
 class ImportPeopleController extends AdminController
 {
     public function import_people_process(Request $request)
     {
         $id = $request->id;
         $dataImport = DataImport::find($id);
-        if ($dataImport == null) {
+        if (!$dataImport) {
             throw new \Exception('Data Import not found');
         }
-        $file = public_path('storage/' . $dataImport->file);
 
-        // Check if file exists
+        $file = public_path('storage/' . $dataImport->file);
         if (!file_exists($file)) {
             throw new \Exception('File not found');
         }
 
-        $data = null;
         try {
-            // Read excel file without importing
-            $data = Excel::toArray([], $file);
+            // Read the whole workbook as arrays
+            $sheets = Excel::toArray([], $file);
         } catch (\Exception $e) {
             throw new \Exception('Import failed: ' . $e->getMessage());
         }
 
-        $headers = $data[0][0];
-        $isFirstRow = true;
+        // We’ll use the first sheet
+        $sheet = $sheets[0] ?? [];
+        if (empty($sheet)) {
+            throw new \Exception('Sheet is empty.');
+        }
+
+        // 1) Normalize headings to friendly keys (e.g., "Phone Number" => "phone_number")
+        $rawHeaders = $sheet[0] ?? [];
+        if (empty($rawHeaders)) {
+            throw new \Exception('No header row found.');
+        }
+        $headers = array_map([$this, 'normalizeHeader'], $rawHeaders);
+
+        $u = User::find($dataImport->user_id);
+
         $total_records = 0;
         $total_imported = 0;
         $total_failed = 0;
-        $u = User::find($dataImport->user_id);
         $error_message = '';
-        $results = []; // Store results for display
-        
+        $results = [];
 
-
-        foreach ($data[0] as $row) {
-            // Skip first row
-            if ($isFirstRow) {
-                $isFirstRow = false;
-                continue;
-            }
-
+        // 2) Process each subsequent row as an associative array
+        for ($i = 1; $i < count($sheet); $i++) {
+            $row = $sheet[$i];
             $total_records++;
-            $name = $row[0];
-            // Check if name is not empty
+
+            // Guard: make row count match header count (pad/truncate)
+            $row = array_pad($row, count($headers), null);
+            $row = array_slice($row, 0, count($headers));
+
+            // Associate: ['name' => 'John', 'phone_number' => '...']
+            $rowAssoc = array_combine($headers, array_map('trim', $row));
+
+            // Helper: fetch by any of these keys (lets you accept multiple header spellings)
+            $get = function(array $candidates, $default = null) use ($rowAssoc) {
+                foreach ($candidates as $key) {
+                    if (array_key_exists($key, $rowAssoc) && strlen((string)$rowAssoc[$key]) > 0) {
+                        return $rowAssoc[$key];
+                    }
+                }
+                return $default;
+            };
+
+            $name = $get(['name', 'full_name', 'surname']);
             if (empty($name)) {
                 $total_failed++;
-                $error_message .= "Name for record $total_records is empty. <br>";
+                $error_message .= "Name for record {$total_records} is empty.<br>";
+                $results[] = ['record' => $total_records, 'status' => 'FAILED', 'data' => $rowAssoc];
                 continue;
             }
 
+            // Read by header names
+            $otherNames    = $get(['other_names', 'othernames', 'middle_names', 'middle_name']);
+            $sex           = $get(['sex', 'gender']);
+            $age           = $get(['age', 'years']);
+            $disabilityStr = $get(['disability', 'disabilities']);
+            $phoneRaw      = $get(['phone_number', 'phone', 'tel', 'mobile']);
+            $ethnicity     = $get(['ethnicity', 'tribe']);
+            $subCounty     = $get(['sub_county', 'subcounty']);
+            $village       = $get(['village']);
+            $email         = $get(['email', 'e_mail']);
+            $marital       = $get(['marital_status', 'marital', 'marital status']);
+            $profiler      = $get(['profiler name', 'profiler', 'recorder']);
+            $religion      = $get(['religion']);
+            $isFormalEdu   = $get(['is_formal_education', 'formal education', 'formal_edu']);
+            $informalEdu   = $get(['informal education', 'informal_edu']);
+            $educationLvl  = $get(['education_level', 'education', 'highest_education']);
+
+            // Phone normalize/validate
             $phone = null;
-            if ($row[5] != null && strlen($row[5]) > 5) {
-                $phone = Utils::prepare_phone_number($row[5]);
-                if (!Utils::phone_number_is_valid($phone)) {
-                    $phone = $row[5];
-                }
+            if (!empty($phoneRaw) && strlen($phoneRaw) > 5) {
+                $prepared = \App\Models\Utils::prepare_phone_number($phoneRaw);
+                $phone = \App\Models\Utils::phone_number_is_valid($prepared) ? $prepared : $phoneRaw;
             }
 
-            // if ($phone != null && strlen($phone) > 3) {
-            //     $existing = Person::where('phone_number', $phone)->first();
-            //     if ($existing != null) {
-            //         $total_failed++;
-            //         $error_message .= "Phone number $phone for record $total_records already exists. <br>";
-            //         continue;
-            //     }
-            // }
-
-            $exists = Person::where('name',        $name)
-                ->where('other_names', $row[1])
-                ->where('sex',         $row[2])
-                ->where('age',         $row[4])
-                ->where('disability',  $row[3])
+            // Uniqueness check by named columns
+            $exists = Person::where('name', $name)
+                ->where('other_names', $otherNames)
+                ->where('sex', $sex)
+                ->where('age', $age)
+                ->where('disability', $disabilityStr)
                 ->exists();
 
             if ($exists) {
                 $total_failed++;
-                $error_message .= "The person with name {$name} {$row[1]} is already registered. <br>";
+                $error_message .= "The person {$name} {$otherNames} is already registered.<br>";
+                $results[] = ['record' => $total_records, 'status' => 'FAILED', 'data' => $rowAssoc];
                 continue;
             }
 
-
             $person = new Person();
-            $person->name = $name;
-            $person->other_names = $row[1];
-            $person->age = $row[4];
-            $person->address = $row[3];
-            $person->phone_number = $phone;
-            $person->email = $row[9];
-            $person->marital_status = $row[10];
-            $person->is_approved = 1;
-            $person->organisation_id = $u->organisation_id;
-            $person->ethnicity = $row[6];
-            if ($person->age != null) {
-                $person->dob = date('Y-m-d', strtotime('-' . $person->age . ' years'));
-            }
-            $person->sub_county = $row[7];
-            $person->village = $row[8];
-            $person->sex = $row[2];
-            $person->profiler = $row[11];
-            $person->religion = $row[12];
-            $person->is_formal_education = $row[13];
-            $person->informal_education = $row[14];
-            $person->education_level = $row[15];
-            $person->disability = $row[3];
-            $person->district_of_origin = $dataImport->district;
-            $person->district_id = $dataImport->district;
+            $person->name                = $name;
+            $person->other_names         = $otherNames;
+            $person->age                 = $age;
+            $person->address             = $disabilityStr; // (kept as your original mapping)
+            $person->phone_number        = $phone;
+            $person->email               = $email;
+            $person->marital_status      = $marital;
+            $person->is_approved         = 1;
+            $person->organisation_id     = $u?->organisation_id;
+            $person->ethnicity           = $ethnicity;
+            $person->dob                 = $age ? date('Y-m-d', strtotime('-' . intval($age) . ' years')) : null;
+            $person->sub_county          = $subCounty;
+            $person->village             = $village;
+            $person->sex                 = $sex;
+            $person->profiler            = $profiler;
+            $person->religion            = $religion;
+            $person->is_formal_education = $isFormalEdu;
+            $person->informal_education  = $informalEdu;
+            $person->education_level     = $educationLvl;
+            $person->disability          = $disabilityStr;
+            $person->district_of_origin  = $dataImport->district;
+            $person->district_id         = $dataImport->district;
 
             try {
                 $person->save();
-                // Handle disabilities
-                if (!empty($row[3])) {
-                    $disabilities = explode(',', $row[3]);
+                Log::info("Imported person ID ");
+
+                // Attach disabilities from comma-separated header value
+                if (!empty($disabilityStr)) {
+                    $disabilities = array_filter(array_map('trim', explode(',', $disabilityStr)));
                     foreach ($disabilities as $disabilityName) {
-                        $disabilityName = trim($disabilityName);
                         $disability = \App\Models\Disability::firstOrCreate(['name' => $disabilityName]);
-                        $person->disabilities()->attach($disability);
+                        $person->disabilities()->syncWithoutDetaching([$disability->id]);
                     }
                 }
+
                 $total_imported++;
-                $status = "SUCCESS";
+                $results[] = ['record' => $total_records, 'status' => 'SUCCESS', 'data' => $rowAssoc];
             } catch (\Exception $e) {
                 $total_failed++;
-                $error_message .= "Failed to save record $total_records. " . $e->getMessage() . "<br>";
-                $status = "FAILED";
+                $error_message .= "Failed to save record {$total_records}. {$e->getMessage()}<br>";
+                $results[] = ['record' => $total_records, 'status' => 'FAILED', 'data' => $rowAssoc];
             }
-
-            // Collect results for display
-            $results[] = [
-                'record' => $total_records,
-                'status' => $status,
-                'data' => array_combine($headers, $row) // Map headers to row values
-            ];
         }
 
-        $dataImport->total_records = $total_records;
+        $dataImport->total_records  = $total_records;
         $dataImport->total_imported = $total_imported;
-        $dataImport->total_failed = $total_failed;
-        $dataImport->error_message = $error_message;
-        $dataImport->processed = 'Yes';
+        $dataImport->total_failed   = $total_failed;
+        $dataImport->error_message  = $error_message;
+        $dataImport->processed      = 'Yes';
         $dataImport->save();
 
-        return view('admin.import_results', [
-            'results' => $results,
-            'total_records' => $total_records,
-            'total_imported' => $total_imported,
-            'total_failed' => $total_failed,
-            'error_message' => $error_message
-        ]);
+        return view('admin.import_results', compact(
+            'results', 'total_records', 'total_imported', 'total_failed', 'error_message'
+        ));
+    }
+
+    /**
+     * Turn a header like "Phone Number (Primary)" into "phone_number_primary".
+     */
+    private function normalizeHeader($h): string
+    {
+        $h = strtolower(trim($h));
+        // Replace non-alphanumerics with underscores
+        $h = preg_replace('/[^a-z0-9]+/i', '_', $h);
+        // Collapse multiple underscores
+        $h = preg_replace('/_+/', '_', $h);
+        return trim($h, '_');
     }
 }
+
