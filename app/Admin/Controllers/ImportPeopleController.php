@@ -18,6 +18,23 @@ use Illuminate\Support\Facades\Log;
 
 class ImportPeopleController extends AdminController
 {
+    public function parseAge($value): ?int
+    {
+        if ($value === null) return null;
+        if (is_int($value)) return ($value >= 0 && $value <= 120) ? $value : null;
+
+        $value = trim((string)$value);
+        if ($value === '') return null;
+
+        // grab first integer in the string
+        if (preg_match('/\d+/', $value, $m)) {
+            $age = (int)$m[0];
+            return ($age >= 0 && $age <= 120) ? $age : null;
+        }
+        return null;
+    }
+
+
     public function import_people_process(Request $request)
     {
         $id = $request->id;
@@ -92,7 +109,8 @@ class ImportPeopleController extends AdminController
             // Read by header names
             $otherNames    = $get(['other_names', 'othernames', 'middle_names', 'middle_name']);
             $sex           = $get(['sex', 'gender']);
-            $age           = $get(['age', 'years']);
+            $ageRaw        = $get(['age', 'years']);
+            $age           = $this->parseAge($ageRaw); // returns ?int
             $disabilityStr = $get(['disability', 'disabilities']);
             $phoneRaw      = $get(['phone_number', 'phone', 'tel', 'mobile']);
             $ethnicity     = $get(['ethnicity', 'tribe']);
@@ -198,5 +216,7 @@ class ImportPeopleController extends AdminController
         $h = preg_replace('/_+/', '_', $h);
         return trim($h, '_');
     }
+
+    
 }
 
