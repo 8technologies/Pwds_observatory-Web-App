@@ -119,7 +119,7 @@ class OPDDashboard
         $opdName = $organisation->name;
 
         // Eager load disabilities within the specified district only.
-        $people = Person::with('disabilities')->where('opd_id', $organisation->id)->get();
+        $people = Person::with('disabilities')->where('opd_id', $organisation->id)->paginate(100);
 
         $opdDisabilityCount = [];
 

@@ -115,7 +115,7 @@ class Dashboard
     //PWDs Disability Category Count per district
     public static function getDisabilityCount(Request $request)
     {
-        $people = Person::with('disabilities', 'district')->get();
+        $people = Person::with('disabilities', 'district')->paginate(100);
         $disabilityCounts = [];
         $districtDisabilityCounts = [];
     

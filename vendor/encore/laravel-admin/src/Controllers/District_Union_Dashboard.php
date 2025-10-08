@@ -121,7 +121,7 @@ class District_Union_Dashboard
         $districtName = District::find($district_union_id)->name ?? 'Unknown';
 
         // Eager load disabilities within the specified district only.
-        $people = Person::with('disabilities')->where('district_id', $district_union_id)->get();
+        $people = Person::with('disabilities')->where('district_id', $district_union_id)->paginate(100);
 
         $districtDisabilityCounts = [];
 

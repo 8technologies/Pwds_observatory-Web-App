@@ -383,7 +383,8 @@ class Person extends Model
 
     public static function updateRecord()
     {
-        $people_records = Person::select('id', 'name', 'other_names')->get();
+        $people_records = Person::select('id', 'name', 'other_names')->paginate(100);
+        // $people_records = Person::select('id', 'name', 'other_names')->get();
         foreach ($people_records as $record) {
             $record->name = ucfirst(strtolower($record->name));
             $record->other_names = ucfirst(strtolower($record->other_names));
