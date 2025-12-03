@@ -11,6 +11,9 @@ class NewsPost extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+    'attachments' => 'array',
+    ];
 
     protected $fillable = [
         'title',
@@ -19,6 +22,7 @@ class NewsPost extends Model
         'post_category_id',
         'views',
         'description',
+        'attachments',
         'photo'
     ];
     protected $appends = ['post_category_text'];

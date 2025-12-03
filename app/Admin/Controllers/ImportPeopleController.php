@@ -111,14 +111,14 @@ class ImportPeopleController extends AdminController
             $sex           = $get(['sex', 'gender']);
             $ageRaw        = $get(['age', 'years']);
             $age           = $this->parseAge($ageRaw); // returns ?int
-            $disabilityStr = $get(['disability', 'disabilities']);
+            $disabilityStr = $get(['disability', 'disabilities', 'select_the_disability']);
             $phoneRaw      = $get(['phone_number', 'phone', 'tel', 'mobile']);
             $ethnicity     = $get(['ethnicity', 'tribe']);
             $subCounty     = $get(['sub_county', 'subcounty']);
             $village       = $get(['village']);
             $email         = $get(['email', 'e_mail']);
             $marital       = $get(['marital_status', 'marital', 'marital status']);
-            $profiler      = $get(['profiler name', 'profiler', 'recorder']);
+            $profiler      = $get(['profiler_name', 'profiler', 'recorder']);
             $religion      = $get(['religion']);
             $isFormalEdu   = $get(['is_formal_education', 'formal education', 'formal_edu']);
             $informalEdu   = $get(['informal education', 'informal_edu']);
@@ -145,6 +145,8 @@ class ImportPeopleController extends AdminController
                 $results[] = ['record' => $total_records, 'status' => 'FAILED', 'data' => $rowAssoc];
                 continue;
             }
+
+            Log::info("Importing person: {$name} {$disabilityStr}");
 
             $person = new Person();
             $person->name                = $name;

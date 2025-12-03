@@ -86,6 +86,21 @@ if (!isset($header_style)) {
                                 </a>
                             </h3>
                             <p> {{ Str::limit($post->description, 300) }}</p>
+                            <p>
+                                @if ($post->attachments)
+                                    <strong>Attachments:</strong>
+                                    <ul>
+                                        {{-- @foreach ($post->attachments as $attachment) --}}
+                                            <li>
+                                                <a href="{{ url('storage/' . $post->attachments) }}" target="_blank">
+                                                    {{-- {{ basename($post->attachments) }} --}}
+                                                    View attached document
+                                                </a>
+                                            </li>
+                                        {{-- @endforeach --}}
+                                    </ul>
+                                @endif
+                            </p>
                             <hr class="my-4">
                             <div class="d-flex align-items-center justify-content-between">
                                 <a href="{{ url('admin/members/' . $post->created_by->id) }}"

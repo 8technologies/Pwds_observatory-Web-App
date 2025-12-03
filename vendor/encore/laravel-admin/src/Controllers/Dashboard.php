@@ -115,44 +115,50 @@ class Dashboard
     //PWDs Disability Category Count per district
     public static function getDisabilityCount(Request $request)
     {
-        $people = Person::with('disabilities', 'district')->paginate(100);
-        $disabilityCounts = [];
+        // Overall disability counts
+        $disabilityCounts = DB::table('disability_person')
+            ->join('disabilities', 'disability_person.disability_id', '=', 'disabilities.id')
+            ->select('disabilities.name', DB::raw('count(*) as count'))
+            ->groupBy('disabilities.name')
+            ->orderByDesc('count')
+            ->pluck('count', 'name')
+            ->toArray();
+
+        // Per-district disability counts
+        $districtDisabilityRaw = DB::table('disability_person')
+            ->join('disabilities', 'disability_person.disability_id', '=', 'disabilities.id')
+            ->join('people', 'disability_person.person_id', '=', 'people.id')
+            ->join('districts', 'people.district_id', '=', 'districts.id')
+            ->select('districts.name as district', 'disabilities.name as disability', DB::raw('count(*) as count'))
+            ->groupBy('districts.name', 'disabilities.name')
+            ->orderBy('districts.name')
+            ->orderByDesc('count')
+            ->get();
+
         $districtDisabilityCounts = [];
-    
-        foreach ($people as $person) {
-            $districtName = $person->district->name ?? 'Unknown';
-            if (!array_key_exists($districtName, $districtDisabilityCounts)) {
-                $districtDisabilityCounts[$districtName] = [];
+        foreach ($districtDisabilityRaw as $row) {
+            if (!isset($districtDisabilityCounts[$row->district])) {
+                $districtDisabilityCounts[$row->district] = [];
             }
-            foreach ($person->disabilities as $disability) {
-                if (!isset($disabilityCounts[$disability->name])) {
-                    $disabilityCounts[$disability->name] = 0;
-                }
-                $disabilityCounts[$disability->name]++;
-    
-                if (!isset($districtDisabilityCounts[$districtName][$disability->name])) {
-                    $districtDisabilityCounts[$districtName][$disability->name] = 0;
-                }
-                $districtDisabilityCounts[$districtName][$disability->name]++;
+            $districtDisabilityCounts[$row->district][$row->disability] = $row->count;
+        }
+
+        // Sort each district's disabilities by count desc
+        foreach ($districtDisabilityCounts as &$counts) {
+            arsort($counts);
+        }
+        unset($counts);
+
+        // Filter for top N disabilities if requested
+        $filter = $request->query('filter');
+        if ($filter === '5' || $filter === '2') {
+            $topN = (int)$filter;
+            $disabilityCounts = array_slice($disabilityCounts, 0, $topN, true);
+            foreach ($districtDisabilityCounts as $districtName => $counts) {
+                $districtDisabilityCounts[$districtName] = array_slice($counts, 0, $topN, true);
             }
         }
-    
-        arsort($disabilityCounts);
-        arsort($districtDisabilityCounts);
-    
-        // Filter for top 5 disabilities if requested
-        if ($request->query('filter') === '5') {
-            $disabilityCounts = array_slice($disabilityCounts, 0, 5, true);
-            foreach ($districtDisabilityCounts as $districtName => $counts) {
-                $districtDisabilityCounts[$districtName] = array_slice($counts, 0, 5, true);
-            }
-        } elseif ($request->query('filter') === '2') { // Filter for top 2 disabilities
-            $disabilityCounts = array_slice($disabilityCounts, 0, 2, true);
-            foreach ($districtDisabilityCounts as $districtName => $counts) {
-                $districtDisabilityCounts[$districtName] = array_slice($counts, 0, 2, true);
-            }
-        }
-    
+
         return view('dashboard.disability-category-count', compact('disabilityCounts', 'districtDisabilityCounts'));
     }
 
