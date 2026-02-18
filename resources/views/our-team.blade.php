@@ -324,7 +324,7 @@
                     </div>
                     <div class="card-body text-center p-3">
                         <h4 class="fs-lg fw-semibold pt-1 mb-2">Mr. Mbabazi Isaac</h4>
-                        <span>Lead Digital skilling </span>
+                        <span>Lead System Developer </span>
                         <p class="fs-sm mb-0">Eight Tech Consults</p>
                     </div>
                 </div>
@@ -334,7 +334,7 @@
             <div class="col">
                 <div class="card card-hover border-0 bg-transparent">
                     <div class="position-relative">
-                        <img src="/assets/images/team/Angel.png" class="rounded-circle -3" alt="Ms. Nagaba Angel ">
+                        <img src="/assets/images/team/hildah2.jpg" class="rounded-circle -3" alt="Ms. Nantabo Hildah ">
                         <div
                             class="card-img-overlay d-flex flex-column align-items-center justify-content-center rounded-3">
                             <span class="position-absolute top-0 start-0 w-100 h-100 bg-dark opacity-25 rounded-3"></span>
@@ -352,8 +352,8 @@
                         </div>
                     </div>
                     <div class="card-body text-center p-3">
-                        <h4 class="fs-lg fw-semibold pt-1 mb-2">Ms. Nagaba Angel </h4>
-                        <span>Lead system development </span>
+                        <h4 class="fs-lg fw-semibold pt-1 mb-2">Ms. Nantabo Hildah </h4>
+                        <span>System Developer </span>
                         <p class="fs-sm mb-0">Eight Tech Consults</p>
                     </div>
                 </div>

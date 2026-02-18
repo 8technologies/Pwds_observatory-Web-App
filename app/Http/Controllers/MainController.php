@@ -19,9 +19,11 @@ use Illuminate\Support\Str;
 use Illuminate\Routing\Controller as BaseController;
 use App\Models\Person;
 use App\Models\PostCategory;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class MainController extends BaseController
 {
@@ -71,12 +73,16 @@ class MainController extends BaseController
 
     //get percentage of persons by gender
     $female_pwd = Person::where('sex', 'Female')->count();
+    // $female_pwd = User::whereIn('gender', ['Female', 'female'])->count();
     $male_pwd = Person::where('sex', 'Male')->count();
+    // $male_pwd = User::whereIn('gender', ['Male', 'male'])->count();
     $total = $female_pwd + $male_pwd;
     if($total != 0){
 
-      $female_percentage = round($female_pwd / $total?? 1 * 100);
-      $male_percentage = round($male_pwd / $total?? 1 * 100);
+      // $female_percentage = round($female_pwd / $total?? 1 * 100);
+      $female_percentage = round(($female_pwd / $total)*100);
+      // $male_percentage = round(($male_pwd / $total)?? 1 * 100);
+      $male_percentage = round(($male_pwd / $total)*100);
     }
     else{
       $female_percentage = 0;

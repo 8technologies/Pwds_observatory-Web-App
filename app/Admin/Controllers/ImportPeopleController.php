@@ -146,8 +146,6 @@ class ImportPeopleController extends AdminController
                 continue;
             }
 
-            Log::info("Importing person: {$name} {$disabilityStr}");
-
             $person = new Person();
             $person->name                = $name;
             $person->other_names         = $otherNames;
